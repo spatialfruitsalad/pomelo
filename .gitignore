@@ -2,3 +2,7 @@
 bin/*
 obj/*
 lib/selene/test/
+lib/voro++/html/
+lib/voro++/examples/
+lib/voro++/man/
+lib/voro++/scripts/

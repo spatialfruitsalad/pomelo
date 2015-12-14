@@ -1,4 +1,4 @@
-CXX = g++ -Wall -Wextra -O3 -std=c++11
+CXX = g++ -Wall -Wextra -O3 -std=c++11 
 
 MAIN = src/main
 
@@ -17,10 +17,10 @@ all: obj/main.o LINK
 #	$(CXX) -c -o obj/raytracer.o src/raytracer.cpp
 
 obj/main.o: src/main.cpp 
-	$(CXX) -c -o obj/main.o src/main.cpp
+	$(CXX) -c -o obj/main.o src/main.cpp -llua
 
 LINK: obj/main.o 
-	$(CXX) obj/main.o -o bin/setvoronoi
+	$(CXX) obj/main.o -o bin/setvoronoi -llua
 
 
 
