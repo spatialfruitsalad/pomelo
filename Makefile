@@ -9,8 +9,8 @@ all: obj/main.o LINK
 obj/voro.o: lib/voro++/src/voro++.*
 	$(CXXVORO) -c -o obj/voro.o lib/voro++/src/voro++.cc
 
-#obj/post.o: src/postprocessing.*
-#	$(CXX) -c -o obj/post.o src/postprocessing.cpp
+obj/fileloader.o: src/fileloader.*
+	$(CXX) -c -o obj/fileloader.o src/fileloader.cpp
 
 #obj/ray.o: src/ray.*
 #	$(CXX) -c -o obj/ray.o src/ray.cpp
@@ -21,8 +21,8 @@ obj/voro.o: lib/voro++/src/voro++.*
 obj/main.o: src/main.cpp 
 	$(CXX) -c -o obj/main.o src/main.cpp -llua
 
-LINK: obj/main.o obj/voro.o 
-	$(CXX) obj/main.o obj/voro.o  -o bin/setvoronoi -llua
+LINK: obj/main.o obj/voro.o obj/fileloader.o
+	$(CXX) obj/main.o obj/voro.o obj/fileloader.o -o bin/setvoronoi -llua
 
 
 
