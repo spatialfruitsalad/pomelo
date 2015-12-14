@@ -1,11 +1,13 @@
 CXX = g++ -Wall -Wextra -O3 -std=c++11 
 
+CXXVORO = g++ -O3 -std=c++11
+
 MAIN = src/main
 
 all: obj/main.o LINK 
 
-#obj/lodepng.o: src/lodepng.* 
-#	$(CXX) -c -o obj/lodepng.o src/lodepng.cpp
+obj/voro.o: lib/voro++/src/voro++.*
+	$(CXXVORO) -c -o obj/voro.o lib/voro++/src/voro++.cc
 
 #obj/post.o: src/postprocessing.*
 #	$(CXX) -c -o obj/post.o src/postprocessing.cpp
@@ -19,8 +21,8 @@ all: obj/main.o LINK
 obj/main.o: src/main.cpp 
 	$(CXX) -c -o obj/main.o src/main.cpp -llua
 
-LINK: obj/main.o 
-	$(CXX) obj/main.o -o bin/setvoronoi -llua
+LINK: obj/main.o obj/voro.o 
+	$(CXX) obj/main.o obj/voro.o  -o bin/setvoronoi -llua
 
 
 
@@ -30,4 +32,3 @@ LINK: obj/main.o
 clean:
 	rm obj/*
 	rm bin/*
-
