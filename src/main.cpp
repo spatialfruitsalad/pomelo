@@ -1,10 +1,18 @@
 #include <iostream>
 #include <fstream>
+#include <map>
 #include "include.hpp"
 #include "fileloader.hpp"
 #include "pointpattern.hpp"
 using namespace sel;
 using namespace voro;
+
+const double epsilon = 1e-6;
+
+bool compare(double d, double e)
+{
+    return (abs(d-e) < epsilon);
+}
 
 int main (int argc, char* argv[])
 {
@@ -63,7 +71,6 @@ int main (int argc, char* argv[])
 
 
     // add particle shapes to voro++
-    // TODO dont load from a file but add within code
     std::cout << "importing point pattern from file" << std::endl;
     const double xmin = state["xmin"];
     const double ymin = state["ymin"];
@@ -74,8 +81,108 @@ int main (int argc, char* argv[])
     const double zmax = state["zmax"];
 
     container con(xmin, xmax, ymin, ymax, zmin, zmax, 8,8,8, false, false, false, 16);
-    con.import("pointpattern.xyz");
-
+    //con.import("pointpattern.xyz");
+   
+    std::cout << "creating label id map" << std::endl;
+    unsigned int id = 0; 
+    std::map < int, int> labelidmap;
+    for(    auto it = pp.points.begin();
+            it != pp.points.end();
+            ++it)
+    {
+        con.put(id, it->x, it->y, it->z);
+        labelidmap[id] = it->l;
+        ++id;
+    }
     con.draw_cells_gnuplot("cells.gnu");
+
+
+    std::cout << "map back ids to labels" << std::endl;
+    //loop over all voronoi cells
+    c_loop_all cla(con);
+    std::vector<pointpattern> vclist;
+    if(cla.start()) 
+    {
+        std::cout << "started"  << std::endl;
+        do
+        {
+            voronoicell c;
+            if(con.compute_cell(c,cla)) 
+            {
+                std::cout << "computed"  << std::endl;
+                double x = 0;
+                double y = 0; 
+                double z = 0; 
+                // Get the position of the current particle under consideration
+                cla.pos(x,y,z);
+                unsigned int id = cla.pid();
+                unsigned int l = labelidmap[id];
+                
+                c_loop_all cla2(con);
+
+                // get the position of the vertices of the cell                
+                std::vector <double> v;
+                c.vertices(x,y,z, v);
+                
+                std::cout << x << " " << y << " " << z << std::endl;
+                pointpattern p;
+                for (unsigned int i = 0; i != v.size(); ++(++(++i)))
+                {
+                    p.addpoint(v[i], v[i+1], v[i+2], l);
+                    //std::cout << v[i] << " " << v[i+1] << " " << v[i+2] << std::endl;
+                }
+                vclist.push_back(p);
+            } 
+        }while (cla.inc());
+    }
+    
+    pointpattern ppreduced;
+    for(unsigned int i = 0; i != vclist.size() -1;++i)
+    {
+        std::vector<point>& p1 = vclist[i].points;
+        for (unsigned int j = i+1; j!= vclist.size();++j)
+        {
+            std::vector<point>& p2 = vclist[j].points;
+
+            for (auto it1 = p1.begin(); it1 != p1.end(); ++it1)
+            {
+                for (auto it2 = p2.begin(); it2 != p2.end(); ++it2)
+                {
+                    double x1 = (*it1).x;
+                    double x2 = (*it2).x;
+                    double y1 = (*it1).y;
+                    double y2 = (*it2).y;
+                    double z1 = (*it1).z;
+                    double z2 = (*it2).z;
+                    bool bx = compare(x1,x2); 
+                    bool by = compare(y1,y2); 
+                    bool bz = compare(z1,z2); 
+                    if (bx && by && bz)
+                    {
+                        if ((*it1).l == (*it2).l)
+                        {
+                            // discard
+                        }
+                        else
+                        {
+                            ppreduced.addpoint(x1,y1,z1, (*it1).l);
+
+                            // keep
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // print out reduced pointpattern to a file for debugging purpose
+    {
+    std::ofstream file;
+    file.open("reduced.xyz");
+    file << ppreduced;
+    file.close();
+    }
+
+    
     return 0;
 }
