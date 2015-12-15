@@ -109,7 +109,7 @@ int main (int argc, char* argv[])
             voronoicell c;
             if(con.compute_cell(c,cla)) 
             {
-                std::cout << "computed"  << std::endl;
+                //std::cout << "computed"  << std::endl;
                 double x = 0;
                 double y = 0; 
                 double z = 0; 
@@ -124,7 +124,7 @@ int main (int argc, char* argv[])
                 std::vector <double> v;
                 c.vertices(x,y,z, v);
                 
-                std::cout << x << " " << y << " " << z << std::endl;
+                //std::cout << x << " " << y << " " << z << std::endl;
                 pointpattern p;
                 for (unsigned int i = 0; i != v.size(); ++(++(++i)))
                 {
@@ -136,9 +136,12 @@ int main (int argc, char* argv[])
         }while (cla.inc());
     }
     
+    // merge voronoi cells to set voronoi diagram
+    std::cout << "merge voronoi cells" << std::endl; 
     pointpattern ppreduced;
     for(unsigned int i = 0; i != vclist.size() -1;++i)
     {
+        std::cout << i << "/" << vclist.size() << std::endl;
         std::vector<point>& p1 = vclist[i].points;
         for (unsigned int j = i+1; j!= vclist.size();++j)
         {
@@ -148,6 +151,10 @@ int main (int argc, char* argv[])
             {
                 for (auto it2 = p2.begin(); it2 != p2.end(); ++it2)
                 {
+                    if ((*it1).l == (*it2).l)
+                    {
+                        continue;
+                    }
                     double x1 = (*it1).x;
                     double x2 = (*it2).x;
                     double y1 = (*it1).y;
@@ -159,24 +166,16 @@ int main (int argc, char* argv[])
                     bool bz = compare(z1,z2); 
                     if (bx && by && bz)
                     {
-                        if ((*it1).l == (*it2).l)
-                        {
-                            // discard
-                        }
-                        else
-                        {
-                            ppreduced.addpoint(x1,y1,z1, (*it1).l);
-
-                            // keep
-                        }
+                        ppreduced.addpoint(x1,y1,z1, (*it1).l);
                     }
                 }
             }
         }
     }
-
+    
     // print out reduced pointpattern to a file for debugging purpose
     {
+        std::cout << "save reduced voronoi diagram" << std::endl;
     std::ofstream file;
     file.open("reduced.xyz");
     file << ppreduced;

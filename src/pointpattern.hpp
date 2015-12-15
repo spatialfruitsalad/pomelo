@@ -26,7 +26,7 @@ public:
                 it != p.points.end();
                 ++it)
         {
-            f << (*it).l << " " <<  std::setw(15)<< (*it).x << " " << std::setw(15) << (*it).y << " " << std::setw(15) << (*it).z << " " << std::endl;
+            f << (*it).l << " " <<  std::setw(5)<< (*it).x << " " << std::setw(5) << (*it).y << " " << std::setw(5) << (*it).z << "\n";
         }
 
         return f;

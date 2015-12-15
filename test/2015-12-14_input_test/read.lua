@@ -1,5 +1,5 @@
-stepstheta = 1
-stepsphi = 1
+stepstheta = 19
+stepsphi = 19
 
 s = {}
 
@@ -10,8 +10,6 @@ function docalculation (p)
     local zoffset = s[3]
     local r = s[4]
 
-    p:addpoint(1,0,0,1)
-    p:addpoint(-1,0,0,2)
     for i=0,stepstheta,1 do 
         for j=0,stepsphi,1 do 
             local theta = i * (1.0/stepstheta)* math.pi
@@ -19,7 +17,7 @@ function docalculation (p)
             local x = xoffset + math.sin(theta)*math.cos(phi)*r
             local y = yoffset + math.sin(theta)*math.sin(phi)*r
             local z = zoffset + math.cos(theta)*r
-            --p:addpoint(x, y, z, l)
+            p:addpoint(x, y, z, l)
         end
     end
 end
