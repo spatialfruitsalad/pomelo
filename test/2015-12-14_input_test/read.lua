@@ -1,5 +1,5 @@
-stepstheta = 99
-stepsphi = 99
+stepstheta = 9
+stepsphi = 9
 
 s = {}
 

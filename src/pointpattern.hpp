@@ -22,12 +22,11 @@ public:
     
     friend std::ostream& operator << (std::ostream &f, const pointpattern& p)
     {
-        f << std::setw(15);
         for (   auto it = p.points.begin();
                 it != p.points.end();
                 ++it)
         {
-            f << std::setw(15)<< (*it).x << " " << std::setw(15) << (*it).y << " " << std::setw(15) << (*it).z << " " << (*it).l << std::endl;
+            f << (*it).l << " " <<  std::setw(15)<< (*it).x << " " << std::setw(15) << (*it).y << " " << std::setw(15) << (*it).z << " " << std::endl;
         }
 
         return f;
