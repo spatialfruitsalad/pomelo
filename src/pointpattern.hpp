@@ -1,6 +1,7 @@
 #ifndef POINTPATTERN_GUARD
 #define POINTPATTERN_GUARD
 
+#include <iomanip>
 #include <vector>
 
 struct point
@@ -18,6 +19,19 @@ public:
     void print();
 
     std::vector<point> points;
+    
+    friend std::ostream& operator << (std::ostream &f, const pointpattern& p)
+    {
+        f << std::setw(15);
+        for (   auto it = p.points.begin();
+                it != p.points.end();
+                ++it)
+        {
+            f << std::setw(15)<< (*it).x << " " << std::setw(15) << (*it).y << " " << std::setw(15) << (*it).z << " " << (*it).l << std::endl;
+        }
+
+        return f;
+    };
 };
 
 #endif

@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <fstream>
 #include "include.hpp"
 #include "fileloader.hpp"
 #include "pointpattern.hpp"
@@ -49,7 +49,12 @@ int main (int argc, char* argv[])
 
         //double x = readstate["result"][1][1][1];
         //std::cout << x << std::endl;
-        pp.print();
     }
+
+    std::ofstream file;
+    file.open("pointpattern.xyz");
+    file << pp;
+    file.close();
+
     return 0;
 }
