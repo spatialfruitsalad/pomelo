@@ -1,13 +1,14 @@
-stepstheta = 100
-stepsphi = 100
+stepstheta = 99
+stepsphi = 99
 
+s = {}
 
-function docalculation (s) 
-    local l = s:get(0)
-    local xoffset = s:get(1)
-    local yoffset = s:get(2)
-    local zoffset = s:get(3)
-    local r = s:get(4)
+function docalculation (p) 
+    local l = s[0] 
+    local xoffset = s[1]
+    local yoffset = s[2]
+    local zoffset = s[3]
+    local r = s[4]
 
     for i=0,stepstheta,1 do 
         for j=0,stepsphi,1 do 
@@ -16,6 +17,7 @@ function docalculation (s)
             local x = xoffset + math.sin(theta)*math.cos(phi)*r
             local y = yoffset + math.sin(theta)*math.sin(phi)*r
             local z = zoffset + math.cos(theta)*r
+            p:addpoint(x, y, z, 1)
         end
     end
 end

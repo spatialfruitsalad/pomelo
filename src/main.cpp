@@ -33,19 +33,23 @@ int main (int argc, char* argv[])
    
 
     State readstate{true};
+    readstate["pointpattern"].SetClass<pointpattern> ("addpoint", &pointpattern::addpoint );
     readstate.Load(readfile);
-    //readstate["pointpattern"].SetClass<pointpattern> ("addpoint", &pointpattern::addpoint );
-    readstate["particleparameterset"].SetClass<particleparameterset> ("get", &particleparameterset::get );
-
     pointpattern pp;
 
     for(auto it = setlist.begin(); it != setlist.end(); ++it )
     {
         particleparameterset set = (*it);
-        readstate["docalculation"](set); 
+        readstate["s"][0] = set.get(0);
+        readstate["s"][1] = set.get(1);
+        readstate["s"][2] = set.get(2);
+        readstate["s"][3] = set.get(3);
+        readstate["s"][4] = set.get(4);
+        readstate["docalculation"](pp); 
 
         //double x = readstate["result"][1][1][1];
         //std::cout << x << std::endl;
+        pp.print();
     }
     return 0;
 }

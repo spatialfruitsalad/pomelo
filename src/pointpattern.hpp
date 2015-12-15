@@ -15,6 +15,7 @@ class pointpattern
 {
 public:
     void addpoint(double x, double y, double z, int l);
+    void print();
 
     std::vector<point> points;
 };
