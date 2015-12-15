@@ -12,6 +12,8 @@ obj/voro.o: lib/voro++/src/voro++.*
 obj/fileloader.o: src/fileloader.*
 	$(CXX) -c -o obj/fileloader.o src/fileloader.cpp
 
+obj/pointpattern.o: src/pointpattern.*
+	$(CXX) -c -o obj/pointpattern.o src/pointpattern.cpp
 #obj/ray.o: src/ray.*
 #	$(CXX) -c -o obj/ray.o src/ray.cpp
 
@@ -21,8 +23,8 @@ obj/fileloader.o: src/fileloader.*
 obj/main.o: src/main.cpp 
 	$(CXX) -c -o obj/main.o src/main.cpp -llua
 
-LINK: obj/main.o obj/voro.o obj/fileloader.o
-	$(CXX) obj/main.o obj/voro.o obj/fileloader.o -o bin/setvoronoi -llua
+LINK: obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o
+	$(CXX) obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o -o bin/setvoronoi -llua
 
 
 
