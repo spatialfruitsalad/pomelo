@@ -61,19 +61,7 @@ int main (int argc, char* argv[])
 
     const double epsilon = state["epsilon"];
     
-    //checking for degenerated points
-    /*
-    for (   auto it = pp.points.begin();
-                it != pp.points.end();
-                ++it)
-    {
-        for (   auto it2 = pp.points.begin();
-                it2 != pp.points.end();
-                ++it2)
-        {
-
-        }
-    }*/
+    pointpattern ppnew;
     
     // print out pointpattern to a file for debugging purpose
     {
