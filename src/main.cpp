@@ -112,10 +112,13 @@ int main (int argc, char* argv[])
     con.draw_cells_gnuplot("cells.gnu");
 
 
-    std::cout << "map back ids to labels" << std::endl;
+    // merge voronoi cells to set voronoi diagram
+    // TODO replace O(N^2) loop by smarter algo
+    std::cout << "merge voronoi cells" << std::endl; 
+    
+    pointpattern ppreduced;
     //loop over all voronoi cells
     c_loop_all cla(con);
-    std::vector<pointpattern> vclist;
     if(cla.start()) 
     {
         std::cout << "started"  << std::endl;
@@ -125,45 +128,62 @@ int main (int argc, char* argv[])
             if(con.compute_cell(c,cla)) 
             {
                 //std::cout << "computed"  << std::endl;
-                double x = 0;
-                double y = 0; 
-                double z = 0; 
+                double xc = 0;
+                double yc = 0; 
+                double zc = 0; 
                 // Get the position of the current particle under consideration
-                cla.pos(x,y,z);
+                cla.pos(xc,yc,zc);
                 unsigned int id = cla.pid();
                 unsigned int l = labelidmap[id];
-                
-                // get the position of the vertices of the cell                
-                std::vector <double> v;
-                c.vertices(x,y,z, v);
-                
-                std::vector <int> w;
-                c.neighbors(w);
-                    
-                std::cout << "size "  << w.size() << std::endl;
-                for (auto it = w.begin(); it != w.end(); ++ it)
-                {
-                    std::cout << (*it) << std::endl;
-                }
-                std::cout << std::endl;
 
-                //std::cout << x << " " << y << " " << z << std::endl;
-                pointpattern p;
-                for (unsigned int i = 0; i != v.size(); ++(++(++i)))
+                std::vector<int> f; // vertices of faces (bracketed, as ID)
+                c.face_vertices(f);
+
+                std::vector<double> vertices;   // all vertices for this face
+                c.vertices(xc,yc,zc, vertices); 
+                
+                
+                std::vector<int> w; // neighbours of faces 
+                c.neighbors(w);
+                for (unsigned int k = 0; k != w.size(); ++k)
                 {
-                    p.addpoint(v[i], v[i+1], v[i+2], l);
-                    //std::cout << v[i] << " " << v[i+1] << " " << v[i+2] << std::endl;
+                    //std::cout << (*it) << std::endl;
+                    int n = w[k];   // ID of neighbor cell
+                    if (labelidmap[n] == l)
+                    {
+                        // discard this face
+                        //std::cout << "discarding face " << std::endl;
+                    }
+                    else
+                    {
+                        unsigned int index = 0;
+                        for (unsigned int cc = 0; cc <= k; cc++)
+                        {
+                            unsigned int b = f[index];
+                            for (unsigned int bb = 1; bb <= b; bb++)
+                            {
+                                index++;
+                                if (cc == k)
+                                {
+                                    //std::cout << "\t" << f[index] << std::endl;
+                                    int vertexindex = f[index];
+                                    double x = vertices[vertexindex*3];
+                                    double y = vertices[vertexindex*3+1];
+                                    double z = vertices[vertexindex*3+2];
+                                    ppreduced.addpoint(x,y,z,l);
+                                }
+                            }
+                            index++;
+                        }
+                    }
                 }
-                vclist.push_back(p);
+
             } 
         }while (cla.inc());
     }
     
-    // merge voronoi cells to set voronoi diagram
-    // TODO replace O(N^2) loop by smarter algo
-    std::cout << "merge voronoi cells" << std::endl; 
-    pointpattern ppreduced;
-    for(unsigned int i = 0; i != vclist.size() -1;++i)
+
+    /*for(unsigned int i = 0; i != vclist.size() -1;++i)
     {
         std::cout << i << "/" << vclist.size() << std::endl;
         std::vector<point>& p1 = vclist[i].points;
@@ -195,7 +215,7 @@ int main (int argc, char* argv[])
                 }
             }
         }
-    }
+    }*/
     
     // print out reduced pointpattern to a file for debugging purpose
     {
