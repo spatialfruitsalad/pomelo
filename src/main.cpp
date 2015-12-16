@@ -7,9 +7,8 @@
 using namespace sel;
 using namespace voro;
 
-const double epsilon = 1e-6;
 
-bool compare(double d, double e)
+bool compare(double d, double e, double epsilon)
 {
     return (abs(d-e) < epsilon);
 }
@@ -44,6 +43,7 @@ int main (int argc, char* argv[])
     State readstate{true};
     readstate["pointpattern"].SetClass<pointpattern> ("addpoint", &pointpattern::addpoint );
     readstate.Load(readfile);
+    
     pointpattern pp;
 
     for(auto it = setlist.begin(); it != setlist.end(); ++it )
@@ -59,6 +59,22 @@ int main (int argc, char* argv[])
         //std::cout << x << std::endl;
     }
 
+    const double epsilon = state["epsilon"];
+    
+    //checking for degenerated points
+    /*
+    for (   auto it = pp.points.begin();
+                it != pp.points.end();
+                ++it)
+    {
+        for (   auto it2 = pp.points.begin();
+                it2 != pp.points.end();
+                ++it2)
+        {
+
+        }
+    }*/
+    
     // print out pointpattern to a file for debugging purpose
     {
     std::cout << "save point pattern file" << std::endl;
@@ -105,7 +121,7 @@ int main (int argc, char* argv[])
         std::cout << "started"  << std::endl;
         do
         {
-            voronoicell c;
+            voronoicell_neighbor c;
             if(con.compute_cell(c,cla)) 
             {
                 //std::cout << "computed"  << std::endl;
@@ -117,12 +133,20 @@ int main (int argc, char* argv[])
                 unsigned int id = cla.pid();
                 unsigned int l = labelidmap[id];
                 
-                c_loop_all cla2(con);
-
                 // get the position of the vertices of the cell                
                 std::vector <double> v;
                 c.vertices(x,y,z, v);
                 
+                std::vector <int> w;
+                c.neighbors(w);
+                    
+                std::cout << "size "  << w.size() << std::endl;
+                for (auto it = w.begin(); it != w.end(); ++ it)
+                {
+                    std::cout << (*it) << std::endl;
+                }
+                std::cout << std::endl;
+
                 //std::cout << x << " " << y << " " << z << std::endl;
                 pointpattern p;
                 for (unsigned int i = 0; i != v.size(); ++(++(++i)))
@@ -136,6 +160,7 @@ int main (int argc, char* argv[])
     }
     
     // merge voronoi cells to set voronoi diagram
+    // TODO replace O(N^2) loop by smarter algo
     std::cout << "merge voronoi cells" << std::endl; 
     pointpattern ppreduced;
     for(unsigned int i = 0; i != vclist.size() -1;++i)
@@ -160,9 +185,9 @@ int main (int argc, char* argv[])
                     double y2 = (*it2).y;
                     double z1 = (*it1).z;
                     double z2 = (*it2).z;
-                    bool bx = compare(x1,x2); 
-                    bool by = compare(y1,y2); 
-                    bool bz = compare(z1,z2); 
+                    bool bx = compare(x1,x2,epsilon); 
+                    bool by = compare(y1,y2,epsilon); 
+                    bool bz = compare(z1,z2,epsilon); 
                     if (bx && by && bz)
                     {
                         ppreduced.addpoint(x1,y1,z1, (*it1).l);

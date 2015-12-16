@@ -8,3 +8,5 @@ zmin = -5.0
 xmax = 5.0
 ymax = 5.0
 zmax = 5.0
+
+epsilon = 1e-6
