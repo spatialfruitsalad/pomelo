@@ -5,6 +5,8 @@
 #include<string>
 #include "fileloader.hpp"
 
+#include "csplitstring.h"
+
 void fileloader::read(std::string filename, std::vector<particleparameterset>& set)
 {
     std::ifstream infile;
@@ -14,26 +16,22 @@ void fileloader::read(std::string filename, std::vector<particleparameterset>& s
         std::cout << "Cannot load file " << filename << std::endl;
         return;
     }
-    std::string line;
+    #pragma GCC diagnostic ignored "-Wwrite-strings"
+    cSplitString line("");
     unsigned int linesloaded = 0;
     std::getline(infile, line);
     while (std::getline(infile, line))
     {
         if(line.find("#")!=std::string::npos) continue; // ignore comment lines
 
-        std::istringstream iss(line);
-        double l, x, y, z, r;
-        if (!(iss >> l >> x >> y >> z >> r))
-        {
-            break;    // error
-        }
-
+        std::vector<std::string> thisparams = line.split(' ');
+       
         particleparameterset p;
-        p.push_back(l);
-        p.push_back(x);
-        p.push_back(y);
-        p.push_back(z);
-        p.push_back(r);
+        for (auto it = thisparams.begin(); it != thisparams.end(); ++it)
+        {
+            double d = std::stof((*it));
+            p.push_back(d);
+        }
         linesloaded++;
         set.push_back(p);
 
