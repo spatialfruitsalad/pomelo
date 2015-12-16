@@ -33,7 +33,6 @@ int main (int argc, char* argv[])
     std::string posfile = state["positionfile"];
     std::string readfile = state["readfile"];
 
-
     std::cout << "Working on " << posfile << " " << readfile << std::endl;
     
     // read particle parameters and positions
@@ -50,11 +49,10 @@ int main (int argc, char* argv[])
     for(auto it = setlist.begin(); it != setlist.end(); ++it )
     {
         particleparameterset set = (*it);
-        readstate["s"][0] = set.get(0);
-        readstate["s"][1] = set.get(1);
-        readstate["s"][2] = set.get(2);
-        readstate["s"][3] = set.get(3);
-        readstate["s"][4] = set.get(4);
+        for(unsigned int i = 0; i != set.parameter.size(); ++i)
+        {
+            readstate["s"][i] = set.get(i);
+        }
         readstate["docalculation"](pp); 
 
         //double x = readstate["result"][1][1][1];
@@ -63,6 +61,7 @@ int main (int argc, char* argv[])
 
     // print out pointpattern to a file for debugging purpose
     {
+    std::cout << "save point pattern file" << std::endl;
     std::ofstream file;
     file.open("pointpattern.xyz");
     file << pp;
@@ -175,7 +174,7 @@ int main (int argc, char* argv[])
     
     // print out reduced pointpattern to a file for debugging purpose
     {
-        std::cout << "save reduced voronoi diagram" << std::endl;
+    std::cout << "save reduced voronoi diagram" << std::endl;
     std::ofstream file;
     file.open("reduced.xyz");
     file << ppreduced;
