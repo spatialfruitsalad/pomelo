@@ -59,7 +59,6 @@ int main (int argc, char* argv[])
         //std::cout << x << std::endl;
     }
 
-    const double epsilon = state["epsilon"];
     
     pointpattern ppnew;
     
@@ -86,9 +85,10 @@ int main (int argc, char* argv[])
     container con(xmin, xmax, ymin, ymax, zmin, zmax, 8,8,8, false, false, false, 16);
     //con.import("pointpattern.xyz");
    
-    std::cout << "creating label id map" << std::endl;
-    unsigned int id = 0; 
-    std::map < int, int> labelidmap;
+    std::cout << "creating label id map " ;
+    std::map < unsigned long long, unsigned long long > labelidmap;
+    {
+    unsigned long long id = 0; 
     for(    auto it = pp.points.begin();
             it != pp.points.end();
             ++it)
@@ -97,24 +97,30 @@ int main (int argc, char* argv[])
         labelidmap[id] = it->l;
         ++id;
     }
-    con.draw_cells_gnuplot("cells.gnu");
+    }
+    unsigned long long numberofpoints = labelidmap.size();
+    std::cout << "finished" << std::endl;
+    // will crash for reasons if there are too many voronoi cells
+    //con.draw_cells_gnuplot("cells.gnu");
 
 
     // merge voronoi cells to set voronoi diagram
-    // TODO replace O(N^2) loop by smarter algo
-    std::cout << "merge voronoi cells" << std::endl; 
+    std::cout << "merge voronoi cells "; 
     
     pointpattern ppreduced;
     //loop over all voronoi cells
     c_loop_all cla(con);
+    unsigned long long status = 0;
     if(cla.start()) 
     {
-        std::cout << "started"  << std::endl;
+        std::cout << "started" << std::flush;
         do
         {
             voronoicell_neighbor c;
             if(con.compute_cell(c,cla)) 
             {
+                status++;
+                std::cout << status << "/" << numberofpoints << "\n";
                 //std::cout << "computed"  << std::endl;
                 double xc = 0;
                 double yc = 0; 
@@ -122,7 +128,7 @@ int main (int argc, char* argv[])
                 // Get the position of the current particle under consideration
                 cla.pos(xc,yc,zc);
                 unsigned int id = cla.pid();
-                unsigned int l = labelidmap[id];
+                unsigned long long l = labelidmap[id];
 
                 std::vector<int> f; // vertices of faces (bracketed, as ID)
                 c.face_vertices(f);
@@ -133,7 +139,7 @@ int main (int argc, char* argv[])
                 
                 std::vector<int> w; // neighbours of faces 
                 c.neighbors(w);
-                for (unsigned int k = 0; k != w.size(); ++k)
+                for (unsigned long long k = 0; k != w.size(); ++k)
                 {
                     //std::cout << (*it) << std::endl;
                     int n = w[k];   // ID of neighbor cell
@@ -144,11 +150,11 @@ int main (int argc, char* argv[])
                     }
                     else
                     {
-                        unsigned int index = 0;
-                        for (unsigned int cc = 0; cc <= k; cc++)
+                        unsigned long long index = 0;
+                        for (unsigned long long cc = 0; cc <= k; cc++)
                         {
-                            unsigned int b = f[index];
-                            for (unsigned int bb = 1; bb <= b; bb++)
+                            unsigned long long b = f[index];
+                            for (unsigned long long bb = 1; bb <= b; bb++)
                             {
                                 index++;
                                 if (cc == k)
@@ -169,41 +175,7 @@ int main (int argc, char* argv[])
             } 
         }while (cla.inc());
     }
-    
-
-    /*for(unsigned int i = 0; i != vclist.size() -1;++i)
-    {
-        std::cout << i << "/" << vclist.size() << std::endl;
-        std::vector<point>& p1 = vclist[i].points;
-        for (unsigned int j = i+1; j!= vclist.size();++j)
-        {
-            std::vector<point>& p2 = vclist[j].points;
-
-            for (auto it1 = p1.begin(); it1 != p1.end(); ++it1)
-            {
-                for (auto it2 = p2.begin(); it2 != p2.end(); ++it2)
-                {
-                    if ((*it1).l == (*it2).l)
-                    {
-                        continue;
-                    }
-                    double x1 = (*it1).x;
-                    double x2 = (*it2).x;
-                    double y1 = (*it1).y;
-                    double y2 = (*it2).y;
-                    double z1 = (*it1).z;
-                    double z2 = (*it2).z;
-                    bool bx = compare(x1,x2,epsilon); 
-                    bool by = compare(y1,y2,epsilon); 
-                    bool bz = compare(z1,z2,epsilon); 
-                    if (bx && by && bz)
-                    {
-                        ppreduced.addpoint(x1,y1,z1, (*it1).l);
-                    }
-                }
-            }
-        }
-    }*/
+    std::cout << " finished" << std::endl; 
     
     // print out reduced pointpattern to a file for debugging purpose
     {
