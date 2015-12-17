@@ -117,9 +117,9 @@ int main (int argc, char* argv[])
         do
         {
             voronoicell_neighbor c;
+            status++;
             if(con.compute_cell(c,cla)) 
             {
-                status++;
                 std::cout << status << "/" << numberofpoints << "\n";
                 //std::cout << "computed"  << std::endl;
                 double xc = 0;
