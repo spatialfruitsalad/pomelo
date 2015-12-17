@@ -120,6 +120,7 @@ int main (int argc, char* argv[])
             status++;
             if(con.compute_cell(c,cla)) 
             {
+
                 std::cout << status << "/" << numberofpoints << "\n";
                 //std::cout << "computed"  << std::endl;
                 double xc = 0;
@@ -133,7 +134,7 @@ int main (int argc, char* argv[])
                 std::vector<int> f; // vertices of faces (bracketed, as ID)
                 c.face_vertices(f);
 
-                std::vector<double> vertices;   // all vertices for this face
+                std::vector<double> vertices;   // all vertices for this cell
                 c.vertices(xc,yc,zc, vertices); 
                 
                 
@@ -176,7 +177,10 @@ int main (int argc, char* argv[])
         }while (cla.inc());
     }
     std::cout << " finished" << std::endl; 
-    
+   
+    // remove duplicate points
+    ppreduced.removeduplicates(1e-6);
+
     // print out reduced pointpattern to a file for debugging purpose
     {
     std::cout << "save reduced voronoi diagram" << std::endl;

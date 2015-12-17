@@ -3,7 +3,7 @@
 
 #include <iomanip>
 #include <vector>
-
+#include <cmath>
 struct point
 {
     point(double cx, double cy, double cz, int cl): x(cx), y (cy), z(cz), l(cl) {};
@@ -11,13 +11,21 @@ struct point
     int l;
 };
 
+inline bool checkdistancecloserthan (point& a, point& b, double e)
+{
+    double dx =fabs(a.x - b.x);
+    double dy =fabs(a.y - b.y);
+    double dz =fabs(a.z - b.z);
+
+    return (dx < e && dy < e && dz < e);
+}
 
 class pointpattern
 {
 public:
     void addpoint(double x, double y, double z, int l);
     void print();
-
+    void removeduplicates ( double epsilon);
     std::vector<point> points;
     
     friend std::ostream& operator << (std::ostream &f, const pointpattern& p)
@@ -29,7 +37,7 @@ public:
         {
             if(oldl != (*it).l )
             {
-                f << "\n";
+                f << "\n\n";
                 oldl = (*it).l;
             }
             f << (*it).l << " " <<  std::setw(5)<< (*it).x << " " << std::setw(5) << (*it).y << " " << std::setw(5) << (*it).z << "\n";

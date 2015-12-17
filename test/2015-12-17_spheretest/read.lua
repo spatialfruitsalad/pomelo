@@ -1,5 +1,6 @@
-stepstheta = 5
-stepsphi = 5
+stepstheta = 9
+stepsphi = 9
+shrink = 0.5
 
 s = {}
 
@@ -8,7 +9,7 @@ function docalculation (p)
     local xoffset = s[1]
     local yoffset = s[2]
     local zoffset = s[3]
-    local r = s[4]
+    local r = s[4]*shrink
 
     for i=0,stepstheta,1 do 
         for j=0,stepsphi,1 do 
