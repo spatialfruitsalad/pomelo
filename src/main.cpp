@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <limits>
 #include "include.hpp"
 #include "fileloader.hpp"
 #include "pointpattern.hpp"
@@ -58,9 +59,8 @@ int main (int argc, char* argv[])
         //double x = readstate["result"][1][1][1];
         //std::cout << x << std::endl;
     }
-
-    
-    pointpattern ppnew;
+    std::cout << "remove duplicates" << std::endl;
+    pp.removeduplicates(1e-8);
     
     // print out pointpattern to a file for debugging purpose
     {
@@ -82,25 +82,31 @@ int main (int argc, char* argv[])
     const double ymax = state["ymax"];
     const double zmax = state["zmax"];
 
-    container con(xmin, xmax, ymin, ymax, zmin, zmax, 8,8,8, false, false, false, 16);
-    //con.import("pointpattern.xyz");
+    pre_container pcon(xmin, xmax, ymin, ymax, zmin, zmax, false, false, false);
    
     std::cout << "creating label id map " ;
     std::map < unsigned long long, unsigned long long > labelidmap;
+
     {
-    unsigned long long id = 0; 
-    for(    auto it = pp.points.begin();
-            it != pp.points.end();
-            ++it)
-    {
-        con.put(id, it->x, it->y, it->z);
-        labelidmap[id] = it->l;
-        ++id;
-    }
+        unsigned long long id = 0; 
+        for(    auto it = pp.points.begin();
+                it != pp.points.end();
+                ++it)
+        {
+            pcon.put(id, it->x, it->y, it->z);
+            labelidmap[id] = it->l;
+            ++id;
+        }
     }
     unsigned long long numberofpoints = labelidmap.size();
     std::cout << "finished" << std::endl;
-    // will crash for reasons if there are too many voronoi cells
+
+    int nx, ny, nz;
+    pcon.guess_optimal(nx,ny,nz);
+    container con(xmin, xmax, ymin, ymax, zmin, zmax, nx, ny, nz, false, false, false, 8);
+    pcon.setup(con);
+    std::cout << "setting up voro++ container with division: (" << nx << " " << ny << " " << nz << ") for N= " << numberofpoints << " particles " << std::numeric_limits<int>::max() << std::endl;
+
     //con.draw_cells_gnuplot("cells.gnu");
 
 
@@ -121,7 +127,7 @@ int main (int argc, char* argv[])
             if(con.compute_cell(c,cla)) 
             {
 
-                std::cout << status << "/" << numberofpoints << "\n";
+                //std::cout << status << "/" << numberofpoints << "\n";
                 //std::cout << "computed"  << std::endl;
                 double xc = 0;
                 double yc = 0; 
@@ -179,7 +185,7 @@ int main (int argc, char* argv[])
     std::cout << " finished" << std::endl; 
    
     // remove duplicate points
-    ppreduced.removeduplicates(1e-6);
+    //ppreduced.removeduplicates(1e-6);
 
     // print out reduced pointpattern to a file for debugging purpose
     {

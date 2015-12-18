@@ -18,8 +18,11 @@ void pointpattern::removeduplicates (double epsilon)
 {
     std::vector<point> newpoints;
     for(unsigned int i = 0; i != points.size(); ++i)
-
     {
+        if(i%1000==0)
+        {
+            std::cout << i << " / " <<  points.size() << "\n";
+        }
         bool addthis =true;
         point p1 = points[i];
         for(unsigned int j = i+1; j != points.size(); ++j)
@@ -28,7 +31,7 @@ void pointpattern::removeduplicates (double epsilon)
             point p2 = points[j];
             if (checkdistancecloserthan(p1, p2, epsilon))
             {
-                //std::cout << " point "<<   i << " and point " << j << " too close together" << std::endl;
+                //std::cout << " point "<<   i << " and point " << j << " too close together" << "\n";
                 addthis = false;
                 break;
             }

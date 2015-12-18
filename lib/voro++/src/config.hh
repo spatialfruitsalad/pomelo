@@ -47,9 +47,9 @@ const int max_n_vertices=16777216;
 /** The maximum buffer size for marginal cases used by the suretest class. */
 const int max_marginal=16777216;
 /** The maximum size for the delete stack. */
-const int max_delete_size=16777216;
+const unsigned long long max_delete_size=16777216*8;
 /** The maximum size for the auxiliary delete stack. */
-const int max_delete2_size=16777216;
+const unsigned long long max_delete2_size=16777216*8;
 /** The maximum amount of particle memory allocated for a single region. */
 const int max_particle_memory=16777216;
 /** The maximum size for the wall pointer array. */

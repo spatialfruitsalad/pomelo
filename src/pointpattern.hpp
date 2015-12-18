@@ -30,6 +30,8 @@ public:
     
     friend std::ostream& operator << (std::ostream &f, const pointpattern& p)
     {
+        if(p.points.empty())
+            return f;
         int oldl = p.points[0].l;
         for (   auto it = p.points.begin();
                 it != p.points.end();
