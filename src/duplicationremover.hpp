@@ -60,7 +60,7 @@ public:
         int cx = static_cast<int>((dx - xmin)/sx);
         int cy = static_cast<int>((dy - ymin)/sy);
         int cz = static_cast<int>((dz - zmin)/sz);
-        
+      
         //std::cout << cx << " " << cy << " " << cz << std::endl;
         //std::cout << xmin << std::endl;
 
