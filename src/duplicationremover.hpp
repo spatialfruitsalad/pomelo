@@ -36,9 +36,21 @@ public:
 
     void addpoint(double dx, double dy, double dz, unsigned long long l)
     {
-        if (dx >= xmax || dx <= xmin) return; // ignore points outside of boundaries
-        if (dy >= ymax || dy <= ymin) return;
-        if (dz >= zmax || dz <= zmin) return;
+        if (dx >= xmax || dx <= xmin)
+        {
+            std::cerr << "ignoring point with label: " << l << " due to X boundaries" << std::endl;
+            return; // ignore points outside of boundaries
+        }
+        if (dy >= ymax || dy <= ymin)
+        { 
+            std::cerr << "ignoring point with label: " << l << " due to Y boundaries" << std::endl;
+            return;
+        }
+        if (dz >= zmax || dz <= zmin) 
+        {
+            std::cerr << "ignoring point with label: " << l << " due to Z boundaries" << std::endl;
+            return;
+        }
         
         //std::cout << "adding particle " << dx << " " << dy << " "  << dz << std::endl;
         double sx = (xmax-xmin)/x;
@@ -80,7 +92,7 @@ public:
     }; 
     void removeduplicates(double epsilon)
     {
-        std::cout << "removing duplicates" << std::endl;
+        std::cout << "removing duplicates within one box" << std::endl;
         for (
                 auto it = list.begin(); 
                 it != list.end();
@@ -89,6 +101,7 @@ public:
             (*it).removeduplicates(epsilon);
         }
         
+        std::cout << "removing duplicates between neighboring boxes" << std::endl;
         for (unsigned int cx = 0; cx != x; ++cx)    
         for (unsigned int cy = 0; cy != y; ++cy)    
         for (unsigned int cz = 0; cz != z; ++cz)

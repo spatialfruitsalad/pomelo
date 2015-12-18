@@ -28,7 +28,8 @@ public:
     void removeduplicates ( double epsilon);
     void removeduplicates ( double epsilon, pointpattern& p);
     std::vector<point> points;
-    
+
+
     friend std::ostream& operator << (std::ostream &f, const pointpattern& p)
     {
         if(p.points.empty())

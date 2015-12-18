@@ -63,8 +63,6 @@ int main (int argc, char* argv[])
     const double ymax = state["ymax"];
     const double zmax = state["zmax"];
     std::cout << "remove duplicates" << std::endl;
-    //pp.removeduplicates(1e-8);
-    std::cout << "xmin: " << xmin << std::endl;
     duplicationremover d(16,16,16); 
     d.setboundaries(xmin, xmax, ymin, ymax, zmin, zmax);
     d.addPoints(pp);
@@ -186,9 +184,12 @@ int main (int argc, char* argv[])
     }
     std::cout << " finished" << std::endl; 
    
-    // remove duplicate points
+    // remove duplicate points for voronoi cells
     //ppreduced.removeduplicates(1e-6);
-
+    duplicationremover d2(16,16,16);
+    d2.setboundaries(xmin, xmax, ymin, ymax, zmin, zmax);
+    d2.addPoints(ppreduced);
+    d2.getallPoints(ppreduced);
     // print out reduced pointpattern to a file for debugging purpose
     {
     std::cout << "save reduced voronoi diagram" << std::endl;

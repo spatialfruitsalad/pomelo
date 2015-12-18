@@ -22,7 +22,7 @@ void pointpattern::removeduplicates (double epsilon)
     {
         if(i%1000==0)
         {
-            std::cout << i << " / " <<  points.size() << "\n";
+            //std::cout << i << " / " <<  points.size() << "\n";
         }
         bool addthis =true;
         point p1 = points[i];
@@ -58,7 +58,7 @@ void pointpattern::removeduplicates (double epsilon, pointpattern& p)
     {
         if(i%1000==0)
         {
-            std::cout << i << " / " <<  points.size() << "\n";
+            //std::cout << i << " / " <<  points.size() << "\n";
         }
         bool addthis =true;
         point p1 = points[i];
