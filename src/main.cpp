@@ -5,14 +5,10 @@
 #include "include.hpp"
 #include "fileloader.hpp"
 #include "pointpattern.hpp"
+#include "duplicationremover.hpp"
 using namespace sel;
 using namespace voro;
 
-
-bool compare(double d, double e, double epsilon)
-{
-    return (abs(d-e) < epsilon);
-}
 
 int main (int argc, char* argv[])
 {
@@ -59,9 +55,22 @@ int main (int argc, char* argv[])
         //double x = readstate["result"][1][1][1];
         //std::cout << x << std::endl;
     }
+    const double xmin = state["xmin"];
+    const double ymin = state["ymin"];
+    const double zmin = state["zmin"];
+
+    const double xmax = state["xmax"];
+    const double ymax = state["ymax"];
+    const double zmax = state["zmax"];
     std::cout << "remove duplicates" << std::endl;
-    pp.removeduplicates(1e-8);
-    
+    //pp.removeduplicates(1e-8);
+    std::cout << "xmin: " << xmin << std::endl;
+    duplicationremover d(16,16,16); 
+    d.setboundaries(xmin, xmax, ymin, ymax, zmin, zmax);
+    d.addPoints(pp);
+    d.removeduplicates(1e-6);
+    d.getallPoints(pp);
+
     // print out pointpattern to a file for debugging purpose
     {
     std::cout << "save point pattern file" << std::endl;
@@ -74,13 +83,6 @@ int main (int argc, char* argv[])
 
     // add particle shapes to voro++
     std::cout << "importing point pattern from file" << std::endl;
-    const double xmin = state["xmin"];
-    const double ymin = state["ymin"];
-    const double zmin = state["zmin"];
-
-    const double xmax = state["xmax"];
-    const double ymax = state["ymax"];
-    const double zmax = state["zmax"];
 
     pre_container pcon(xmin, xmax, ymin, ymax, zmin, zmax, false, false, false);
    
@@ -127,7 +129,7 @@ int main (int argc, char* argv[])
             if(con.compute_cell(c,cla)) 
             {
 
-                //std::cout << status << "/" << numberofpoints << "\n";
+                std::cout << status << "/" << numberofpoints << "\n";
                 //std::cout << "computed"  << std::endl;
                 double xc = 0;
                 double yc = 0; 

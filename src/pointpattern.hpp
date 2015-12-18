@@ -18,7 +18,7 @@ inline bool checkdistancecloserthan (point& a, point& b, double e)
     double dz =fabs(a.z - b.z);
 
     return (dx < e && dy < e && dz < e);
-}
+};
 
 class pointpattern
 {
@@ -26,6 +26,7 @@ public:
     void addpoint(double x, double y, double z, int l);
     void print();
     void removeduplicates ( double epsilon);
+    void removeduplicates ( double epsilon, pointpattern& p);
     std::vector<point> points;
     
     friend std::ostream& operator << (std::ostream &f, const pointpattern& p)

@@ -20,7 +20,7 @@ obj/pointpattern.o: src/pointpattern.*
 #obj/raytracer.o: obj/ray.o src/raytracer.*
 #	$(CXX) -c -o obj/raytracer.o src/raytracer.cpp
 
-obj/main.o: src/main.cpp 
+obj/main.o: src/main.cpp  src/duplicationremover.hpp
 	$(CXX) -c -o obj/main.o src/main.cpp -llua5.2
 
 LINK: obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o
