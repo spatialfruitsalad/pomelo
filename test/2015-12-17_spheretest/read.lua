@@ -1,5 +1,5 @@
-stepstheta = 22
-stepsphi = 22
+stepstheta = 12
+stepsphi = 12
 shrink = 0.95
 
 s = {}

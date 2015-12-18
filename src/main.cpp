@@ -186,7 +186,8 @@ int main (int argc, char* argv[])
    
     // remove duplicate points for voronoi cells
     //ppreduced.removeduplicates(1e-6);
-    duplicationremover d2(16,16,16);
+    std::cout << "remove duplicates in voronoi vertices" << std::endl;
+    duplicationremover d2(16*2,16*2,16*2);
     d2.setboundaries(xmin, xmax, ymin, ymax, zmin, zmax);
     d2.addPoints(ppreduced);
     d2.getallPoints(ppreduced);
