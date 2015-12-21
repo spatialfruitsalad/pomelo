@@ -52,7 +52,7 @@ public:
             return;
         }
         
-        //std::cout << "adding particle " << dx << " " << dy << " "  << dz << std::endl;
+        //std::cout << "adding particle " << dx << " " << dy << " "  << dz << " " << zmax  << std::endl;
         double sx = (xmax-xmin)/x;
         double sy = (ymax-ymin)/y;
         double sz = (zmax-zmin)/z;
@@ -60,13 +60,22 @@ public:
         int cx = static_cast<int>((dx - xmin)/sx);
         int cy = static_cast<int>((dy - ymin)/sy);
         int cz = static_cast<int>((dz - zmin)/sz);
+        
+
+        // sometimes, double comparison goes wrong, therefore handle indices manually
+        if (cx < 0 ) cx++;
+        if (cy < 0 ) cy++;
+        if (cz < 0 ) cz++;
+
+        if (static_cast<unsigned int>(cx) >= x ) cx--;
+        if (static_cast<unsigned int>(cy) >= y ) cy--;
+        if (static_cast<unsigned int>(cz) >= z ) cz--;
       
         //std::cout << cx << " " << cy << " " << cz << std::endl;
         //std::cout << xmin << std::endl;
 
         unsigned int index = getindex(cx,cy,cz);
-        //std::cout << "index: " << index << std::endl;
-
+        //std::cout << "index: " << index << " " << list.size() <<  std::endl;
         list[index].addpoint(dx,dy,dz, l);
 
     }
