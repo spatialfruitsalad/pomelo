@@ -14,7 +14,7 @@ public:
 
     void addPoints ( pointpattern& porig)
     {
-        std::cout << "adding points for duplication check" << std::endl;
+        std::cout << "adding N= " <<porig.points.size() <<  " points for duplication check" << std::endl;
         for (  auto it = porig.points.begin(); 
                it != porig.points.end(); 
                ++it)
@@ -36,17 +36,17 @@ public:
 
     void addpoint(double dx, double dy, double dz, unsigned long long l)
     {
-        if (dx >= xmax || dx <= xmin)
+        if (dx > xmax || dx < xmin)
         {
             std::cerr << "ignoring point with label: " << l << " due to X boundaries" << std::endl;
             return; // ignore points outside of boundaries
         }
-        if (dy >= ymax || dy <= ymin)
+        if (dy > ymax || dy < ymin)
         { 
             std::cerr << "ignoring point with label: " << l << " due to Y boundaries" << std::endl;
             return;
         }
-        if (dz >= zmax || dz <= zmin) 
+        if (dz > zmax || dz < zmin) 
         {
             std::cerr << "ignoring point with label: " << l << " due to Z boundaries" << std::endl;
             return;
@@ -83,6 +83,7 @@ public:
     void getallPoints ( pointpattern& p)
     {
         p.points.clear();
+        unsigned int i = 0;
         for (
                 auto it = list.begin(); 
                 it != list.end();
@@ -94,11 +95,17 @@ public:
                     ++itp)
             {
                 p.addpoint(itp->x, itp->y, itp->z, itp->l);
+                i++;
             }
         }
+        std::cout << "found " << i << std::endl;
 
 
     }; 
+
+
+
+    // if indexShifts equals null, dont do any rearrangements
     void removeduplicates(double epsilon)
     {
         std::cout << "removing duplicates within one box" << std::endl;
@@ -133,12 +140,36 @@ public:
             }
 
         }
+        
+        for (
+                auto it = list.begin(); 
+                it != list.end();
+                ++it)
+        {
+            
+            for (auto it2 = (*it).indexShift.begin();
+                    it2 != (*it).indexShift.end();
+                    ++it2)
+            {
+                    indexShift[(*it2).first] = (*it2).second;
+            }
+        }
     };
 
     unsigned int getindex (unsigned int cx, unsigned int cy, unsigned int cz)
     {
        return cx + x * cy + x*y*cz;
     }
+
+
+    void applyIndexShifts(std::map<unsigned int, std::vector<unsigned int > >& faces)
+    {
+
+    }
+
+    std::map<unsigned int, long> indexShift;
+
+
 private:
    std::vector<pointpattern> list;
     

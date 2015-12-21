@@ -6,7 +6,7 @@
 #include <map>
 #include <cmath>
 
-#include "pointpattern.hpp"
+#include "duplicationremover.hpp"
 
 class polywriter
 {
@@ -61,6 +61,17 @@ public:
 
         return f;
     };
+
+    void removeduplicates (double epsilon, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax)
+    {
+        duplicationremover d(16,16,16);
+        d.setboundaries(xmin, xmax, ymin, ymax, zmin, zmax);
+        d.addPoints(p);
+        d.removeduplicates(epsilon);
+        d.getallPoints(p);
+        d.applyIndexShifts(faces);
+    }
+
 
     pointpattern p; // holds all the points
     std::map<unsigned int, unsigned int> faceCellMap;   // first is face id, second is cell id

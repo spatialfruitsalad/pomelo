@@ -214,7 +214,7 @@ int main (int argc, char* argv[])
             } 
         }while (cla.inc());
     }
-    std::cout << " finished" << std::endl; 
+    std::cout << " finished with N= " << ppreduced.points.size() << std::endl; 
     {
     std::ofstream file;
     file.open("cell.poly");

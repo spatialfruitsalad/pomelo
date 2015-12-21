@@ -3,6 +3,7 @@
 
 #include <iomanip>
 #include <vector>
+#include <map>
 #include <cmath>
 struct point
 {
@@ -28,7 +29,7 @@ public:
     void removeduplicates ( double epsilon);
     void removeduplicates ( double epsilon, pointpattern& p);
     std::vector<point> points;
-
+    std::map<unsigned int, long> indexShift;    // first is particle ID, second is new Index or -1
 
     friend std::ostream& operator << (std::ostream &f, const pointpattern& p)
     {

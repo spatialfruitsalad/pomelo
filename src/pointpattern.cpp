@@ -14,10 +14,15 @@ void pointpattern::print ()
 
 }
 
+// if indexShifts equals null, dont do any rearrangements
 void pointpattern::removeduplicates (double epsilon)
 {
-    if(points.empty()) return;
+    if(points.empty())
+    {
+        return;
+    }
     std::vector<point> newpoints;
+
     for(unsigned int i = 0; i != points.size(); ++i)
     {
         if(i%1000==0)
@@ -26,10 +31,11 @@ void pointpattern::removeduplicates (double epsilon)
         }
         bool addthis =true;
         point p1 = points[i];
+        point p2(0,0,0,0);
         for(unsigned int j = i+1; j != points.size(); ++j)
         {
             if (j >= points.size()) break;
-            point p2 = points[j];
+            p2 = points[j];
             if (checkdistancecloserthan(p1, p2, epsilon))
             {
                 //std::cout << " point "<<   i << " and point " << j << " too close together" << "\n";
@@ -39,12 +45,19 @@ void pointpattern::removeduplicates (double epsilon)
         }
         if (addthis)
         {
+            unsigned int l = p1.l;
+            indexShift[l] = -1;
             //std::cout << "adding" << std::endl;
             newpoints.push_back(p1);
         }
         else
         {
+            unsigned int l1 = p1.l;
+            unsigned int l2 = p2.l;
+            indexShift[l1] = l2;
+
             //std::cout << "removing point" << std::endl;
+
         }
     }
     points = newpoints;
@@ -62,9 +75,10 @@ void pointpattern::removeduplicates (double epsilon, pointpattern& p)
         }
         bool addthis =true;
         point p1 = points[i];
+        point p2(0,0,0,0);
         for(unsigned int j = 0; j != p.points.size(); ++j)
         {
-            point p2 = p.points[j];
+            p2 = p.points[j];
             if (checkdistancecloserthan(p1, p2, epsilon))
             {
                 //std::cout << " point "<<   i << " and point " << j << " too close together" << "\n";
@@ -76,10 +90,15 @@ void pointpattern::removeduplicates (double epsilon, pointpattern& p)
         {
             //std::cout << "adding" << std::endl;
             newpoints.push_back(p1);
+            unsigned int l = p1.l;
+            indexShift[l] = -1;
         }
         else
         {
             //std::cout << "removing point" << std::endl;
+            unsigned int l1 = p1.l;
+            unsigned int l2 = p2.l;
+            indexShift[l1] = l2;
         }
     }
     points = newpoints;
