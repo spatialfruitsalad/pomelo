@@ -6,8 +6,38 @@
 #include "fileloader.hpp"
 #include "pointpattern.hpp"
 #include "duplicationremover.hpp"
+#include "polywriter.hpp"
 using namespace sel;
 using namespace voro;
+
+
+void  getFaceVerticesOfFace( std::vector<int>& f, unsigned int k, std::vector<unsigned int>& vertexList)
+{
+    vertexList.clear();
+
+    // iterate through face-vertices vector bracketed
+    // (number of vertices for face 1) vertex 1 ID face 1, vertex 2 ID face 1 , ... (number of vertices for face 2, ...
+    unsigned long long index = 0;
+    // we are at face k, so we have to iterate through the face vertices vector up to k
+    for (unsigned long long cc = 0; cc <= k; cc++)
+    {
+
+        unsigned long long b = f[index];    // how many vertices does the current face (index) have?
+        // iterate index "number of vertices of this face" forward
+        for (unsigned long long bb = 1; bb <= b; bb++)  
+        {
+            index++;
+            // if we have found the correct face, get all the vertices for this face and save them
+            if (cc == k)
+            {
+                //std::cout << "\t" << f[index] << std::endl;
+                int vertexindex = f[index];
+                vertexList.push_back(vertexindex);
+            }
+        }
+        index++;
+    }
+} 
 
 
 int main (int argc, char* argv[])
@@ -110,10 +140,11 @@ int main (int argc, char* argv[])
     //con.draw_cells_gnuplot("cells.gnu");
 
 
-    // merge voronoi cells to set voronoi diagram
+    // merge voronoi cells to set voronoi diagram and write poly file
     std::cout << "merge voronoi cells "; 
     
     pointpattern ppreduced;
+    polywriter pw;
     //loop over all voronoi cells
     c_loop_all cla(con);
     unsigned long long status = 0;
@@ -137,45 +168,46 @@ int main (int argc, char* argv[])
                 unsigned int id = cla.pid();
                 unsigned long long l = labelidmap[id];
 
-                std::vector<int> f; // vertices of faces (bracketed, as ID)
+                std::vector<int> f; // list of face vertices (bracketed, as ID)
                 c.face_vertices(f);
 
                 std::vector<double> vertices;   // all vertices for this cell
                 c.vertices(xc,yc,zc, vertices); 
                 
                 
-                std::vector<int> w; // neighbours of faces 
+                std::vector<int> w; // neighbors of faces 
                 c.neighbors(w);
+                // for this cell, loop over all faces and get the corresponding neighbors
                 for (unsigned long long k = 0; k != w.size(); ++k)
                 {
-                    //std::cout << (*it) << std::endl;
+                    // compare if id for this cell and the face-neighbor is the same
                     int n = w[k];   // ID of neighbor cell
                     if (labelidmap[n] == l)
                     {
-                        // discard this face
+                        // discard this face, since they have the same id
                         //std::cout << "discarding face " << std::endl;
                     }
                     else
                     {
-                        unsigned long long index = 0;
-                        for (unsigned long long cc = 0; cc <= k; cc++)
+                        std::vector<unsigned int> facevertexlist;
+                        getFaceVerticesOfFace(f, k, facevertexlist);
+                        std::vector<double> positionlist;
+                        for (
+                                auto it = facevertexlist.begin(); 
+                                it != facevertexlist.end();
+                                ++it)
                         {
-                            unsigned long long b = f[index];
-                            for (unsigned long long bb = 1; bb <= b; bb++)
-                            {
-                                index++;
-                                if (cc == k)
-                                {
-                                    //std::cout << "\t" << f[index] << std::endl;
-                                    int vertexindex = f[index];
-                                    double x = vertices[vertexindex*3];
-                                    double y = vertices[vertexindex*3+1];
-                                    double z = vertices[vertexindex*3+2];
-                                    ppreduced.addpoint(x,y,z,l);
-                                }
-                            }
-                            index++;
+                            unsigned int vertexindex = (*it);
+                            double x = vertices[vertexindex*3];
+                            double y = vertices[vertexindex*3+1];
+                            double z = vertices[vertexindex*3+2];
+                            ppreduced.addpoint(x,y,z,l); 
+                            positionlist.push_back(x);
+                            positionlist.push_back(y);
+                            positionlist.push_back(z);
                         }
+                        pw.addface(positionlist, l);
+
                     }
                 }
 
@@ -183,7 +215,12 @@ int main (int argc, char* argv[])
         }while (cla.inc());
     }
     std::cout << " finished" << std::endl; 
-   
+    {
+    std::ofstream file;
+    file.open("cell.poly");
+    file << pw;
+    file.close();
+    }
     // remove duplicate points for voronoi cells
     //ppreduced.removeduplicates(1e-6);
     std::cout << "remove duplicates in voronoi vertices" << std::endl;
