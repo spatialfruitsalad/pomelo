@@ -164,7 +164,19 @@ public:
 
     void applyIndexShifts(std::map<unsigned int, std::vector<unsigned int > >& faces)
     {
-
+        for (auto it = faces.begin(); it != faces.end(); ++ it)
+        {
+            for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
+            {
+                unsigned int vertexIndex = (*it2);
+                
+                while (indexShift[vertexIndex] != -1)
+                {
+                    vertexIndex = indexShift[vertexIndex];
+                }
+                (*it2) = vertexIndex;
+            }
+        }
     }
 
     std::map<unsigned int, long> indexShift;

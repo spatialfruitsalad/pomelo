@@ -215,6 +215,11 @@ int main (int argc, char* argv[])
         }while (cla.inc());
     }
     std::cout << " finished with N= " << ppreduced.points.size() << std::endl; 
+
+    // polywriter: remove duplicates 
+    std::cout << "polywriter: remove duplicates" << std::endl;
+    pw.removeduplicates(1e-6, xmin, xmax, ymin, ymax, zmin, zmax);
+
     {
     std::ofstream file;
     file.open("cell.poly");
