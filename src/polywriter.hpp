@@ -24,7 +24,7 @@ public:
             double y = positionlist[i+1];
             double z = positionlist[i+2];
             unsigned int l = currentVertexLabel;
-            p.addpoint(x,y,z,l);
+            p.addpointForCell(x,y,z,l, cellID);
             facevertexIDs.push_back(l);
             currentVertexLabel++;
         } 
@@ -45,20 +45,21 @@ public:
 
         f << "POLYS" <<  std::endl;
         for (
-                auto it = p.faces.begin(); 
-                it != p.faces.end(); 
+                auto it = p.faces.rbegin(); 
+                it != p.faces.rend(); 
                 ++ it)
         {
             f << it->first << ":\t";
-            for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
+            for (auto it2 = it->second.rbegin(); it2 != it->second.rend(); ++it2)
             {
                 f << (*it2) << " ";
             }
             unsigned int faceID = it->first;
             unsigned int cellID = p.faceCellMap.at(faceID);
-            f << "< c (0, 0, 0, " << cellID << ")" << std::endl;
+            f << "< c(0, 0, 0, " << cellID << ")" << std::endl;
         }
 
+        f << "END";
         return f;
     };
 
@@ -66,11 +67,52 @@ public:
     {
         duplicationremover d(16,16,16);
         d.setboundaries(xmin, xmax, ymin, ymax, zmin, zmax);
-        d.addPoints(p);
+        d.addPoints(p, true);
         d.removeduplicates(epsilon);
         d.getallPoints(p);
-        d.applyIndexShifts(faces);
+        rearrangeIndices(d.indexShift);
+        
+        orderIndices(); 
     }
+
+    void orderIndices ()
+    {
+        std::cout << "order indices" << std::endl;
+        std::map<unsigned int, long> indexShift;
+        unsigned int label = 1;
+        for( auto it = p.points.begin(); it != p.points.end(); ++it)
+        {
+            indexShift[(*it).l] = label;
+            (*it).l = label;
+            label++;
+        }
+        rearrangeIndices(indexShift, false);
+    }
+
+    void rearrangeIndices(std::map<unsigned int, long>& indexShift, bool multipleTimes = true)
+    {
+        for (auto it = faces.begin(); it != faces.end(); ++ it)
+        {
+            for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
+            {
+                unsigned int vertexIndex = (*it2);
+
+                if( multipleTimes)
+                {
+                    while (indexShift[vertexIndex] != -1)
+                    {
+                        vertexIndex = indexShift[vertexIndex];
+                    }
+                    (*it2) = vertexIndex;
+                }
+                else
+                {
+                    (*it2) =indexShift[(*it2)];
+                }
+            }
+        }
+    }
+
 
 
     pointpattern p; // holds all the points

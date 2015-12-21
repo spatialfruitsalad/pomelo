@@ -7,9 +7,10 @@
 #include <cmath>
 struct point
 {
-    point(double cx, double cy, double cz, int cl): x(cx), y (cy), z(cz), l(cl) {};
+    point(double cx, double cy, double cz, int cl, long cC = -1): x(cx), y (cy), z(cz), l(cl), cellID(cC) {};
     double x, y, z;
     int l;
+    long cellID;
 };
 
 inline bool checkdistancecloserthan (point& a, point& b, double e)
@@ -25,6 +26,7 @@ class pointpattern
 {
 public:
     void addpoint(double x, double y, double z, int l);
+    void addpointForCell(double x, double y, double z, int l, long cC);
     void print();
     void removeduplicates ( double epsilon);
     void removeduplicates ( double epsilon, pointpattern& p);

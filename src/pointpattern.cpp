@@ -2,6 +2,12 @@
 #include "pointpattern.hpp"
 
 
+void pointpattern::addpointForCell(double x, double y, double z, int l, long cC)
+{
+    point p (x,y,z,l, cC);
+    points.push_back(p);
+}
+
 void pointpattern::addpoint(double x, double y, double z, int l)
 {
     point p (x,y,z,l);
@@ -38,9 +44,15 @@ void pointpattern::removeduplicates (double epsilon)
             p2 = points[j];
             if (checkdistancecloserthan(p1, p2, epsilon))
             {
+                if (p1.cellID == p2.cellID && p1.cellID != -1)
+                {
+                    std::cout << "removing point " << p1.l <<" for cell " << p1.cellID << std::endl;
+                    addthis = false;
+                    break;
+                }
                 //std::cout << " point "<<   i << " and point " << j << " too close together" << "\n";
-                addthis = false;
-                break;
+            //    addthis = false;
+            //    break;
             }
         }
         if (addthis)
@@ -81,9 +93,15 @@ void pointpattern::removeduplicates (double epsilon, pointpattern& p)
             p2 = p.points[j];
             if (checkdistancecloserthan(p1, p2, epsilon))
             {
+                if (p1.cellID == p2.cellID && p1.cellID != -1)
+                {
+                    std::cout << "removing point " << p1.l <<" for cell " << p1.cellID << std::endl;
+                    addthis = false;
+                    break;
+                }
                 //std::cout << " point "<<   i << " and point " << j << " too close together" << "\n";
-                addthis = false;
-                break;
+                //addthis = false;
+                //break;
             }
         }
         if (addthis)

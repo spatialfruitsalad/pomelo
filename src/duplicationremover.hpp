@@ -12,14 +12,21 @@ public:
         list.resize(x*y*z);
     };
 
-    void addPoints ( pointpattern& porig)
+    void addPoints ( pointpattern& porig, bool useCellIDs = false)
     {
         std::cout << "adding N= " <<porig.points.size() <<  " points for duplication check" << std::endl;
         for (  auto it = porig.points.begin(); 
                it != porig.points.end(); 
                ++it)
         {
-            addpoint(it->x, it->y, it->z, it->l);        
+            if (useCellIDs)
+            {
+                addpoint(it->x, it->y, it->z, it->l, it->cellID);        
+            }
+            else
+            {
+                addpoint(it->x, it->y, it->z, it->l);        
+            }
         }
     }
 
@@ -34,7 +41,7 @@ public:
         zmax = zma;
     }
 
-    void addpoint(double dx, double dy, double dz, unsigned long long l)
+    void addpoint(double dx, double dy, double dz, unsigned long long l, long cellID = -1)
     {
         if (dx > xmax || dx < xmin)
         {
@@ -76,7 +83,14 @@ public:
 
         unsigned int index = getindex(cx,cy,cz);
         //std::cout << "index: " << index << " " << list.size() <<  std::endl;
-        list[index].addpoint(dx,dy,dz, l);
+        if (cellID == -1)
+        {
+            list[index].addpoint(dx,dy,dz, l);
+        }
+        else
+        {
+            list[index].addpointForCell(dx,dy,dz,l,cellID);
+        }
 
     }
     
@@ -159,24 +173,6 @@ public:
     unsigned int getindex (unsigned int cx, unsigned int cy, unsigned int cz)
     {
        return cx + x * cy + x*y*cz;
-    }
-
-
-    void applyIndexShifts(std::map<unsigned int, std::vector<unsigned int > >& faces)
-    {
-        for (auto it = faces.begin(); it != faces.end(); ++ it)
-        {
-            for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
-            {
-                unsigned int vertexIndex = (*it2);
-                
-                while (indexShift[vertexIndex] != -1)
-                {
-                    vertexIndex = indexShift[vertexIndex];
-                }
-                (*it2) = vertexIndex;
-            }
-        }
     }
 
     std::map<unsigned int, long> indexShift;
