@@ -63,6 +63,16 @@ public:
         return f;
     };
 
+
+    void savePointPatternForGnuplot( std::string filename)
+    {
+        std::cout << "writing PointPattern file" << std::endl;
+        std::ofstream file;
+        file.open(filename);
+        file << p;
+        file.close();
+    }
+
     void removeduplicates (double epsilon, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax)
     {
         std::cout << "polywriter: remove duplicates" << std::endl;

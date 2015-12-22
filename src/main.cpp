@@ -92,11 +92,12 @@ int main (int argc, char* argv[])
     const double xmax = state["xmax"];
     const double ymax = state["ymax"];
     const double zmax = state["zmax"];
+    const double epsilon = state["epsilon"];
     std::cout << "remove duplicates" << std::endl;
     duplicationremover d(16,16,16);
     d.setboundaries(xmin, xmax, ymin, ymax, zmin, zmax);
     d.addPoints(pp);
-    d.removeduplicates(1e-6);
+    d.removeduplicates(epsilon);
     d.getallPoints(pp);
 
     // print out pointpattern to a file for debugging purpose
@@ -218,7 +219,7 @@ int main (int argc, char* argv[])
     std::cout << " finished with N= " << ppreduced.points.size() << std::endl;
 
     // polywriter: remove duplicates
-    pw.removeduplicates(1e-6, xmin, xmax, ymin, ymax, zmin, zmax);
+    pw.removeduplicates(epsilon, xmin, xmax, ymin, ymax, zmin, zmax);
 
     {
         std::cout << "writing poly file" << std::endl;
@@ -228,23 +229,6 @@ int main (int argc, char* argv[])
         file.close();
     }
 
-    // remove duplicate points for voronoi cells
-    //ppreduced.removeduplicates(1e-6);
-    std::cout << "remove duplicates in voronoi vertices" << std::endl;
-    duplicationremover d2(16,16,16);
-    d2.setboundaries(xmin, xmax, ymin, ymax, zmin, zmax);
-    d2.addPoints(ppreduced);
-    d2.removeduplicates(1e-6);
-    d2.getallPoints(ppreduced);
-    // print out reduced pointpattern to a file for debugging purpose
-    {
-        std::cout << "save reduced voronoi diagram" << std::endl;
-        std::ofstream file;
-        file.open("reduced.xyz");
-        file << ppreduced;
-        file.close();
-    }
-
-
+    pw.savePointPatternForGnuplot("reduced.xyz");
     return 0;
 }

@@ -1,8 +1,0 @@
-#infolder = /home/sweis/daten/TomogrammAnalysen/2014-08-06_pom3.5mm_0100taps_zylinder840mm_bubblefoil_preparation_quartic_analysis/
-#parameters:
-#nx = 1132
-#ny = 1132
-#nz = 1000
-#             #Label           #center_x           #center_y           #center_z      #length_axis_1            #axis1_x            #axis1_y            #axis1_z      #length_axis_2            #axis2_x            #axis2_y            #axis2_z      #length_axis_3            #axis3_x            #axis3_y            #axis3_z
-1   -1.5  0   0   1
-2   1.5  0   0   1

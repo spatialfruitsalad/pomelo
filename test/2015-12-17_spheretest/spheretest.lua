@@ -9,4 +9,4 @@ xmax = 1090
 ymax = 1089
 zmax = 975
 
-
+epsilon = 1e-6
