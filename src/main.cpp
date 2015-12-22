@@ -177,7 +177,7 @@ int main (int argc, char* argv[])
                 if ( status >= target)
                 {
                     target += tenpercentSteps;
-                    std::cout << static_cast<int>(static_cast<double>(status)/static_cast<double>(numberofpoints)*100) << " \%\n";
+                    std::cout << static_cast<int>(static_cast<double>(status)/static_cast<double>(numberofpoints)*100) << " \%\t" << std::flush;
                 } 
                 //std::cout << "computed"  << std::endl;
                 double xc = 0;
@@ -235,7 +235,7 @@ int main (int argc, char* argv[])
         }
         while (cla.inc());
     }
-    std::cout << " finished with N= " << ppreduced.points.size() << std::endl;
+    std::cout << std::endl << " finished with N= " << ppreduced.points.size() << std::endl;
 
     // polywriter: remove duplicates
     pw.removeduplicates(epsilon, xmin, xmax, ymin, ymax, zmin, zmax);

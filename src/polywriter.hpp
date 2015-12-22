@@ -129,7 +129,7 @@ public:
             if ( i >= target)
             {
                 target += fivepercentSteps;
-                std::cout << static_cast<int>(static_cast<double>(i)/static_cast<double>(faces.size())*100) << " \%\n";
+                std::cout << static_cast<int>(static_cast<double>(i)/static_cast<double>(faces.size())*100) << " \%\t"<< std::flush;
             } 
             unsigned int j = 0;
             for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
@@ -158,6 +158,7 @@ public:
                 }
             }
         }
+        std::cout << std::endl;
     }
 
 
