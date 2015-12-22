@@ -47,15 +47,15 @@ public:
     {
         if (dx > xmax || dx < xmin)
         {
-            std::cout << "Warning: point with label: " << l << " out of X boundaries, adding in outmost subcell" << std::endl;
+            std::cerr << "Warning: point with label: " << l << " out of X boundaries, adding in outmost subcell" << std::endl;
         }
         if (dy > ymax || dy < ymin)
         {
-            std::cout << "Warning: point with label: " << l << " out of Y boundaries, adding in outmost subcell" << std::endl;
+            std::cerr << "Warning: point with label: " << l << " out of Y boundaries, adding in outmost subcell" << std::endl;
         }
         if (dz > zmax || dz < zmin)
         {
-            std::cout << "Warning: point with label: " << l << " out of Z boundaries, adding in outmost subcell" << std::endl;
+            std::cerr << "Warning: point with label: " << l << " out of Z boundaries, adding in outmost subcell" << std::endl;
         }
 
         //std::cout << "adding particle " << dx << " " << dy << " "  << dz << " " << zmax  << std::endl;
@@ -120,7 +120,7 @@ public:
 
     void removeduplicates(double epsilon)
     {
-        std::cout << std::endl << std::endl;
+        std::cout << std::endl;
         std::cout << "removing duplicates within one box" << std::endl;
         for (
             auto it = list.begin();
@@ -130,8 +130,7 @@ public:
             (*it).removeduplicates(epsilon);
         }
 
-        std::cout << std::endl << std::endl;
-        std::cout << std::endl << std::endl;
+        std::cout << std::endl;
         std::cout << "removing duplicates between neighboring boxes" << std::endl;
         for (unsigned int cx = 0; cx != x; ++cx)
             for (unsigned int cy = 0; cy != y; ++cy)

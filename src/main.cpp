@@ -2,6 +2,7 @@
 #include <fstream>
 #include <map>
 #include <limits>
+#include <sys/stat.h>
 #include "include.hpp"
 #include "fileloader.hpp"
 #include "pointpattern.hpp"
@@ -46,13 +47,26 @@ int main (int argc, char* argv[])
     // lua state for the global parameter file
     State state {true};
 
-    if(argc != 2 )
-    {
-        std::cerr << "No File given .... aborting "  << std::endl;
+    if(argc != 3 )
+        {
+        std::cerr << "Commandline parameters not correct .... aborting "  << std::endl;
+        std::cerr << std::endl <<  "Use setvoronoi this way:\n\t ./setvoronoi [path-to-lua-file] [outputfolder]"  << std::endl;
         return -1;
     }
 
-    std::string filename = argv[1];
+    const std::string filename = argv[1];
+    std::string folder = argv[2];
+
+    if(folder.empty())
+    {
+        throw std::string("outfilepath is empty");
+    }
+    
+    char lastCharOfFolder = *folder.rbegin();
+    if (lastCharOfFolder != '/')
+    folder += '/';
+
+    mkdir(folder.c_str(),0755);    
 
     state.Load(filename);
 
@@ -104,7 +118,7 @@ int main (int argc, char* argv[])
     {
         std::cout << "save point pattern file" << std::endl;
         std::ofstream file;
-        file.open("pointpattern.xyz");
+        file.open(folder + "pointpattern.xyz");
         file << pp;
         file.close();
     }
@@ -149,17 +163,22 @@ int main (int argc, char* argv[])
     //loop over all voronoi cells
     c_loop_all cla(con);
     unsigned long long status = 0;
+    double tenpercentSteps = 0.1*static_cast<double>(numberofpoints);
+    double target = tenpercentSteps;
     if(cla.start())
     {
-        std::cout << "started" << std::flush;
+        std::cout << "started\n" << std::flush;
         do
         {
             voronoicell_neighbor c;
             status++;
             if(con.compute_cell(c,cla))
             {
-
-                std::cout << status << "/" << numberofpoints << "\n";
+                if ( status >= target)
+                {
+                    target += tenpercentSteps;
+                    std::cout << static_cast<int>(static_cast<double>(status)/static_cast<double>(numberofpoints)*100) << " \%\n";
+                } 
                 //std::cout << "computed"  << std::endl;
                 double xc = 0;
                 double yc = 0;
@@ -224,11 +243,11 @@ int main (int argc, char* argv[])
     {
         std::cout << "writing poly file" << std::endl;
         std::ofstream file;
-        file.open("cell.poly");
+        file.open(folder + "cell.poly");
         file << pw;
         file.close();
     }
 
-    pw.savePointPatternForGnuplot("reduced.xyz");
+    pw.savePointPatternForGnuplot(folder + "reduced.xyz");
     return 0;
 }

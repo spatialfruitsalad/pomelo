@@ -121,10 +121,16 @@ public:
 
         std::cout << "\tPolywriter rearrange Indices"<< std::endl;
         unsigned int i = 0;
+        double fivepercentSteps = 0.05*static_cast<double>(faces.size());
+        double target = fivepercentSteps;
         for (auto it = faces.begin(); it != faces.end(); ++ it)
         {
             i++;
-            std::cout << "\t\t" << i << " / " << faces.size() << std::endl;
+            if ( i >= target)
+            {
+                target += fivepercentSteps;
+                std::cout << static_cast<int>(static_cast<double>(i)/static_cast<double>(faces.size())*100) << " \%\n";
+            } 
             unsigned int j = 0;
             for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
             {
