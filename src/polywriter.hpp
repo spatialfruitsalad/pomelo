@@ -65,13 +65,19 @@ public:
 
     void removeduplicates (double epsilon, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax)
     {
+        std::cout << "polywriter: remove duplicates" << std::endl;
         duplicationremover d(16,16,16);
         d.setboundaries(xmin, xmax, ymin, ymax, zmin, zmax);
+        std::cout << "\tadding points" << std::endl;
         d.addPoints(p, true);
+        std::cout << "\tremoving duplicates" << std::endl;
         d.removeduplicates(epsilon);
+        std::cout << "\tget back points" << std::endl;
         d.getallPoints(p);
+        std::cout << "\tmatch back indices" << std::endl;
         rearrangeIndices(d.indexShift);
         
+        //std::cout << "\torder indices" << std::endl;
         orderIndices(); 
     }
 
@@ -91,17 +97,42 @@ public:
 
     void rearrangeIndices(std::map<unsigned int, long>& indexShift, bool multipleTimes = true)
     {
+
+        //std::cout << "### index map" << std::endl;
+        unsigned int maxIndex = (*indexShift.rbegin()).first;
+        for(unsigned int i = 1; i != maxIndex; ++i)
+        {
+            if(indexShift.find(i) == indexShift.end())
+            {
+                indexShift[i] = -1;
+            }
+            //std::cout << i << " " << indexShift[i] << std::endl;  
+        }
+
+        std::cout << "\tPolywriter rearrange Indices"<< std::endl;
+        unsigned int i = 0;
         for (auto it = faces.begin(); it != faces.end(); ++ it)
         {
+            i++;
+            std::cout << "\t\t" << i << " / " << faces.size() << std::endl;
+            unsigned int j = 0;
             for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
             {
+                j++;
+                //std::cout << "\t\t\t" << j << " / " << it->second.size() << std::endl;
                 unsigned int vertexIndex = (*it2);
 
                 if( multipleTimes)
                 {
-                    while (indexShift[vertexIndex] != -1)
+                    while (indexShift[vertexIndex] != -1 )
                     {
+                        //std::cout << "\t\t\t\t" << vertexIndex << std::endl;
                         vertexIndex = indexShift[vertexIndex];
+                        if (indexShift.find(vertexIndex) == indexShift.end())
+                        {
+                            indexShift[vertexIndex] = -1;
+                            break;
+                        }
                     }
                     (*it2) = vertexIndex;
                 }

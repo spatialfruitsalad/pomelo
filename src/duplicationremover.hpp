@@ -21,6 +21,7 @@ public:
         {
             if (useCellIDs)
             {
+                //std::cout << "adding point with label : " << it->l << " in cellID " << it->cellID << "at (" << it->x << " " << it->y << " " << it->z << std::endl;
                 addpoint(it->x, it->y, it->z, it->l, it->cellID);        
             }
             else
@@ -45,18 +46,15 @@ public:
     {
         if (dx > xmax || dx < xmin)
         {
-            std::cerr << "ignoring point with label: " << l << " due to X boundaries" << std::endl;
-            return; // ignore points outside of boundaries
+            std::cout << "Warning: point with label: " << l << " out of X boundaries, adding in outmost subcell" << std::endl;
         }
         if (dy > ymax || dy < ymin)
         { 
-            std::cerr << "ignoring point with label: " << l << " due to Y boundaries" << std::endl;
-            return;
+            std::cout << "Warning: point with label: " << l << " out of Y boundaries, adding in outmost subcell" << std::endl;
         }
         if (dz > zmax || dz < zmin) 
         {
-            std::cerr << "ignoring point with label: " << l << " due to Z boundaries" << std::endl;
-            return;
+            std::cout << "Warning: point with label: " << l << " out of Z boundaries, adding in outmost subcell" << std::endl;
         }
         
         //std::cout << "adding particle " << dx << " " << dy << " "  << dz << " " << zmax  << std::endl;
@@ -119,9 +117,9 @@ public:
 
 
 
-    // if indexShifts equals null, dont do any rearrangements
     void removeduplicates(double epsilon)
     {
+        std::cout << std::endl << std::endl;
         std::cout << "removing duplicates within one box" << std::endl;
         for (
                 auto it = list.begin(); 
@@ -131,6 +129,8 @@ public:
             (*it).removeduplicates(epsilon);
         }
         
+        std::cout << std::endl << std::endl;
+        std::cout << std::endl << std::endl;
         std::cout << "removing duplicates between neighboring boxes" << std::endl;
         for (unsigned int cx = 0; cx != x; ++cx)    
         for (unsigned int cy = 0; cy != y; ++cy)    
@@ -165,7 +165,7 @@ public:
                     it2 != (*it).indexShift.end();
                     ++it2)
             {
-                    indexShift[(*it2).first] = (*it2).second;
+                indexShift[(*it2).first] = (*it2).second;
             }
         }
     };

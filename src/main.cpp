@@ -217,15 +217,16 @@ int main (int argc, char* argv[])
     std::cout << " finished with N= " << ppreduced.points.size() << std::endl; 
 
     // polywriter: remove duplicates 
-    std::cout << "polywriter: remove duplicates" << std::endl;
     pw.removeduplicates(1e-6, xmin, xmax, ymin, ymax, zmin, zmax);
 
     {
+    std::cout << "writing poly file" << std::endl;
     std::ofstream file;
     file.open("cell.poly");
     file << pw;
     file.close();
     }
+
     // remove duplicate points for voronoi cells
     //ppreduced.removeduplicates(1e-6);
     std::cout << "remove duplicates in voronoi vertices" << std::endl;
