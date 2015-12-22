@@ -1,0 +1,3 @@
+#label x y z radius
+1 5 5 3.5 2
+2 5 5 7 2

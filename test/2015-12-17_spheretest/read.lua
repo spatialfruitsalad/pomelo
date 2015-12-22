@@ -1,6 +1,6 @@
-stepstheta = 12
-stepsphi = 12
-shrink = 0.95
+stepstheta = 4 
+stepsphi = 4
+shrink = 0.1
 
 s = {}
 
