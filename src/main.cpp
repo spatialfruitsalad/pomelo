@@ -24,7 +24,7 @@ void  getFaceVerticesOfFace( std::vector<int>& f, unsigned int k, std::vector<un
 
         unsigned long long b = f[index];    // how many vertices does the current face (index) have?
         // iterate index "number of vertices of this face" forward
-        for (unsigned long long bb = 1; bb <= b; bb++)  
+        for (unsigned long long bb = 1; bb <= b; bb++)
         {
             index++;
             // if we have found the correct face, get all the vertices for this face and save them
@@ -37,14 +37,14 @@ void  getFaceVerticesOfFace( std::vector<int>& f, unsigned int k, std::vector<un
         }
         index++;
     }
-} 
+}
 
 
 int main (int argc, char* argv[])
 {
-    
-    // lua state for the global parameter file    
-    State state{true};
+
+    // lua state for the global parameter file
+    State state {true};
 
     if(argc != 2 )
     {
@@ -53,24 +53,24 @@ int main (int argc, char* argv[])
     }
 
     std::string filename = argv[1];
-   
+
     state.Load(filename);
 
     std::string posfile = state["positionfile"];
     std::string readfile = state["readfile"];
 
     std::cout << "Working on " << posfile << " " << readfile << std::endl;
-    
+
     // read particle parameters and positions
     std::vector<particleparameterset> setlist;
     fileloader loader;
     loader.read(posfile,setlist);
-   
+
     // create a readstate that translates the particle parameters to surface shapes
-    State readstate{true};
+    State readstate {true};
     readstate["pointpattern"].SetClass<pointpattern> ("addpoint", &pointpattern::addpoint );
     readstate.Load(readfile);
-    
+
     pointpattern pp;
 
     for(auto it = setlist.begin(); it != setlist.end(); ++it )
@@ -80,7 +80,7 @@ int main (int argc, char* argv[])
         {
             readstate["s"][i] = set.get(i);
         }
-        readstate["docalculation"](pp); 
+        readstate["docalculation"](pp);
 
         //double x = readstate["result"][1][1][1];
         //std::cout << x << std::endl;
@@ -93,7 +93,7 @@ int main (int argc, char* argv[])
     const double ymax = state["ymax"];
     const double zmax = state["zmax"];
     std::cout << "remove duplicates" << std::endl;
-    duplicationremover d(16,16,16); 
+    duplicationremover d(16,16,16);
     d.setboundaries(xmin, xmax, ymin, ymax, zmin, zmax);
     d.addPoints(pp);
     d.removeduplicates(1e-6);
@@ -101,11 +101,11 @@ int main (int argc, char* argv[])
 
     // print out pointpattern to a file for debugging purpose
     {
-    std::cout << "save point pattern file" << std::endl;
-    std::ofstream file;
-    file.open("pointpattern.xyz");
-    file << pp;
-    file.close();
+        std::cout << "save point pattern file" << std::endl;
+        std::ofstream file;
+        file.open("pointpattern.xyz");
+        file << pp;
+        file.close();
     }
 
 
@@ -113,12 +113,12 @@ int main (int argc, char* argv[])
     std::cout << "importing point pattern from file" << std::endl;
 
     pre_container pcon(xmin, xmax, ymin, ymax, zmin, zmax, false, false, false);
-   
+
     std::cout << "creating label id map " ;
     std::map < unsigned long long, unsigned long long > labelidmap;
 
     {
-        unsigned long long id = 0; 
+        unsigned long long id = 0;
         for(    auto it = pp.points.begin();
                 it != pp.points.end();
                 ++it)
@@ -141,28 +141,28 @@ int main (int argc, char* argv[])
 
 
     // merge voronoi cells to set voronoi diagram and write poly file
-    std::cout << "merge voronoi cells "; 
-    
+    std::cout << "merge voronoi cells ";
+
     pointpattern ppreduced;
     polywriter pw;
     //loop over all voronoi cells
     c_loop_all cla(con);
     unsigned long long status = 0;
-    if(cla.start()) 
+    if(cla.start())
     {
         std::cout << "started" << std::flush;
         do
         {
             voronoicell_neighbor c;
             status++;
-            if(con.compute_cell(c,cla)) 
+            if(con.compute_cell(c,cla))
             {
 
                 std::cout << status << "/" << numberofpoints << "\n";
                 //std::cout << "computed"  << std::endl;
                 double xc = 0;
-                double yc = 0; 
-                double zc = 0; 
+                double yc = 0;
+                double zc = 0;
                 // Get the position of the current particle under consideration
                 cla.pos(xc,yc,zc);
                 unsigned int id = cla.pid();
@@ -172,10 +172,10 @@ int main (int argc, char* argv[])
                 c.face_vertices(f);
 
                 std::vector<double> vertices;   // all vertices for this cell
-                c.vertices(xc,yc,zc, vertices); 
-                
-                
-                std::vector<int> w; // neighbors of faces 
+                c.vertices(xc,yc,zc, vertices);
+
+
+                std::vector<int> w; // neighbors of faces
                 c.neighbors(w);
                 // for this cell, loop over all faces and get the corresponding neighbors
                 for (unsigned long long k = 0; k != w.size(); ++k)
@@ -193,15 +193,15 @@ int main (int argc, char* argv[])
                         getFaceVerticesOfFace(f, k, facevertexlist);
                         std::vector<double> positionlist;
                         for (
-                                auto it = facevertexlist.begin(); 
-                                it != facevertexlist.end();
-                                ++it)
+                            auto it = facevertexlist.begin();
+                            it != facevertexlist.end();
+                            ++it)
                         {
                             unsigned int vertexindex = (*it);
                             double x = vertices[vertexindex*3];
                             double y = vertices[vertexindex*3+1];
                             double z = vertices[vertexindex*3+2];
-                            ppreduced.addpoint(x,y,z,l); 
+                            ppreduced.addpoint(x,y,z,l);
                             positionlist.push_back(x);
                             positionlist.push_back(y);
                             positionlist.push_back(z);
@@ -211,20 +211,21 @@ int main (int argc, char* argv[])
                     }
                 }
 
-            } 
-        }while (cla.inc());
+            }
+        }
+        while (cla.inc());
     }
-    std::cout << " finished with N= " << ppreduced.points.size() << std::endl; 
+    std::cout << " finished with N= " << ppreduced.points.size() << std::endl;
 
-    // polywriter: remove duplicates 
+    // polywriter: remove duplicates
     pw.removeduplicates(1e-6, xmin, xmax, ymin, ymax, zmin, zmax);
 
     {
-    std::cout << "writing poly file" << std::endl;
-    std::ofstream file;
-    file.open("cell.poly");
-    file << pw;
-    file.close();
+        std::cout << "writing poly file" << std::endl;
+        std::ofstream file;
+        file.open("cell.poly");
+        file << pw;
+        file.close();
     }
 
     // remove duplicate points for voronoi cells
@@ -237,13 +238,13 @@ int main (int argc, char* argv[])
     d2.getallPoints(ppreduced);
     // print out reduced pointpattern to a file for debugging purpose
     {
-    std::cout << "save reduced voronoi diagram" << std::endl;
-    std::ofstream file;
-    file.open("reduced.xyz");
-    file << ppreduced;
-    file.close();
+        std::cout << "save reduced voronoi diagram" << std::endl;
+        std::ofstream file;
+        file.open("reduced.xyz");
+        file << ppreduced;
+        file.close();
     }
 
-    
+
     return 0;
 }

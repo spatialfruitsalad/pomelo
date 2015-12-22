@@ -27,17 +27,17 @@ public:
             p.addpointForCell(x,y,z,l, cellID);
             facevertexIDs.push_back(l);
             currentVertexLabel++;
-        } 
-        faces[faceID] = facevertexIDs; 
+        }
+        faces[faceID] = facevertexIDs;
     };
 
-    
+
     friend std::ostream& operator << (std::ostream &f, const polywriter& p)
     {
         f << "POINTS" << std::endl;
 
-        for(auto it =  p.p.points.begin(); 
-                it != p.p.points.end(); 
+        for(auto it =  p.p.points.begin();
+                it != p.p.points.end();
                 ++it)
         {
             f << it->l << ":\t" << it->x << " " << it-> y << " " << it->z<< std::endl;
@@ -45,9 +45,9 @@ public:
 
         f << "POLYS" <<  std::endl;
         for (
-                auto it = p.faces.rbegin(); 
-                it != p.faces.rend(); 
-                ++ it)
+            auto it = p.faces.rbegin();
+            it != p.faces.rend();
+            ++ it)
         {
             f << it->first << ":\t";
             for (auto it2 = it->second.rbegin(); it2 != it->second.rend(); ++it2)
@@ -76,9 +76,9 @@ public:
         d.getallPoints(p);
         std::cout << "\tmatch back indices" << std::endl;
         rearrangeIndices(d.indexShift);
-        
+
         //std::cout << "\torder indices" << std::endl;
-        orderIndices(); 
+        orderIndices();
     }
 
     void orderIndices ()
@@ -106,7 +106,7 @@ public:
             {
                 indexShift[i] = -1;
             }
-            //std::cout << i << " " << indexShift[i] << std::endl;  
+            //std::cout << i << " " << indexShift[i] << std::endl;
         }
 
         std::cout << "\tPolywriter rearrange Indices"<< std::endl;

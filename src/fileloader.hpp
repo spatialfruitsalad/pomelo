@@ -6,8 +6,8 @@
 #include "particleparameterset.hpp"
 class fileloader
 {
-    public:
-       void read(std::string filename, std::vector<particleparameterset>& set);
+public:
+    void read(std::string filename, std::vector<particleparameterset>& set);
 
 };
 

@@ -41,19 +41,17 @@ void pointpattern::removeduplicates (double epsilon)
         {
             if (j >= points.size()) break;
             p2 = points[j];
-            if(p2.cellID == -1 || p2.l == -1) continue;
+            //if(p2.cellID == -1 || p2.l == -1) continue;
             if (p2.l == 0) std::cout << "particle with label 0 detected" << std::endl;
             if (checkdistancecloserthan(p1, p2, epsilon))
             {
-                if (p1.cellID == p2.cellID && p1.cellID != -1)
+                if (p1.cellID == p2.cellID && p1.l != -1)
                 {
                     //std::cout << "removing point " << p1.l <<" for cell " << p1.cellID << std::endl;
                     //std::cout << " point "<<   p1.l << " and point " << p2.l << " too close together" << "\n";
                     addthis = false;
                     break;
                 }
-            //    addthis = false;
-            //    break;
             }
         }
         if (addthis)
@@ -68,9 +66,6 @@ void pointpattern::removeduplicates (double epsilon)
             unsigned int l1 = p1.l;
             unsigned int l2 = p2.l;
             indexShift[l1] = l2;
-
-            //std::cout << "removing point" << std::endl;
-
         }
     }
     points = newpoints;
@@ -92,14 +87,14 @@ void pointpattern::removeduplicates (double epsilon, pointpattern& p)
         for(unsigned int j = 0; j != p.points.size(); ++j)
         {
             p2 = p.points[j];
-            if(p2.cellID == -1 || p2.l == -1) continue;
+            //if(p2.cellID == -1 || p2.l == -1) continue;
             if (p2.l == 0) std::cout << "particle with label 0 detected" << std::endl;
             if (checkdistancecloserthan(p1, p2, epsilon))
             {
-                if (p1.cellID == p2.cellID && p1.cellID != -1)
+                if (p1.cellID == p2.cellID && p1.l != -1)
                 {
-                //std::cout << "removing point " << p1.l <<" for cell " << p1.cellID << std::endl;
-                //std::cout << " point "<<   p1.l << " and point " << p2.l << " too close together" << "\n";
+                    //std::cout << "removing point " << p1.l <<" for cell " << p1.cellID << std::endl;
+                    //std::cout << " point "<<   p1.l << " and point " << p2.l << " too close together" << "\n";
                     addthis = false;
                     break;
                 }

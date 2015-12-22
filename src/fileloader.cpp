@@ -16,7 +16,7 @@ void fileloader::read(std::string filename, std::vector<particleparameterset>& s
         std::cout << "Cannot load file " << filename << std::endl;
         return;
     }
-    #pragma GCC diagnostic ignored "-Wwrite-strings"
+#pragma GCC diagnostic ignored "-Wwrite-strings"
     cSplitString line("");
     unsigned int linesloaded = 0;
     std::getline(infile, line);
@@ -25,7 +25,7 @@ void fileloader::read(std::string filename, std::vector<particleparameterset>& s
         if(line.find("#")!=std::string::npos) continue; // ignore comment lines
 
         std::vector<std::string> thisparams = line.split(' ');
-       
+
         particleparameterset p;
         for (auto it = thisparams.begin(); it != thisparams.end(); ++it)
         {
