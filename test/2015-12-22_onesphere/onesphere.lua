@@ -1,5 +1,5 @@
-positionfile = "/home/tester/setvoronoi/test/2015-12-22_onesphere/pos.txt"
-readfile = "/home/tester/setvoronoi/test/2015-12-22_onesphere/read.lua"
+positionfile = "/home/sweis/setvoronoi_git/test/2015-12-22_onesphere/pos.txt"
+readfile = "/home/sweis/setvoronoi_git/test/2015-12-22_onesphere/read.lua"
 
 xmin = 0
 ymin = 0

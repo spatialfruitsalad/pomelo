@@ -17,6 +17,7 @@ public:
         currentFaceLabel++;
         faceCellMap[faceID] = cellID;
 
+
         std::vector<unsigned int> facevertexIDs;
         for(unsigned int i = 0; i != positionlist.size(); ++(++(++i)) )
         {
@@ -24,10 +25,12 @@ public:
             double y = positionlist[i+1];
             double z = positionlist[i+2];
             unsigned int l = currentVertexLabel;
-            p.addpointForCell(x,y,z,l, cellID);
+
+            p.addpointForCell(x, y, z, l, cellID);
             facevertexIDs.push_back(l);
             currentVertexLabel++;
         }
+
         faces[faceID] = facevertexIDs;
     };
 
@@ -35,12 +38,12 @@ public:
     friend std::ostream& operator << (std::ostream &f, const polywriter& p)
     {
         f << "POINTS" << std::endl;
-
+        f << std::fixed;
         for(auto it =  p.p.points.begin();
                 it != p.p.points.end();
                 ++it)
         {
-            f << it->l << ":\t" << it->x << " " << it-> y << " " << it->z<< std::endl;
+            f << it->l << ":\t" <<  std::setprecision(12) << it->x << " " << std::setprecision(12) << it-> y << " " << std::setprecision(12) << it->z<< std::endl;
         }
 
         f << "POLYS" <<  std::endl;
