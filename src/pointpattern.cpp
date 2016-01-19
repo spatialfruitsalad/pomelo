@@ -2,9 +2,9 @@
 #include "pointpattern.hpp"
 
 
-void pointpattern::addpointForCell(double x, double y, double z, int l, long cC)
+void pointpattern::addpointForCell(double x, double y, double z, int l, long cf, long cC)
 {
-    point p (x,y,z,l, cC);
+    point p (x,y,z,l, cf,cC);
     points.push_back(p);
 }
 

@@ -26,7 +26,7 @@ public:
             double z = positionlist[i+2];
             unsigned int l = currentVertexLabel;
 
-            p.addpointForCell(x, y, z, l, cellID);
+            p.addpointForCell(x, y, z, l, faceID, cellID);
             facevertexIDs.push_back(l);
             currentVertexLabel++;
         }
@@ -53,9 +53,19 @@ public:
             ++ it)
         {
             f << it->first << ":\t";
+	    std::vector<double> testing;
             for (auto it2 = it->second.rbegin(); it2 != it->second.rend(); ++it2)
             {
-                f << (*it2) << " ";
+		bool doppelt = false;
+		for(unsigned int kk = 0; kk < testing.size(); kk++ ){ 
+			if(testing[kk] == (*it2) ){ 
+				doppelt = true;
+				break;
+			}
+		}
+		if(doppelt) continue;
+                testing.push_back( (*it2) );
+		f << (*it2) << " ";
             }
             unsigned int faceID = it->first;
             unsigned int cellID = p.faceCellMap.at(faceID);
@@ -72,7 +82,7 @@ public:
         std::cout << "writing PointPattern file" << std::endl;
         std::ofstream file;
         file.open(filename);
-        file << p;
+        file >> p;
         file.close();
     }
 

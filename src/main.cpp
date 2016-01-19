@@ -205,7 +205,7 @@ int main (int argc, char* argv[])
                     if (labelidmap[n] == l)
                     {
                         // discard this face, since they have the same id
-                        //std::cout << "discarding face " << std::endl;
+                        // std::cout << "discarding face " << l << " " << labelidmap[n] << std::endl;
                     }
                     else
                     {
@@ -237,6 +237,9 @@ int main (int argc, char* argv[])
     }
     std::cout << std::endl << " finished with N= " << ppreduced.points.size() << std::endl;
 
+
+    pw.savePointPatternForGnuplot(folder + "reduced.xyz");
+   
     // polywriter: remove duplicates
     pw.removeduplicates(epsilon, xmin, xmax, ymin, ymax, zmin, zmax);
 
@@ -248,6 +251,5 @@ int main (int argc, char* argv[])
         file.close();
     }
 
-    pw.savePointPatternForGnuplot(folder + "reduced.xyz");
     return 0;
 }

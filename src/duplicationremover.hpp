@@ -88,7 +88,7 @@ public:
         }
         else
         {
-            list[index].addpointForCell(dx,dy,dz,l,cellID);
+            list[index].addpointForCell(dx,dy,dz,l,cellID,cellID);
         }
 
     }
