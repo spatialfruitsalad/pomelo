@@ -69,16 +69,16 @@ public:
 
 
         // sometimes, double comparison goes wrong, therefore handle indices manually
-        if (cx < 0 ) cx++;
-        if (cy < 0 ) cy++;
-        if (cz < 0 ) cz++;
+        while (cx < 0 ) cx++;
+        while (cy < 0 ) cy++;
+        while (cz < 0 ) cz++;
 
-        if (static_cast<unsigned int>(cx) >= x ) cx--;
-        if (static_cast<unsigned int>(cy) >= y ) cy--;
-        if (static_cast<unsigned int>(cz) >= z ) cz--;
+        while (static_cast<unsigned int>(cx) >= x ) cx--;
+        while (static_cast<unsigned int>(cy) >= y ) cy--;
+        while (static_cast<unsigned int>(cz) >= z ) cz--;
 
         //std::cout << cx << " " << cy << " " << cz << std::endl;
-        //std::cout << xmin << std::endl;
+	//std::cout << zmin << std::endl;
 
         unsigned int index = getindex(cx,cy,cz);
         //std::cout << "index: " << index << " " << list.size() <<  std::endl;

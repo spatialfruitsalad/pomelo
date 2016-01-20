@@ -66,10 +66,11 @@ public:
                 it != p.points.end();
                 ++it)
         {
-            if(oldf != (*it).faceID )
+            if(oldf != (*it).faceID)
             {
                 f << oldc << " " <<  std::setw(5)<< xx << " " << std::setw(5) << yy << " " << std::setw(5) << zz << "\n\n";
-                oldf = (*it).faceID;
+                if(oldc != (*it).cellID) f << "\n";
+		oldf = (*it).faceID;
 		oldc = (*it).cellID;
 		xx = (*it).x;
 		yy = (*it).y;

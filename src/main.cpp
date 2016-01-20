@@ -107,6 +107,10 @@ int main (int argc, char* argv[])
     const double ymax = state["ymax"];
     const double zmax = state["zmax"];
     const double epsilon = state["epsilon"];
+    bool xpbc = state["xpbc"];
+    bool ypbc = state["ypbc"];
+    bool zpbc = state["zpbc"];
+
     std::cout << "remove duplicates" << std::endl;
     duplicationremover d(16,16,16);
     d.setboundaries(xmin, xmax, ymin, ymax, zmin, zmax);
@@ -127,7 +131,7 @@ int main (int argc, char* argv[])
     // add particle shapes to voro++
     std::cout << "importing point pattern from file" << std::endl;
 
-    pre_container pcon(xmin, xmax, ymin, ymax, zmin, zmax, false, false, false);
+    pre_container pcon(xmin, xmax, ymin, ymax, zmin, zmax, xpbc, ypbc, zpbc);
 
     std::cout << "creating label id map " ;
     std::map < unsigned long long, unsigned long long > labelidmap;
@@ -148,7 +152,7 @@ int main (int argc, char* argv[])
 
     int nx, ny, nz;
     pcon.guess_optimal(nx,ny,nz);
-    container con(xmin, xmax, ymin, ymax, zmin, zmax, nx, ny, nz, false, false, false, 8);
+    container con(xmin, xmax, ymin, ymax, zmin, zmax, nx, ny, nz, xpbc, ypbc, zpbc, 8);
     pcon.setup(con);
     std::cout << "setting up voro++ container with division: (" << nx << " " << ny << " " << nz << ") for N= " << numberofpoints << " particles " << std::numeric_limits<int>::max() << std::endl;
 
@@ -165,6 +169,13 @@ int main (int argc, char* argv[])
     unsigned long long status = 0;
     double tenpercentSteps = 0.1*static_cast<double>(numberofpoints);
     double target = tenpercentSteps;
+    double xdist = xmax - xmin;
+    double ydist = ymax - ymin;
+    double zdist = zmax - zmin;
+
+    std::vector<std::vector<double> > ref;
+    unsigned long long refl = 0;
+
     if(cla.start())
     {
         std::cout << "started\n" << std::flush;
@@ -185,22 +196,60 @@ int main (int argc, char* argv[])
                 double zc = 0;
                 // Get the position of the current particle under consideration
                 cla.pos(xc,yc,zc);
+	
                 unsigned int id = cla.pid();
                 unsigned long long l = labelidmap[id];
+		
+		
+		if(refl != l){		
+		    if(ref.size() < l+1) ref.resize(l+1);
+		    if(ref[l].size() == 0){
+                        ref[l].push_back(xc);
+                        ref[l].push_back(yc);
+                        ref[l].push_back(zc);
+			ref[l].push_back(0);
+                        ref[l].push_back(0);
+                        ref[l].push_back(0);
+		    }
+		    refl = l;
+		}
+	
+		double xabs = (xc-ref[l][0]);		
+		double yabs = (yc-ref[l][1]);		
+		double zabs = (zc-ref[l][2]);	
 
-                std::vector<int> f; // list of face vertices (bracketed, as ID)
+		double xabs2 = xabs*xabs;
+		double yabs2 = yabs*yabs;
+		double zabs2 = zabs*zabs;
+		
+		ref[l][3]=0;
+		if(xabs2 > 4){
+			if(xabs < 0) ref[l][3] = xdist;
+			else ref[l][3] = -xdist;
+		}
+		ref[l][4]=0;
+		if(yabs2 > 4){
+			if(yabs < 0) ref[l][4] = ydist;
+			else ref[l][4] = -ydist;
+		}
+		ref[l][5]=0;
+		if(zabs2 > 4){
+			if(zabs < 0) ref[l][5] = zdist;
+			else ref[l][5] = -zdist;
+		}
+	
+		std::vector<int> f; // list of face vertices (bracketed, as ID)
                 c.face_vertices(f);
 
                 std::vector<double> vertices;   // all vertices for this cell
                 c.vertices(xc,yc,zc, vertices);
 
-
-                std::vector<int> w; // neighbors of faces
+		std::vector<int> w; // neighbors of faces
                 c.neighbors(w);
                 // for this cell, loop over all faces and get the corresponding neighbors
                 for (unsigned long long k = 0; k != w.size(); ++k)
                 {
-                    // compare if id for this cell and the face-neighbor is the same
+		    // compare if id for this cell and the face-neighbor is the same
                     int n = w[k];   // ID of neighbor cell
                     if (labelidmap[n] == l)
                     {
@@ -221,7 +270,12 @@ int main (int argc, char* argv[])
                             double x = vertices[vertexindex*3];
                             double y = vertices[vertexindex*3+1];
                             double z = vertices[vertexindex*3+2];
-                            ppreduced.addpoint(x,y,z,l);
+                            	
+			    if(xpbc) x += ref[l][3]; 
+			    if(ypbc) y += ref[l][4]; 
+			    if(zpbc) z += ref[l][5]; 
+
+			    ppreduced.addpoint(x,y,z,l);
                             positionlist.push_back(x);
                             positionlist.push_back(y);
                             positionlist.push_back(z);
