@@ -107,9 +107,23 @@ int main (int argc, char* argv[])
     const double ymax = state["ymax"];
     const double zmax = state["zmax"];
     const double epsilon = state["epsilon"];
-    bool xpbc = state["xpbc"];
-    bool ypbc = state["ypbc"];
-    bool zpbc = state["zpbc"];
+    bool xpbc = false;
+    bool ypbc = false;
+    bool zpbc = false;
+
+    std::string boundary = state["boundary"];
+    if(boundary == "periodic")
+    { 
+        xpbc = state["xpbc"];
+        ypbc = state["ypbc"];
+        zpbc = state["zpbc"];
+    }
+    else
+    {
+        std::cerr << "bondary condition mode " << boundary << " not known" << std::endl;
+    }
+
+
 
     std::cout << "remove duplicates" << std::endl;
     duplicationremover d(16,16,16);
@@ -136,6 +150,7 @@ int main (int argc, char* argv[])
     std::cout << "creating label id map " ;
     std::map < unsigned long long, unsigned long long > labelidmap;
 
+    std::vector<std::vector<double> > ref;
     {
         unsigned long long id = 0;
         for(    auto it = pp.points.begin();
@@ -143,8 +158,18 @@ int main (int argc, char* argv[])
                 ++it)
         {
             pcon.put(id, it->x, it->y, it->z);
-            labelidmap[id] = it->l;
+            unsigned int l = it->l;
+	    labelidmap[id] = l;
             ++id;
+            if(ref.size() < l+1) ref.resize(l+1);
+            if(ref[l].size() == 0){
+	        ref[l].push_back(it->x);
+	        ref[l].push_back(it->y);
+	        ref[l].push_back(it->z);
+	        ref[l].push_back(0);
+	        ref[l].push_back(0);
+                ref[l].push_back(0);
+            }
         }
     }
     unsigned long long numberofpoints = labelidmap.size();
@@ -173,8 +198,7 @@ int main (int argc, char* argv[])
     double ydist = ymax - ymin;
     double zdist = zmax - zmin;
 
-    std::vector<std::vector<double> > ref;
-    unsigned long long refl = 0;
+    //unsigned long long refl = 0;
 
     if(cla.start())
     {
@@ -200,20 +224,6 @@ int main (int argc, char* argv[])
                 unsigned int id = cla.pid();
                 unsigned long long l = labelidmap[id];
 		
-		
-		if(refl != l){		
-		    if(ref.size() < l+1) ref.resize(l+1);
-		    if(ref[l].size() == 0){
-                        ref[l].push_back(xc);
-                        ref[l].push_back(yc);
-                        ref[l].push_back(zc);
-			ref[l].push_back(0);
-                        ref[l].push_back(0);
-                        ref[l].push_back(0);
-		    }
-		    refl = l;
-		}
-	
 		double xabs = (xc-ref[l][0]);		
 		double yabs = (yc-ref[l][1]);		
 		double zabs = (zc-ref[l][2]);	

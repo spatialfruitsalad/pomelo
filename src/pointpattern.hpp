@@ -68,16 +68,16 @@ public:
         {
             if(oldf != (*it).faceID)
             {
-                f << oldc << " " <<  std::setw(5)<< xx << " " << std::setw(5) << yy << " " << std::setw(5) << zz << "\n\n";
-                if(oldc != (*it).cellID) f << "\n";
-		oldf = (*it).faceID;
-		oldc = (*it).cellID;
-		xx = (*it).x;
-		yy = (*it).y;
-		zz = (*it).z;
+               	f << oldc << " " <<  std::setw(8)<< xx << " " << std::setw(8) << yy << " " << std::setw(8) << zz << "\n\n\n";
+                oldf = (*it).faceID;
+                oldc = (*it).cellID;
+                xx = (*it).x;
+                yy = (*it).y;
+                zz = (*it).z;
             }
-            f << (*it).cellID << " " <<  std::setw(5)<< (*it).x << " " << std::setw(5) << (*it).y << " " << std::setw(5) << (*it).z << "\n";
+            f << (*it).cellID << " " <<  std::setw(8) << (*it).x << " " << std::setw(8) << (*it).y << " " << std::setw(8) << (*it).z << "\n";
         }
+        f << oldc << " " <<  std::setw(8)<< xx << " " << std::setw(8) << yy << " " << std::setw(8) << zz;
 
         return f;
     };

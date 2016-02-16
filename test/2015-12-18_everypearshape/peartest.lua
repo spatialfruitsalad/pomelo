@@ -9,4 +9,4 @@ xmax = 5
 ymax = 5
 zmax = 5
 
-epsilon = 1e-6
+boundary = "none"

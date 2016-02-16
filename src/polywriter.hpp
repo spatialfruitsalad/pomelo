@@ -43,7 +43,7 @@ public:
                 it != p.p.points.end();
                 ++it)
         {
-            f << it->l << ":\t" <<  std::setprecision(12) << it->x << " " << std::setprecision(12) << it-> y << " " << std::setprecision(12) << it->z<< std::endl;
+           f << it->l << ":\t" <<  std::setprecision(12) << it->x << " " << std::setprecision(12) << it-> y << " " << std::setprecision(12) << it->z<< std::endl;
         }
 
         f << "POLYS" <<  std::endl;
@@ -52,8 +52,9 @@ public:
             it != p.faces.rend();
             ++ it)
         {
-            f << it->first << ":\t";
-	    std::vector<double> testing;
+            unsigned int faceID = it->first;
+            unsigned int cellID = p.faceCellMap.at(faceID);
+	    std::vector<unsigned int> testing;
             for (auto it2 = it->second.rbegin(); it2 != it->second.rend(); ++it2)
             {
 		bool doppelt = false;
@@ -65,11 +66,15 @@ public:
 		}
 		if(doppelt) continue;
                 testing.push_back( (*it2) );
-		f << (*it2) << " ";
             }
-            unsigned int faceID = it->first;
-            unsigned int cellID = p.faceCellMap.at(faceID);
-            f << "< c(0, 0, 0, " << cellID << ")" << std::endl;
+	    if(2 < testing.size()){
+	        f << it->first << ":\t";
+	    	for(unsigned int kk = 0; kk < testing.size(); kk++ ){
+		    f << testing[kk] << " ";
+	    	}
+            	f << "< c(0, 0, 0, " << cellID << ")" << std::endl;
+	    }
+	    else std::cout << testing.size() << " " << cellID << std::endl;
         }
 
         f << "END";

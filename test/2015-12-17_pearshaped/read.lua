@@ -1,6 +1,6 @@
 stepst = 10
 stepsphi = 10
-shrink = 0.95
+shrink = 0.6
 
 s = {}
 
@@ -119,9 +119,9 @@ function docalculation (p)
                 nz = nzPear
             end
            
-            x = x - (1-shrink)*nx
-            y = y - (1-shrink)*ny
-            z = z - (1-shrink)*nz
+            x = x*shrink
+            y = y*shrink 
+            z = z*shrink
 
 
             local xn = xoffset + a11*x + a12*y + a13*z

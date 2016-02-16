@@ -1,5 +1,5 @@
-positionfile = "/home/tester/setvoronoi/test/2015-12-17_pearshaped/onepear.dat"
-readfile = "/home/tester/setvoronoi/test/2015-12-17_pearshaped/read.lua"
+positionfile = "/home/pschoenhoefer/Promotion/setvoronoi_git/test/2015-12-17_pearshaped/onepear.dat"
+readfile = "/home/pschoenhoefer/Promotion/setvoronoi_git/test/2015-12-17_pearshaped/read.lua"
 
 xmin = -5
 ymin = -5
@@ -10,3 +10,9 @@ ymax = 5
 zmax = 5
 
 epsilon = 1e-6
+
+boundary = "periodic"
+
+xpbc = false 
+ypbc = false 
+zpbc = false 

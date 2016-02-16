@@ -33,4 +33,4 @@ LINK: obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o
 
 clean:
 	rm obj/*
-	rm bin/*
+	rm bin/setvoronoi
