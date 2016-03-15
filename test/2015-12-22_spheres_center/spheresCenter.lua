@@ -1,5 +1,5 @@
-positionfile = "/data/sweis/daten/TomogrammAnalysen/2016-01-19_pom3.5mm_0000taps_zylinder840mm_noprep_seifenwasser_segmentierung_min/ellipsoids_linear_std5.ellip"
-readfile = "/home/sweis/setvoronoi_git/test/2015-12-17_spheretest/read.lua"
+positionfile = "/home/sweis/setvoronoi/test/2015-12-22_spheres_center/ellipsoids_linear_std5.ellip"
+readfile = "/home/sweis/setvoronoi/test/2015-12-22_spheres_center/read.lua"
 
 xmin = 0
 ymin = 0

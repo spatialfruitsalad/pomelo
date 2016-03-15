@@ -1,5 +1,5 @@
-positionfile = "/home/pschoenhoefer/Promotion/setvoronoi_git/test/2015-12-17_twospheretest/ellipsoids_linear_std5.ellip"
-readfile = "/home/pschoenhoefer/Promotion/setvoronoi_git/test/2015-12-17_twospheretest/read.lua"
+positionfile = "/home/sweis/setvoronoi/test/2015-12-17_twospheretest/ellipsoids_linear_std5.ellip"
+readfile = "/home/sweis/setvoronoi/test/2015-12-17_twospheretest/read.lua"
 
 xmin = -3
 ymin = -3

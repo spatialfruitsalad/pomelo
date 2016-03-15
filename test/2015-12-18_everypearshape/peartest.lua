@@ -1,7 +1,7 @@
-positionfile = "/home/tester/setvoronoi/test/2015-12-18_everypearshape/onepear.dat"
-readfile = "/home/tester/setvoronoi/test/2015-12-18_everypearshape/read.lua"
+positionfile = "/home/sweis/setvoronoi/test/2015-12-18_everypearshape/onepear.dat"
+readfile = "/home/sweis/setvoronoi/test/2015-12-18_everypearshape/read.lua"
 
-xmin = -5
+xmin = -2
 ymin = -5
 zmin = -5
 
