@@ -9,5 +9,5 @@ function docalculation (p)
     local xoffset = s[1]
     local yoffset = s[2]
     local zoffset = s[3]
-    p:addpoint(xoffset, yoffset, zoffset, l)
+    p:addpoint(l, xoffset, yoffset, zoffset)
 end

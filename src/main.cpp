@@ -285,7 +285,7 @@ int main (int argc, char* argv[])
 			    if(ypbc) y += ref[l][4]; 
 			    if(zpbc) z += ref[l][5]; 
 
-			    ppreduced.addpoint(x,y,z,l);
+			    ppreduced.addpoint(l,x,y,z);
                             positionlist.push_back(x);
                             positionlist.push_back(y);
                             positionlist.push_back(z);

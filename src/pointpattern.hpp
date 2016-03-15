@@ -25,7 +25,7 @@ inline bool checkdistancecloserthan (point& a, point& b, double e)
 class pointpattern
 {
 public:
-    void addpoint(double x, double y, double z, int l);
+    void addpoint(int l, double x, double y, double z);
     void addpointForCell(double x, double y, double z, int l, long cf, long cC);
     void print();
     void removeduplicates ( double epsilon);

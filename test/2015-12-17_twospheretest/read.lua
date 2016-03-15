@@ -18,7 +18,7 @@ function docalculation (p)
             local x = xoffset + math.cos(theta)*math.sin(phi)*(r*0.97)
             local y = yoffset + math.sin(theta)*math.sin(phi)*(r*1.05)
             local z = zoffset + math.cos(phi)*(r * 0.95)
-            p:addpoint(x, y, z, l)
+            p:addpoint(l, x, y, z)
         end
     end
 end

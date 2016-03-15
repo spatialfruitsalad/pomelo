@@ -132,7 +132,7 @@ function docalculation (p)
             local xn = xoffset + a11*x + a12*y + a13*z
             local yn = yoffset + a21*x + a22*y + a23*z
             local zn = zoffset + a31*x + a32*y + a33*z
-            p:addpoint(xn, yn, zn, l)
+            p:addpoint(l, xn, yn, zn)
         end
     end
 end
