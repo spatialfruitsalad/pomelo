@@ -84,7 +84,7 @@ public:
         //std::cout << "index: " << index << " " << list.size() <<  std::endl;
         if (cellID == -1)
         {
-            list[index].addpoint(dx,dy,dz, l);
+            list[index].addpoint(l, dx,dy,dz);
         }
         else
         {
@@ -107,7 +107,7 @@ public:
                 itp != (*it).points.end();
                 ++itp)
             {
-                p.addpoint(itp->x, itp->y, itp->z, itp->l);
+                p.addpoint(itp->l, itp->x, itp->y, itp->z);
                 i++;
             }
         }
