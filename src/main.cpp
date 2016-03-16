@@ -8,6 +8,8 @@
 #include "pointpattern.hpp"
 #include "duplicationremover.hpp"
 #include "polywriter.hpp"
+#include "postprocessing.hpp"
+
 using namespace sel;
 using namespace voro;
 
@@ -125,9 +127,11 @@ int main (int argc, char* argv[])
     std::string boundary = state["boundary"];
     if(boundary == "periodic")
     {
+        std::cout << "boundary condition mode 'periodic' selected." ;
         xpbc = state["xpbc"];
         ypbc = state["ypbc"];
         zpbc = state["zpbc"];
+        std::cout << "x: " << xpbc << "\ny: " << ypbc << "\nz: " << zpbc << std::endl;
     }
     else if (boundary == "none")
     {
@@ -137,6 +141,7 @@ int main (int argc, char* argv[])
     {
         std::cerr << "bondary condition mode " << boundary << " not known" << std::endl;
     }
+    std::cout << std::endl;
 
     // clean degenerated vertices from particle surface triangulation pointpattern
     std::cout << "remove duplicates" << std::endl;
@@ -145,8 +150,10 @@ int main (int argc, char* argv[])
     d.addPoints(pp);
     d.removeduplicates(epsilon);
     d.getallPoints(pp);
+    std::cout << std::endl;
 
     // print out pointpattern file
+    if (state["savesurface"] == true)
     {
         std::cout << "save point pattern file" << std::endl;
         std::ofstream file;
@@ -154,6 +161,7 @@ int main (int argc, char* argv[])
         file << pp;
         file.close();
     }
+    std::cout << std::endl;
 
 
     // add particle surface triangulation to voro++ pre container for subcell division estimate
@@ -197,13 +205,24 @@ int main (int argc, char* argv[])
     container con(xmin, xmax, ymin, ymax, zmin, zmax, nx, ny, nz, xpbc, ypbc, zpbc, 8);
     pcon.setup(con);
     std::cout << "setting up voro++ container with division: (" << nx << " " << ny << " " << nz << ") for N= " << numberofpoints << " particles " << std::endl;
+    std::cout << std::endl;
 
     // postprocessing for normal voronoi Output
+    if(state["postprocessing"] == true)
     {
-        std::string customFileName = folder + "custom.stat";
-        con.print_custom("%i %s %v", customFileName);
-    }
 
+        std::cout << "Performing Postprocessing for normal (unmerged) Voronoi Cells" << std::endl;
+
+        std::string customFileName = folder + "custom.dat";
+        con.print_custom("%i %s %v", customFileName.c_str());
+        DoPostProcessing(folder);
+    }
+    else
+    {
+        std::cout << "skipping postprocessing" << std::endl;
+    }
+    std::cout << std::endl;
+    
     // merge voronoi cells to set voronoi diagram
     std::cout << "merge voronoi cells ";
     
@@ -326,14 +345,21 @@ int main (int argc, char* argv[])
         while (cla.inc());
     }
     std::cout << std::endl << " finished with N= " << ppreduced.points.size() << std::endl;
+    std::cout << std::endl;
 
     // save point pattern output
-    pw.savePointPatternForGnuplot(folder + "reduced.xyz");
+    if(state["savereduced"] == true)
+    {
+        pw.savePointPatternForGnuplot(folder + "reduced.xyz");
+    }
 
+    std::cout << std::endl;
     // remove duplicates and label back indices
     pw.removeduplicates(epsilon, xmin, xmax, ymin, ymax, zmin, zmax);
 
+    std::cout << std::endl;
     // Write poly file for karambola
+    if(state["savepoly"] == true)
     {
         std::cout << "writing poly file" << std::endl;
         std::ofstream file;

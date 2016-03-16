@@ -16,3 +16,9 @@ boundary = "periodic"
 xpbc = false 
 ypbc = false 
 zpbc = false 
+
+postprocessing = false
+
+savepoly = true
+savereduced = true
+savesurface = true

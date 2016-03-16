@@ -10,3 +10,8 @@ ymax = 5
 zmax = 5
 
 boundary = "none"
+postprocessing = false
+
+savepoly = true
+savereduced = true
+savesurface = true

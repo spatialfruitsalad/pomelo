@@ -120,7 +120,6 @@ public:
     // remove any duplicated points
     void removeduplicates(double epsilon)
     {
-        std::cout << std::endl;
         std::cout << "removing duplicates within one box" << std::endl;
         for (
             auto it = list.begin();
@@ -130,7 +129,6 @@ public:
             (*it).removeduplicates(epsilon);
         }
 
-        std::cout << std::endl;
         std::cout << "removing duplicates between neighboring boxes" << std::endl;
         for (unsigned int cx = 0; cx != x; ++cx)
             for (unsigned int cy = 0; cy != y; ++cy)

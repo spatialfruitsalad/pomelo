@@ -16,3 +16,5 @@ boundary = "periodic"
 xpbc = true
 ypbc = true
 zpbc = true
+
+postprocessing = false

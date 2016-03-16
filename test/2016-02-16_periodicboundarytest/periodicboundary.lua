@@ -17,3 +17,5 @@ xpbc = true
 ypbc = false 
 zpbc = true 
 
+postprocessing = false
+

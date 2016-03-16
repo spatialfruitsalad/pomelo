@@ -10,7 +10,7 @@ void pointpattern::addpointForCell(double x, double y, double z, int l, long cf,
 
 void pointpattern::addpoint(int l, double x, double y, double z)
 {
-    std::cout << "adding point " << l << " " << x << " " << y << " " << z << std::endl;
+    //std::cout << "adding point " << l << " " << x << " " << y << " " << z << std::endl;
     point p (x,y,z,l);
     points.push_back(p);
 }

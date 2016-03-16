@@ -12,3 +12,9 @@ zmax = 2.0
 epsilon = 1e-6
 
 boundary = "none"
+
+postprocessing = false
+
+savepoly = true
+savereduced = true
+savesurface = true
