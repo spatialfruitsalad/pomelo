@@ -12,6 +12,7 @@ public:
         list.resize(x*y*z);
     };
 
+    // read points from a pointpattern
     void addPoints ( pointpattern& porig, bool useCellIDs = false)
     {
         std::cout << "adding N= " <<porig.points.size() <<  " points for duplication check" << std::endl;
@@ -32,7 +33,7 @@ public:
         }
     }
 
-    // TODO Boundaries
+    // TODO periodic Boundaries
     void setboundaries (double xmi, double xma, double ymi, double yma, double zmi, double zma)
     {
         xmin = xmi;
@@ -68,7 +69,7 @@ public:
         int cz = static_cast<int>((dz - zmin)/sz);
 
 
-        // sometimes, double comparison goes wrong, therefore handle indices manually
+        // if strange index has been calculated, shift it to the valid range
         while (cx < 0 ) cx++;
         while (cy < 0 ) cy++;
         while (cz < 0 ) cz++;
@@ -77,11 +78,7 @@ public:
         while (static_cast<unsigned int>(cy) >= y ) cy--;
         while (static_cast<unsigned int>(cz) >= z ) cz--;
 
-        //std::cout << cx << " " << cy << " " << cz << std::endl;
-	//std::cout << zmin << std::endl;
-
         unsigned int index = getindex(cx,cy,cz);
-        //std::cout << "index: " << index << " " << list.size() <<  std::endl;
         if (cellID == -1)
         {
             list[index].addpoint(l, dx,dy,dz);
@@ -93,31 +90,34 @@ public:
 
     }
 
+    // store all points to passed parameter p
     void getallPoints ( pointpattern& p)
     {
         p.points.clear();
         unsigned int i = 0;
+        // loop over all subcells
         for (
             auto it = list.begin();
             it != list.end();
             ++it)
         {
+            // ... in each subcell, loop over all points
             for (
                 auto itp = (*it).points.begin();
                 itp != (*it).points.end();
                 ++itp)
             {
+                // add them to p
                 p.addpoint(itp->l, itp->x, itp->y, itp->z);
                 i++;
             }
         }
-        std::cout << "found " << i << std::endl;
-
+        //std::cout << "found " << i << std::endl;
 
     };
 
 
-
+    // remove any duplicated points
     void removeduplicates(double epsilon)
     {
         std::cout << std::endl;
