@@ -1,4 +1,4 @@
-CXX = g++ -Wall -Wextra -O3 -std=c++11 -I/usr/include/lua5.2 -ggdb
+CXX = g++ -Wall -Wextra -O3 -std=c++11 -I/usr/include/lua5.2 
 
 CXXVORO = g++ -std=c++11 -g -O3
 
@@ -21,10 +21,10 @@ obj/pointpattern.o: src/pointpattern.*
 #	$(CXX) -c -o obj/raytracer.o src/raytracer.cpp
 
 obj/main.o: src/main.cpp  src/duplicationremover.hpp src/polywriter.hpp src/postprocessing.hpp
-	$(CXX) -c -o obj/main.o src/main.cpp -llua5.2
+	$(CXX) -c -o obj/main.o src/main.cpp 
 
 LINK: obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o
-	$(CXX) obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o -o bin/setvoronoi -llua5.2
+	$(CXX) obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o -o bin/pomelo -llua5.2
 
 
 
@@ -33,4 +33,4 @@ LINK: obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o
 
 clean:
 	rm obj/*
-	rm bin/setvoronoi
+	rm bin/pomelo
