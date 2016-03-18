@@ -47,7 +47,7 @@ inline void DoPostProcessing(std::string folder)
     double count = vecVolume.size();
 
 
-    double binCount = count/20;
+    double binCount = count/5;
     if (binCount >= 100)
         binCount = 100;
 

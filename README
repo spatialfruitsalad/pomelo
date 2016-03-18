@@ -1,10 +1,18 @@
-This is pomelo, a tool that allows you to calculate set voronoi tesselations. 
+--- GENERAL ---
+
+This is Pomelo, a tool that allows you to calculate set voronoi tesselations. 
 If you want to learn about set voronoi diagramms, please refer to http://www.tandfonline.com/doi/abs/10.1080/14786435.2013.834389#.Vulxk9qdJLU  (DOI:10.1080/14786435.2013.834389) where the algorithm is described.
 
 It has been written by Simon Weis and Philipp Schoenhoefer at the Institute For Theoretical Physics 1 of the Friedrich-Alexander University Erlangen.
 The development of this software was funded by the German Research Foundation (DFG) Forschergruppe FOR1548 "Geometry and Physics of Spatial Random Systems" (GPSRS).
 
+Pomelo is free software. (released under GPL3, see Licence for details). While Pomelo is licenced under GPL3, external libraries (in the folder lib) may be licenced differently.
 
-TODO: System Requirements
-TODO: Usage
-TODO: Licence
+If you use Pomelo, we would be happy if you let us know. You can contact us at simon.weis@fau.de or philipp.schoenhoefer@fau.de
+
+--- System Requirements ---
+--- Compilation ---
+--- Usage ---
+
+--- Licence ---
+Pomelo is licenced under GPL3. See COPYING for further details.
