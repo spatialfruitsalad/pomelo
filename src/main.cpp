@@ -32,6 +32,8 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include "polywriter.hpp"
 #include "postprocessing.hpp"
 
+std::string version = "0.1.0";
+
 using namespace sel;
 using namespace voro;
 
@@ -72,21 +74,32 @@ int main (int argc, char* argv[])
     if(argc != 3 )
     {
         std::cerr << "Commandline parameters not correct .... aborting "  << std::endl;
-        std::cerr << std::endl <<  "Use setvoronoi this way:\n\t ./setvoronoi [path-to-lua-file] [outputfolder]"  << std::endl;
+        std::cerr << std::endl <<  "Use pomelo this way:\n\t ./pomelo [path-to-lua-file] [outputfolder]"  << std::endl;
         return -1;
     }
+
+    std::cout << "\nP O M E L O\n\nVersion " << version << "\nCopyright (C) 2016\nSimon Weis and Philipp Schoenhoefer\n\n";
+    std::cout << "pomelo home:\t\t http://www.theorie1.physik.uni-erlangen.de/" << std::endl << std::endl << std::endl;
+
 
     const std::string filename = argv[1];
     std::string folder = argv[2];
 
+    std::cout << "command line arguments parsed:\nLUA Parameter File: " << filename << "\noutfolder: " << folder << std::endl << std::endl;
+
     // lua state for the global parameter file
     State state {true};
-    state.Load(filename);
+    if(!state.Load(filename))
+    {
+        std::cerr << "error loading lua parameter file: " << filename << std::endl;
+        return -1;
+    }
 
     // command line sanity check
     if(folder.empty())
     {
-        throw std::string("outfilepath is empty");
+        std::cerr << "outfilepath is not valid" << std::endl;
+        return -1;
     }
 
     // sanitize folder path and create folder 
@@ -100,13 +113,14 @@ int main (int argc, char* argv[])
     std::string posfile = state["positionfile"];
     std::string readfile = state["readfile"];
 
-    std::cout << "Working on " << posfile << " " << readfile << std::endl;
+    std::cout << "Parsing Position File... \nWorking on " << posfile << " " << readfile << std::endl;
 
     // read particle parameters and positions
     std::vector<particleparameterset> setlist;
     fileloader loader;
     loader.read(posfile,setlist);
 
+    std::cout << "Creating Surface Triangulation... " << std::flush;
     // pp contains the triangulation of the particle surfaces
     pointpattern pp;
     
@@ -132,6 +146,8 @@ int main (int argc, char* argv[])
             readstate["docalculation"](pp);
         }
     }
+    std::cout << "finished!" << std::endl;
+    std::cout << "points created: " << pp.points.size() << std::endl << std::endl;
 
     // parse epsilon from the global lua parameter file
     const double epsilon = state["epsilon"];
@@ -166,7 +182,7 @@ int main (int argc, char* argv[])
     std::cout << std::endl;
 
     // clean degenerated vertices from particle surface triangulation pointpattern
-    std::cout << "remove duplicates" << std::endl;
+    std::cout << "remove duplicates in surface triangulation" << std::endl;
     duplicationremover d(16,16,16);
     d.setboundaries(xmin, xmax, ymin, ymax, zmin, zmax);
     d.addPoints(pp);
@@ -389,7 +405,7 @@ int main (int argc, char* argv[])
         file << pw;
         file.close();
     }
-    std::cout << "working for you has been nice. Thank you for using me & see you soon. :) "<< std::endl;
+    std::cout << "\nworking for you has been nice. Thank you for using me & see you soon. :) "<< std::endl;
 
     return 0;
 }

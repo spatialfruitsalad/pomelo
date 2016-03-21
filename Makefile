@@ -1,6 +1,6 @@
-CXX = g++ -Wall -Wextra -O3 -std=c++11 -I/usr/include/lua5.2 
+CXX = clang++ -Wall -Wextra -O3 -std=c++11 -I/usr/include/lua5.2 
 
-CXXVORO = g++ -std=c++11 -g -O3
+CXXVORO = clang++ -std=c++11 -g -O3
 
 MAIN = src/main
 

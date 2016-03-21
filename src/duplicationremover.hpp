@@ -35,7 +35,7 @@ public:
     // read points from a pointpattern
     void addPoints ( pointpattern& porig, bool useCellIDs = false)
     {
-        std::cout << "adding N= " <<porig.points.size() <<  " points for duplication check" << std::endl;
+        std::cout << "\tadding N= " <<porig.points.size() <<  " points for duplication check" << std::endl;
         for (  auto it = porig.points.begin();
                 it != porig.points.end();
                 ++it)
@@ -140,7 +140,7 @@ public:
     // remove any duplicated points
     void removeduplicates(double epsilon)
     {
-        std::cout << "removing duplicates within one box" << std::endl;
+        std::cout << "\tremoving duplicates within one box" << std::endl;
         for (
             auto it = list.begin();
             it != list.end();
@@ -149,7 +149,7 @@ public:
             (*it).removeduplicates(epsilon);
         }
 
-        std::cout << "removing duplicates between neighboring boxes" << std::endl;
+        std::cout << "\tremoving duplicates between neighboring boxes" << std::endl;
         for (unsigned int cx = 0; cx != x; ++cx)
             for (unsigned int cy = 0; cy != y; ++cy)
                 for (unsigned int cz = 0; cz != z; ++cz)
