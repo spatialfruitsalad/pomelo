@@ -1,5 +1,5 @@
-positionfile = "/home/pschoenhoefer/Promotion/setvoronoi_git/test/2016-02-16_periodictwospheres/ellipsoids_linear_std5.ellip"
-readfile = "/home/pschoenhoefer/Promotion/setvoronoi_git/test/2016-02-16_periodictwospheres/read.lua"
+positionfile = "../test/2016-02-16_periodictwospheres/ellipsoids_linear_std5.ellip"
+readfile = "../test/2016-02-16_periodictwospheres/read.lua"
 
 xmin = -3
 ymin = -3

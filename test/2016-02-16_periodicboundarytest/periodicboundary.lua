@@ -1,5 +1,5 @@
-positionfile = "/home/pschoenhoefer/Promotion/setvoronoi_git/test/2016-02-16_periodicboundarytest/pos.txt"
-readfile = "/home/pschoenhoefer/Promotion/setvoronoi_git/test/2016-02-16_periodicboundarytest/read.lua"
+positionfile = "../test/2016-02-16_periodicboundarytest/pos.txt"
+readfile = "../test/2016-02-16_periodicboundarytest/read.lua"
 
 xmin = -2.0
 ymin = -2.0

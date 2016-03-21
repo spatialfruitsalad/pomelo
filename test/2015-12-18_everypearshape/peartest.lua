@@ -1,5 +1,5 @@
-positionfile = "/home/sweis/setvoronoi/test/2015-12-18_everypearshape/onepear.dat"
-readfile = "/home/sweis/setvoronoi/test/2015-12-18_everypearshape/read.lua"
+positionfile = "../test/2015-12-18_everypearshape/onepear.dat"
+readfile = "../test/2015-12-18_everypearshape/read.lua"
 
 xmin = -2
 ymin = -5

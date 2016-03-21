@@ -1,5 +1,5 @@
-positionfile = "/home/sweis/setvoronoi/test/2015-12-16_tripoints/pos.txt"
-readfile = "/home/sweis/setvoronoi/test/2015-12-16_tripoints/read.lua"
+positionfile = "../test/2015-12-16_tripoints/pos.txt"
+readfile = "../test/2015-12-16_tripoints/read.lua"
 
 xmin = -2.0
 ymin = -2.0

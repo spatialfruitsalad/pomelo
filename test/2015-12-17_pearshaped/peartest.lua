@@ -1,5 +1,5 @@
-positionfile = "/home/pschoenhoefer/Promotion/setvoronoi_git/test/2015-12-17_pearshaped/onepear.dat"
-readfile = "/home/pschoenhoefer/Promotion/setvoronoi_git/test/2015-12-17_pearshaped/read.lua"
+positionfile = "../test/2015-12-17_pearshaped/onepear.dat"
+readfile = "../test/2015-12-17_pearshaped/read.lua"
 
 xmin = -5
 ymin = -5
