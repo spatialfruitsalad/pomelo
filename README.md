@@ -16,6 +16,10 @@ The development of this software was funded by the German Research Foundation (D
 
 Pomelo is free software. (released under GPL3, see License for details). While Pomelo is licensed under GPL3, external libraries (in the folder lib) may be licensed differently.
 
+External libraries are
+ - Voro++ for calculating point Voronoi cells(http://math.lbl.gov/voro++/)
+ - Selene for parsing Lua scripts (https://github.com/jeremyong/Selene)
+
 If you use Pomelo, we would be happy if you let us know. You can contact us at simon.weis@fau.de or philipp.schoenhoefer@fau.de
 
 ## System Requirements
