@@ -21,6 +21,8 @@ obj/pointpattern.o: src/pointpattern.*
 #	$(CXX) -c -o obj/raytracer.o src/raytracer.cpp
 
 obj/main.o: src/main.cpp  src/duplicationremover.hpp src/polywriter.hpp src/postprocessing.hpp
+	mkdir -p obj
+	mkdir -p bin
 	$(CXX) -c -o obj/main.o src/main.cpp 
 
 LINK: obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o
