@@ -63,13 +63,13 @@ public:
                 it != p.p.points.end();
                 ++it)
         {
-           f << it->l << ":\t" <<  std::setprecision(12) << it->x << " " << std::setprecision(12) << it-> y << " " << std::setprecision(12) << it->z<< std::endl;
+           f << it->l << ":    " <<  std::setprecision(12) << it->x << " " << std::setprecision(12) << it-> y << " " << std::setprecision(12) << it->z<< std::endl;
         }
 
         f << "POLYS" <<  std::endl;
         for (
-            auto it = p.faces.rbegin();
-            it != p.faces.rend();
+            auto it = p.faces.begin();
+            it != p.faces.end();
             ++ it)
         {
             unsigned int faceID = it->first;
@@ -88,7 +88,7 @@ public:
                 testing.push_back( (*it2) );
             }
 	    if(2 < testing.size()){
-	        f << it->first << ":\t";
+	        f << it->first << ":    ";
 	    	for(unsigned int kk = 0; kk < testing.size(); kk++ ){
 		    f << testing[kk] << " ";
 	    	}
