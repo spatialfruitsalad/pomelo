@@ -25,25 +25,36 @@ If you use Pomelo, we would be happy if you let us know. You can contact us at s
 ## System Requirements
  
 - g++ 4.9.2+, clang++ 3.5.0-10+
-- lib-lua 5.2+ & respective devel package
+- lib-lua 5.2+ & respective devel package (if you want to use generic mode)
 
 
 ## Compilation
-To compile your version of Pomelo, just call `make`. This will invoke the Makefile, which builds Pomelo.
+There are two version of Pomelo, the normal one and the generic one. The normal one can process simple tasks, while the generic one is more complex and can process any type of particles.
+
+To compile the normal version of Pomelo, just call `make`. This will invoke the Makefile, which builds Pomelo.
 The output is stored in the folder `bin`. Temporary object files can be found in the folder `obj`.
 
 ```
-mkdir bin
-mkdir obj
 make
-cd bin
 ```
-
-If you want to use clang++ instead of g++ just change the respective commands in the Makefile.
+If you want to use the generic version of Pomelo, call
+```
+make GENERIC
+```
 
 ## Usage 
 
-### Pomelo workflow 
+### Calling Pomelo 
+To use pomelo to calculate the voronoi tesselation of spheres, you can use the normal mode. Switch to the bin directory and type 
+
+```
+./pomelo -SPHERE ../test/2016-05-13_xyz/hs-16384_0.50.xyz [output folder]
+```
+
+Use any other xyz file and adapt the comment line as shown in the test case.
+
+
+### Pomelo workflow (generic) 
 Pomelo is designed to be as generic as possible and can process any type of particles.
 
 A set voronoi diagram will be calculated by spawning points on the surface of the particles (surface triangulation), by calculating the ordinary voronoi diagram of all the surface points and by merging the voronoi cells for one particle together.
@@ -51,11 +62,11 @@ A set voronoi diagram will be calculated by spawning points on the surface of th
 Pomelo allows you to use your own position file (e.g. the output of a simulation or image processing) and allows you to script the surface triangulation the way you want it by passing a simple to write lua file.
  
 
-### Calling Pomelo 
-To invoke Pomelo, switch to the bin directory. There you can call Pomelo by typing 
+### Calling Pomelo (generic)
+To invoke Pomelo, switch to the bin directory. For the generic mode to work, you will have to build the generic binary of pomelo. There you can call Pomelo by typing 
 
 ```
-./pomelo [file to lua path] [output folder]
+./pomelo -GENERIC [file to lua path] [output folder]
 ```
 
 The passed lua file is a parameter file, which contains all the information needed by pomelo. The output folder is the folder which will contain the calculated output. 
