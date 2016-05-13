@@ -31,8 +31,9 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include "duplicationremover.hpp"
 #include "polywriter.hpp"
 #include "postprocessing.hpp"
+#include "output.hpp"
 
-std::string version = "0.1.0";
+std::string version = "0.1.1";
 
 using namespace sel;
 using namespace voro;
@@ -66,35 +67,64 @@ void  getFaceVerticesOfFace( std::vector<int>& f, unsigned int k, std::vector<un
     }
 }
 
+enum eMode
+{
+    GENERIC,
+    SPHERE,
+    TETRA,
+    ELLIP,
+    SPHCYL
+} thisMode;
 
 int main (int argc, char* argv[])
 {
 
     // command line argument parsing
-    if(argc != 3 )
+    if(argc != 4 )
     {
         std::cerr << "Commandline parameters not correct .... aborting "  << std::endl;
-        std::cerr << std::endl <<  "Use pomelo this way:\n\t ./pomelo [path-to-lua-file] [outputfolder]"  << std::endl;
+        std::cerr << std::endl <<  "Use pomelo this way:\n\t./pomelo -TYPE [position-file] [outputfolder]"  << std::endl;
+        std::cerr <<  "\twith -TYPE being -SPHERE, -TETRA, -ELLIP, -SPHCYL"  << std::endl;
+        std::cerr << std::endl <<  "Or in a generic way:\n\t./pomelo -GENERIC [path-to-lua-file] [outputfolder]"  << std::endl;
         return -1;
     }
 
     std::cout << "\nP O M E L O\n\nVersion " << version << "\nCopyright (C) 2016\nSimon Weis and Philipp Schoenhoefer\n\n";
     std::cout << "pomelo home:\t\t http://www.theorie1.physik.uni-erlangen.de/" << std::endl << std::endl << std::endl;
 
-
-    const std::string filename = argv[1];
-    std::string folder = argv[2];
-
-    std::cout << "command line arguments parsed:\nLUA Parameter File: " << filename << "\noutfolder: " << folder << std::endl << std::endl;
-
-    // lua state for the global parameter file
-    State state {true};
-    if(!state.Load(filename))
+/////////////////////
+// Parse Command line arguments
+/////////////////////
+    const std::string mode = argv[1];
+    const std::string filename = argv[2];
+    std::string folder = argv[3];
+    if (mode == "-GENERIC" || mode == "--GENERIC")
     {
-        std::cerr << "error loading lua parameter file: " << filename << std::endl;
-        return -1;
+        thisMode = GENERIC;
     }
-
+    else if (mode == "-SPHERE")
+    {
+        thisMode = SPHERE;
+    }
+    else if (mode == "-TETRA")
+    {
+        thisMode = TETRA;
+    }
+    else if (mode == "-ELLIP")
+    {
+        thisMode = ELLIP;
+    }
+    else if (mode == "-SPHCYL")
+    {
+        thisMode = SPHCYL;
+    }
+    else
+    {
+        throw std::string ("unknown mode " + mode);
+    }
+/////////////////////
+// check if folder is ok and create it
+/////////////////////
     // command line sanity check
     if(folder.empty())
     {
@@ -109,78 +139,115 @@ int main (int argc, char* argv[])
     mkdir(folder.c_str(),0755);
 
 
-    // parse global parameters from lua file
-    std::string posfile = state["positionfile"];
-    std::string readfile = state["readfile"];
-
-    std::cout << "Parsing Position File... \nWorking on " << posfile << " " << readfile << std::endl;
-
-    // read particle parameters and positions
-    std::vector<particleparameterset> setlist;
-    fileloader loader;
-    loader.read(posfile,setlist);
-
-    std::cout << "Creating Surface Triangulation... " << std::flush;
+/////////////////////
+// Parameters that are needed
+/////////////////////
     // pp contains the triangulation of the particle surfaces
     pointpattern pp;
-    
-    // scope for the readstate to ensure it won't lack out to anything else
-    {
-        // create a readstate that translates the particle parameters to surface shapes
-        State readstate {true};
-        readstate["pointpattern"].SetClass<pointpattern> ("addpoint", &pointpattern::addpoint );
-        readstate.Load(readfile);
-
-
-        for(auto it = setlist.begin(); it != setlist.end(); ++it )
-        {
-            // read one particle from the position file
-            particleparameterset set = (*it);
-            // put all parameters for this particle to the lua readstate
-            for(unsigned int i = 0; i != set.parameter.size(); ++i)
-            {
-                readstate["s"][i] = set.get(i);
-            }
-
-            // let the lua readstate calculate the surface triangulation for this particle
-            readstate["docalculation"](pp);
-        }
-    }
-    std::cout << "finished!" << std::endl;
-    std::cout << "points created: " << pp.points.size() << std::endl << std::endl;
-
     // parse epsilon from the global lua parameter file
-    const double epsilon = state["epsilon"];
+    double epsilon = 1e-12;
     // parse boundaries from the global lua parameter file
-    const double xmin = state["xmin"];
-    const double ymin = state["ymin"];
-    const double zmin = state["zmin"];
-    const double xmax = state["xmax"];
-    const double ymax = state["ymax"];
-    const double zmax = state["zmax"];
+    double xmin = 0;
+    double ymin = 0;
+    double zmin = 0;
+    double xmax = 0;
+    double ymax = 0;
+    double zmax = 0;
     bool xpbc = false;
     bool ypbc = false;
     bool zpbc = false;
+    output outMode;
+    
+/////////////////////
+// Load Particles in GENERIC Mode
+/////////////////////
+    if (thisMode == GENERIC)
+    {
+        std::cout << "command line arguments parsed:\nLUA Parameter File: " << filename << "\noutfolder: " << folder << std::endl << std::endl;
 
-    std::string boundary = state["boundary"];
-    if(boundary == "periodic")
-    {
-        std::cout << "boundary condition mode 'periodic' selected." ;
-        xpbc = state["xpbc"];
-        ypbc = state["ypbc"];
-        zpbc = state["zpbc"];
-        std::cout << "x: " << xpbc << "\ny: " << ypbc << "\nz: " << zpbc << std::endl;
-    }
-    else if (boundary == "none")
-    {
-        std::cout << "boundary condition mode 'none' selected." << std::endl;
-    }
-    else
-    {
-        std::cerr << "bondary condition mode " << boundary << " not known" << std::endl;
-    }
-    std::cout << std::endl;
+        // lua state for the global parameter file
+        State state {true};
+        if(!state.Load(filename))
+        {
+            std::cerr << "error loading lua parameter file: " << filename << std::endl;
+            return -1;
+        }
 
+        // parse output from lua file
+        outMode.savesurface = state["savesurface"];
+        outMode.savepoly = state["savepoly"];
+        outMode.savereduced = state["savereduced"];
+        outMode.postprocessing = state["postprocessing"];
+        // parse global parameters from lua file
+        std::string posfile = state["positionfile"];
+        std::string readfile = state["readfile"];
+
+        std::cout << "Parsing Position File... \nWorking on " << posfile << " " << readfile << std::endl;
+
+        // read particle parameters and positions
+        std::vector<particleparameterset> setlist;
+        fileloader loader;
+        loader.read(posfile,setlist);
+
+        std::cout << "Creating Surface Triangulation... " << std::flush;
+        
+        // scope for the readstate to ensure it won't lack out to anything else
+        {
+            // create a readstate that translates the particle parameters to surface shapes
+            State readstate {true};
+            readstate["pointpattern"].SetClass<pointpattern> ("addpoint", &pointpattern::addpoint );
+            readstate.Load(readfile);
+
+
+            for(auto it = setlist.begin(); it != setlist.end(); ++it )
+            {
+                // read one particle from the position file
+                particleparameterset set = (*it);
+                // put all parameters for this particle to the lua readstate
+                for(unsigned int i = 0; i != set.parameter.size(); ++i)
+                {
+                    readstate["s"][i] = set.get(i);
+                }
+
+                // let the lua readstate calculate the surface triangulation for this particle
+                readstate["docalculation"](pp);
+            }
+        }
+        std::cout << "finished!" << std::endl;
+        std::cout << "points created: " << pp.points.size() << std::endl << std::endl;
+
+        // parse epsilon from the global lua parameter file
+        epsilon = state["epsilon"];
+        // parse boundaries from the global lua parameter file
+        xmin = state["xmin"];
+        ymin = state["ymin"];
+        zmin = state["zmin"];
+        xmax = state["xmax"];
+        ymax = state["ymax"];
+        zmax = state["zmax"];
+        xpbc = false;
+        ypbc = false;
+        zpbc = false;
+
+        std::string boundary = state["boundary"];
+        if(boundary == "periodic")
+        {
+            std::cout << "boundary condition mode 'periodic' selected." ;
+            xpbc = state["xpbc"];
+            ypbc = state["ypbc"];
+            zpbc = state["zpbc"];
+            std::cout << "x: " << xpbc << "\ny: " << ypbc << "\nz: " << zpbc << std::endl;
+        }
+        else if (boundary == "none")
+        {
+            std::cout << "boundary condition mode 'none' selected." << std::endl;
+        }
+        else
+        {
+            std::cerr << "bondary condition mode " << boundary << " not known" << std::endl;
+        }
+        std::cout << std::endl;
+    }
     // clean degenerated vertices from particle surface triangulation pointpattern
     std::cout << "remove duplicates in surface triangulation" << std::endl;
     duplicationremover d(16,16,16);
@@ -191,7 +258,7 @@ int main (int argc, char* argv[])
     std::cout << std::endl;
 
     // print out pointpattern file
-    if (state["savesurface"] == true)
+    if (outMode.savesurface == true)
     {
         std::cout << "save point pattern file" << std::endl;
         std::ofstream file;
@@ -246,7 +313,7 @@ int main (int argc, char* argv[])
     std::cout << std::endl;
 
     // postprocessing for normal voronoi Output
-    if(state["postprocessing"] == true)
+    if(outMode.postprocessing == true)
     {
 
         std::cout << "Performing Postprocessing for normal (unmerged) Voronoi Cells" << std::endl;
@@ -386,7 +453,7 @@ int main (int argc, char* argv[])
     std::cout << std::endl;
 
     // save point pattern output
-    if(state["savereduced"] == true)
+    if(outMode.savereduced == true)
     {
         pw.savePointPatternForGnuplot(folder + "reduced.xyz");
     }
@@ -397,7 +464,7 @@ int main (int argc, char* argv[])
 
     std::cout << std::endl;
     // Write poly file for karambola
-    if(state["savepoly"] == true)
+    if(outMode.savepoly == true)
     {
         std::cout << "writing poly file" << std::endl;
         std::ofstream file;
