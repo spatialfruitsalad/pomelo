@@ -35,8 +35,9 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include "output.hpp"
 
 std::string version = "0.1.1";
-
+#ifdef USELUA 
 using namespace sel;
+#endif
 using namespace voro;
 
 
@@ -160,6 +161,7 @@ int main (int argc, char* argv[])
 /////////////////////
 // Load Particles in GENERIC Mode
 /////////////////////
+#ifdef USELUA
     if (thisMode == GENERIC)
     {
         std::cout << "command line arguments parsed:\nLUA Parameter File: " << filename << "\noutfolder: " << folder << std::endl << std::endl;
@@ -247,7 +249,8 @@ int main (int argc, char* argv[])
         }
         std::cout << std::endl;
     }
-    else if (thisMode == SPHERE)
+#endif
+    if (thisMode == SPHERE)
     {
         parsexyz p;
         p.parse(filename, pp);

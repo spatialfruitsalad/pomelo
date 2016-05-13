@@ -20,7 +20,9 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 */
 #ifdef __GNUC__
 #pragma GCC system_header
+#ifdef USELUA
 #include "../lib/selene/include/selene.h"
+#endif
 #pragma GCC system_header
 #include "../lib/voro++/src/voro++.hh"
 #endif
