@@ -27,6 +27,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include <sys/stat.h>
 #include "include.hpp"
 #include "fileloader.hpp"
+#include "parsexyz.hpp"
 #include "pointpattern.hpp"
 #include "duplicationremover.hpp"
 #include "polywriter.hpp"
@@ -102,7 +103,7 @@ int main (int argc, char* argv[])
     {
         thisMode = GENERIC;
     }
-    else if (mode == "-SPHERE")
+    else if (mode == "-SPHERE" || mode == "--SPHERE")
     {
         thisMode = SPHERE;
     }
@@ -144,9 +145,7 @@ int main (int argc, char* argv[])
 /////////////////////
     // pp contains the triangulation of the particle surfaces
     pointpattern pp;
-    // parse epsilon from the global lua parameter file
     double epsilon = 1e-12;
-    // parse boundaries from the global lua parameter file
     double xmin = 0;
     double ymin = 0;
     double zmin = 0;
@@ -247,6 +246,21 @@ int main (int argc, char* argv[])
             std::cerr << "bondary condition mode " << boundary << " not known" << std::endl;
         }
         std::cout << std::endl;
+    }
+    else if (thisMode == SPHERE)
+    {
+        parsexyz p;
+        p.parse(filename, pp);
+
+        xmin = p.xmin;
+        ymin = p.ymin;
+        zmin = p.zmin;
+        xmax = p.xmax;
+        ymax = p.ymax;
+        zmax = p.zmax;
+        xpbc = p.xpbc;
+        ypbc = p.ypbc;
+        zpbc = p.zpbc;
     }
     // clean degenerated vertices from particle surface triangulation pointpattern
     std::cout << "remove duplicates in surface triangulation" << std::endl;

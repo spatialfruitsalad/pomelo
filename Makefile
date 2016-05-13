@@ -20,7 +20,7 @@ obj/pointpattern.o: src/pointpattern.*
 #obj/raytracer.o: obj/ray.o src/raytracer.*
 #	$(CXX) -c -o obj/raytracer.o src/raytracer.cpp
 
-obj/main.o: src/main.cpp  src/duplicationremover.hpp src/polywriter.hpp src/postprocessing.hpp
+obj/main.o: src/main.cpp  src/duplicationremover.hpp src/polywriter.hpp src/postprocessing.hpp src/parsexyz.hpp src/output.hpp
 	mkdir -p obj
 	mkdir -p bin
 	$(CXX) -c -o obj/main.o src/main.cpp 
