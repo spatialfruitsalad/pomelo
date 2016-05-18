@@ -97,7 +97,7 @@ public:
 	    else std::cout << testing.size() << " " << cellID << std::endl;
         }
 
-        f << "END";
+        f << "END\n";
         return f;
     };
 
