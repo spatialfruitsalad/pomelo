@@ -18,8 +18,8 @@ along with Pomelo.  If not, see <http://www.gnu.org/licenses/>.
 
 The development of Pomelo took place at the Friedrich-Alexander University of Erlangen and was funded by the German Research Foundation (DFG) Forschergruppe FOR1548 "Geometry and Physics of Spatial Random Systems" (GPSRS). 
 */
-#ifndef WRITERPOLY_H_GUARD_12345
-#define WRITERPOLY_H_GUARD_12345
+#ifndef WRITEROFF_H_GUARD_123456
+#define WRITEROFF_H_GUARD_123456
 
 #include <iomanip>
 #include <vector>
@@ -28,13 +28,13 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 
 #include "IWriter.hpp"
 
-class writerpoly : public IWriter
+class writeroff : public IWriter
 {
 public:
-    writerpoly()
+    writeroff()
     {
     };
-    writerpoly(IWriter const& other)
+    writeroff(IWriter const& other)
     {
         faceCellMap = other.faceCellMap;
         p = other.p;
@@ -43,16 +43,15 @@ public:
 
     void print(std::ostream& f) const
     {
-        f << "POINTS" << std::endl;
+        f << "OFF\n" << p.points.size() << " " << faces.size() << " 0\n";
         f << std::fixed;
         for(auto it =  p.points.begin();
                 it != p.points.end();
                 ++it)
         {
-           f << it->l << ":    " <<  std::setprecision(12) << it->x << " " << std::setprecision(12) << it-> y << " " << std::setprecision(12) << it->z<< std::endl;
+           f << std::setprecision(12) << it->x << " " << std::setprecision(12) << it-> y << " " << std::setprecision(12) << it->z<< std::endl;
         }
 
-        f << "POLYS" <<  std::endl;
         for (
             auto it = faces.begin();
             it != faces.end();
@@ -60,33 +59,35 @@ public:
         {
             unsigned int faceID = it->first;
             unsigned int cellID = faceCellMap.at(faceID);
-	    std::vector<unsigned int> testing;
+        std::vector<unsigned int> testing;
             for (auto it2 = it->second.rbegin(); it2 != it->second.rend(); ++it2)
             {
-		bool doppelt = false;
-		for(unsigned int kk = 0; kk < testing.size(); kk++ ){ 
-			if(testing[kk] == (*it2) ){ 
-				doppelt = true;
-				break;
-			}
-		}
-		if(doppelt) continue;
+        bool doppelt = false;
+        for(unsigned int kk = 0; kk < testing.size(); kk++ ){ 
+            if(testing[kk] == (*it2) ){ 
+                doppelt = true;
+                break;
+            }
+        }
+        if(doppelt) continue;
                 testing.push_back( (*it2) );
             }
-	    if(2 < testing.size()){
-	        f << it->first << ":    ";
-	    	for(unsigned int kk = 0; kk < testing.size(); kk++ ){
-		    f << testing[kk] << " ";
-	    	}
-            	f << "< c(0, 0, 0, " << cellID << ")" << std::endl;
-	    }
-	    else std::cout << testing.size() << " " << cellID << std::endl;
+        if(2 < testing.size()){
+            //f << it->first << ":    ";
+            f << testing.size() << " ";
+            for(unsigned int kk = 0; kk < testing.size(); kk++ ){
+            f << testing[kk]-1 << " ";
+            }
+                f << "0 0 0 " << cellID << "" << std::endl;
+        }
+        else std::cout << testing.size() << " " << cellID << std::endl;
         }
 
-        f << "END";
+        f << "\n";
     };
 
 
 };
 
 #endif
+

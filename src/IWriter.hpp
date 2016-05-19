@@ -167,11 +167,11 @@ public:
     std::map<unsigned int, unsigned int> faceCellMap;   // first is face id, second is cell id
     std::map<unsigned int, std::vector<unsigned int > > faces;
 private:
-
     unsigned int currentVertexLabel = 1;
     unsigned int currentFaceLabel = 1;
-// since you cant override operators, this is just another level of indirection
+
 protected:
+// since you cant override operators, this is just another level of indirection
     virtual void print (std::ostream& out) const = 0;
 };
 

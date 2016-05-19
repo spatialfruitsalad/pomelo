@@ -31,6 +31,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include "pointpattern.hpp"
 #include "duplicationremover.hpp"
 #include "writerpoly.hpp"
+#include "writeroff.hpp"
 #include "postprocessing.hpp"
 #include "output.hpp"
 
@@ -483,11 +484,22 @@ int main (int argc, char* argv[])
     // Write poly file for karambola
     if(outMode.savepoly == true)
     {
+        {
         std::cout << "writing poly file" << std::endl;
         std::ofstream file;
         file.open(folder + "cell.poly");
         file << pw;
         file.close();
+        }
+        {
+        std::cout << "writing off file" << std::endl;
+        std::ofstream file;
+        file.open(folder+"cell.off");
+        writeroff wo(pw);
+        file << wo;
+        file.close();
+        }
+
     }
     std::cout << "\nworking for you has been nice. Thank you for using me & see you soon. :) "<< std::endl;
 
