@@ -30,7 +30,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include "parsexyz.hpp"
 #include "pointpattern.hpp"
 #include "duplicationremover.hpp"
-#include "polywriter.hpp"
+#include "writerpoly.hpp"
 #include "postprocessing.hpp"
 #include "output.hpp"
 
@@ -349,7 +349,7 @@ int main (int argc, char* argv[])
     std::cout << "merge voronoi cells ";
     
     pointpattern ppreduced;
-    polywriter pw;
+    writerpoly pw;
     // loop over all voronoi cells
     c_loop_all cla(con);
     // cell currently worked on

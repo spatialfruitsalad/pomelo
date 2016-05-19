@@ -18,8 +18,8 @@ along with Pomelo.  If not, see <http://www.gnu.org/licenses/>.
 
 The development of Pomelo took place at the Friedrich-Alexander University of Erlangen and was funded by the German Research Foundation (DFG) Forschergruppe FOR1548 "Geometry and Physics of Spatial Random Systems" (GPSRS). 
 */
-#ifndef POLYWRITER_H_123456
-#define POLYWRITER_H_123456
+#ifndef IWRITER_H_123456
+#define IWRITER_H_123456
 
 #include <iomanip>
 #include <vector>
@@ -28,7 +28,8 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 
 #include "duplicationremover.hpp"
 
-class polywriter
+
+class IWriter
 {
 public:
     void addface( std::vector<double> positionlist, unsigned int cellID)
@@ -54,50 +55,11 @@ public:
         faces[faceID] = facevertexIDs;
     };
 
+    
 
-    friend std::ostream& operator << (std::ostream &f, const polywriter& p)
+    friend std::ostream& operator << (std::ostream &f, const IWriter& p)
     {
-        f << "POINTS" << std::endl;
-        f << std::fixed;
-        for(auto it =  p.p.points.begin();
-                it != p.p.points.end();
-                ++it)
-        {
-           f << it->l << ":    " <<  std::setprecision(12) << it->x << " " << std::setprecision(12) << it-> y << " " << std::setprecision(12) << it->z<< std::endl;
-        }
-
-        f << "POLYS" <<  std::endl;
-        for (
-            auto it = p.faces.begin();
-            it != p.faces.end();
-            ++ it)
-        {
-            unsigned int faceID = it->first;
-            unsigned int cellID = p.faceCellMap.at(faceID);
-	    std::vector<unsigned int> testing;
-            for (auto it2 = it->second.rbegin(); it2 != it->second.rend(); ++it2)
-            {
-		bool doppelt = false;
-		for(unsigned int kk = 0; kk < testing.size(); kk++ ){ 
-			if(testing[kk] == (*it2) ){ 
-				doppelt = true;
-				break;
-			}
-		}
-		if(doppelt) continue;
-                testing.push_back( (*it2) );
-            }
-	    if(2 < testing.size()){
-	        f << it->first << ":    ";
-	    	for(unsigned int kk = 0; kk < testing.size(); kk++ ){
-		    f << testing[kk] << " ";
-	    	}
-            	f << "< c(0, 0, 0, " << cellID << ")" << std::endl;
-	    }
-	    else std::cout << testing.size() << " " << cellID << std::endl;
-        }
-
-        f << "END";
+        p.print(f);
         return f;
     };
 
@@ -113,7 +75,7 @@ public:
 
     void removeduplicates (double epsilon, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax)
     {
-        std::cout << "polywriter: remove duplicates" << std::endl;
+        std::cout << "IWriter: remove duplicates" << std::endl;
         duplicationremover d(16,16,16);
         d.setboundaries(xmin, xmax, ymin, ymax, zmin, zmax);
         std::cout << "\tadding points" << std::endl;
@@ -208,6 +170,11 @@ private:
 
     unsigned int currentVertexLabel = 1;
     unsigned int currentFaceLabel = 1;
+// since you cant override operators, this is just another level of indirection
+protected:
+    virtual void print (std::ostream& out) const = 0;
 };
+
+
 
 #endif
