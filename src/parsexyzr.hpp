@@ -18,18 +18,19 @@ along with Pomelo.  If not, see <http://www.gnu.org/licenses/>.
 
 The development of Pomelo took place at the Friedrich-Alexander University of Erlangen and was funded by the German Research Foundation (DFG) Forschergruppe FOR1548 "Geometry and Physics of Spatial Random Systems" (GPSRS). 
 */
-#ifndef PARSEXYZ_H_GUARD_123456
-#define PARSEXYZ_H_GUARD_123456
+#ifndef PARSEXYZR_H_GUARD_123456
+#define PARSEXYZR_H_GUARD_123456
 
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
 #include <vector>
+#include <cmath>
 #include "pointpattern.hpp"
 #include "splitstring.hpp"
 
-class parsexyz
+class parsexyzr
 {
 public:
     double xmin;
@@ -38,11 +39,14 @@ public:
     double xmax;
     double ymax;
     double zmax;
+    double shrink;
+    int stepsTheta;
+    int stepsPhi;
     bool xpbc;
     bool ypbc;
     bool zpbc;
 
-    parsexyz () : xmin(0),  ymin(0), zmin(0), xmax(0) ,ymax(0), zmax(0), xpbc(false), ypbc(false), zpbc(false)
+    parsexyzr () : xmin(0),  ymin(0), zmin(0), xmax(0) ,ymax(0), zmax(0), shrink(0.95), stepsTheta(10), stepsPhi(10),  xpbc(false), ypbc(false), zpbc(false)
     {};
     void parse(std::string const filename, pointpattern& pp)
     {
@@ -92,6 +96,30 @@ public:
                     std::cout << "xyz parser boundaries: " << pbcsplit[1] << std::endl;
                 }
             }
+            else if (s.find("shrink") != std::string::npos)
+            {
+                splitstring split (s.c_str());
+                std::vector<std::string> shrinksplit = split.split('=');
+                if (shrinksplit.size() != 2)
+                    throw std::string("cannot parse parameters from XYZ file");
+                shrink = std::stod(shrinksplit[1]);
+            }
+            else if (s.find("stepstheta") != std::string::npos)
+            {
+                splitstring split (s.c_str());
+                std::vector<std::string> stepsThetaSplit = split.split('=');
+                if (stepsThetaSplit.size() != 2)
+                    throw std::string("cannot parse parameters from XYZ file");
+                stepsTheta = std::stoi(stepsThetaSplit[1]);
+            }
+            else if (s.find("stepsphi") != std::string::npos)
+            {
+                splitstring split (s.c_str());
+                std::vector<std::string> stepsPhiSplit = split.split('=');
+                if (stepsPhiSplit.size() != 2)
+                    throw std::string("cannot parse parameters from XYZ file");
+                stepsPhi = std::stoi(stepsPhiSplit[1]);
+            }
 
         }
         
@@ -100,14 +128,26 @@ public:
         {
             line = line.substr(2, line.size()); // remove "P "
             std::istringstream iss(line);
-            double x ,y, z;
-            if (!(iss >> x >> y >> z))
+            double x ,y, z, r;
+            if (!(iss >> x >> y >> z >> r))
             {
                 std::cerr << "error parsing one line in XYZ file" << std::endl;
                 break;
             }
+            
             linesloaded++;
-            pp.addpoint(linesloaded, x,y,z);
+            for(int i = 0; i != stepsTheta; ++i)
+            for(int j = 0; j != stepsPhi; ++j)
+            {
+                double theta = static_cast<double>(i) * (1.0/stepsTheta) * std::acos(-1)*2.0;
+                double phi =   std::acos( static_cast<double>(j) * (2.0/stepsPhi) - 1.0);
+                std::cout << phi << " " << theta << std::endl;
+                double xp = x + cos(theta) * sin(phi)*(r*shrink);
+                double yp = y + sin(theta) * sin(phi)*(r*shrink);
+                double zp = z + cos(phi)*(r * shrink);
+                pp.addpoint(linesloaded, xp, yp, zp);
+            }
+
         }
         std::cout << "parsed "  << linesloaded << " lines" << std::endl;
     };

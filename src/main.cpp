@@ -28,6 +28,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include "include.hpp"
 #include "fileloader.hpp"
 #include "parsexyz.hpp"
+#include "parsexyzr.hpp"
 #include "pointpattern.hpp"
 #include "duplicationremover.hpp"
 #include "writerpoly.hpp"
@@ -74,6 +75,7 @@ enum eMode
 {
     GENERIC,
     SPHERE,
+    SPHEREPOLY,
     TETRA,
     ELLIP,
     SPHCYL
@@ -87,7 +89,7 @@ int main (int argc, char* argv[])
     {
         std::cerr << "Commandline parameters not correct .... aborting "  << std::endl;
         std::cerr << std::endl <<  "Use pomelo this way:\n\t./pomelo -TYPE [position-file] [outputfolder]"  << std::endl;
-        std::cerr <<  "\twith -TYPE being -SPHERE, -TETRA, -ELLIP, -SPHCYL"  << std::endl;
+        std::cerr <<  "\twith -TYPE being -SPHERE, -SPHEREPOLY -TETRA, -ELLIP, -SPHCYL"  << std::endl;
         std::cerr << std::endl <<  "Or in a generic way:\n\t./pomelo -GENERIC [path-to-lua-file] [outputfolder]"  << std::endl;
         return -1;
     }
@@ -107,6 +109,10 @@ int main (int argc, char* argv[])
     {
         thisMode = SPHERE;
     }
+    else if (mode == "-SPHEREPOLY" || mode == "--SPHEREPOLY")
+    {
+        thisMode = SPHEREPOLY;
+    }
     else if (mode == "-TETRA")
     {
         thisMode = TETRA;
@@ -119,7 +125,7 @@ int main (int argc, char* argv[])
     {
         thisMode = SPHCYL;
     }
-    if (mode == "-GENERIC" || mode == "--GENERIC")
+    else if (mode == "-GENERIC" || mode == "--GENERIC")
     {
 #ifdef USELUA
         thisMode = GENERIC;
@@ -268,6 +274,21 @@ int main (int argc, char* argv[])
     if (thisMode == SPHERE)
     {
         parsexyz p;
+        p.parse(filename, pp);
+
+        xmin = p.xmin;
+        ymin = p.ymin;
+        zmin = p.zmin;
+        xmax = p.xmax;
+        ymax = p.ymax;
+        zmax = p.zmax;
+        xpbc = p.xpbc;
+        ypbc = p.ypbc;
+        zpbc = p.zpbc;
+    }
+    else if (thisMode == SPHEREPOLY)
+    {
+        parsexyzr p;
         p.parse(filename, pp);
 
         xmin = p.xmin;
