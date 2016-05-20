@@ -101,11 +101,9 @@ int main (int argc, char* argv[])
     const std::string mode = argv[1];
     const std::string filename = argv[2];
     std::string folder = argv[3];
-    if (mode == "-GENERIC" || mode == "--GENERIC")
+    try
     {
-        thisMode = GENERIC;
-    }
-    else if (mode == "-SPHERE" || mode == "--SPHERE")
+    if (mode == "-SPHERE" || mode == "--SPHERE")
     {
         thisMode = SPHERE;
     }
@@ -121,9 +119,24 @@ int main (int argc, char* argv[])
     {
         thisMode = SPHCYL;
     }
+    if (mode == "-GENERIC" || mode == "--GENERIC")
+    {
+#ifdef USELUA
+        thisMode = GENERIC;
+#else
+        throw std::string ("unknown mode " + mode + ".\n to enable GENERIC mode, you must build pomelo with 'make GENERIC'");
+
+#endif
+    }
     else
     {
         throw std::string ("unknown mode " + mode);
+    }
+    }
+    catch (std::string const &  e)
+    {
+        std::cerr << "an error occurred: " << e << std::endl;
+        return -1;
     }
 /////////////////////
 // check if folder is ok and create it
@@ -485,23 +498,22 @@ int main (int argc, char* argv[])
     // Write poly file for karambola
     if(outMode.savepoly == true)
     {
-        {
         std::cout << "writing poly file" << std::endl;
         std::ofstream file;
         file.open(folder + "cell.poly");
         file << pw;
         file.close();
-        }
-        {
-        std::cout << "writing off file" << std::endl;
-        std::ofstream file;
-        file.open(folder+"cell.off");
-        writeroff wo(pw);
-        file << wo;
-        file.close();
-        }
-
     }
+    if(outMode.saveoff == true)
+    {
+    std::cout << "writing off file" << std::endl;
+    std::ofstream file;
+    file.open(folder+"cell.off");
+    writeroff wo(pw);
+    file << wo;
+    file.close();
+    }
+
     std::cout << "\nworking for you has been nice. Thank you for using me & see you soon. :) "<< std::endl;
 
     return 0;
