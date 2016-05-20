@@ -178,6 +178,7 @@ int main (int argc, char* argv[])
         // parse output from lua file
         outMode.savesurface = state["savesurface"];
         outMode.savepoly = state["savepoly"];
+        outMode.saveoff = state["saveoff"];
         outMode.savereduced = state["savereduced"];
         outMode.postprocessing = state["postprocessing"];
         // parse global parameters from lua file

@@ -23,8 +23,9 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 
 struct output
 {
-    output ():savepoly(true), savesurface(true), savereduced(true), postprocessing(true) {};
+    output ():savepoly(true), saveoff(true), savesurface(true), savereduced(true), postprocessing(true) {};
     bool savepoly;
+    bool saveoff;
     bool savesurface;
     bool savereduced;
     bool postprocessing;
