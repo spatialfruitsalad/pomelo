@@ -31,7 +31,26 @@ struct point
     double x, y, z;
     int l;
     long faceID, cellID;
+    point& operator= ( point const& rhs)
+    {
+        x = rhs.x;
+        y = rhs.y;
+        z = rhs.z;
+        l = rhs.l;
+        return *this;
+        
+    }
+    point operator+ ( point const& rhs) const
+    {
+        return point(point::x + rhs.x, point::y + rhs.y, point::z + rhs.z, point::l);
+    }
 };
+
+point operator/ (const point& p,  double const& f);
+point operator* ( double const& f, const point& p);
+point operator* (const point& p,  double const& f);
+
+
 
 inline bool checkdistancecloserthan (point& a, point& b, double e)
 {
@@ -50,8 +69,10 @@ public:
     void print();
     void removeduplicates ( double epsilon);
     void removeduplicates ( double epsilon, pointpattern& p);
+
     std::vector<point> points;
     std::map<unsigned int, long> indexShift;    // first is particle ID, second is new Index or -1
+    
 
     friend std::ostream& operator << (std::ostream &f, const pointpattern& p)
     {

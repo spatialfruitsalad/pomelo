@@ -140,3 +140,18 @@ void pointpattern::removeduplicates (double epsilon, pointpattern& p)
     }
     points = newpoints;
 }
+
+point operator/ (const point& p,  double const& f)
+{
+    return point(p.x /f, p.y / f, p.z /f, p.l);
+}
+
+point operator* ( double const& f, const point& p)
+{
+    return point(p.x *f, p.y * f, p.z *f, p.l);
+}
+
+point operator* (const point& p,  double const& f)
+{
+    return point(p.x *f, p.y * f, p.z *f, p.l);
+}

@@ -29,6 +29,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include "fileloader.hpp"
 #include "parsexyz.hpp"
 #include "parsexyzr.hpp"
+#include "parsetetra.hpp"
 #include "pointpattern.hpp"
 #include "duplicationremover.hpp"
 #include "writerpoly.hpp"
@@ -301,6 +302,26 @@ int main (int argc, char* argv[])
         ypbc = p.ypbc;
         zpbc = p.zpbc;
     }
+    else if (thisMode == TETRA)
+    {
+        parsetetra p;
+        p.parse(filename, pp);
+    
+        std::cout << "epsilon " << epsilon << std::endl;
+        xmin = p.xmin;
+        ymin = p.ymin;
+        zmin = p.zmin;
+        xmax = p.xmax;
+        ymax = p.ymax;
+        zmax = p.zmax;
+        xpbc = p.xpbc;
+        ypbc = p.ypbc;
+        zpbc = p.zpbc;
+    }
+
+
+
+
     // clean degenerated vertices from particle surface triangulation pointpattern
     std::cout << "remove duplicates in surface triangulation" << std::endl;
     duplicationremover d(16,16,16);
