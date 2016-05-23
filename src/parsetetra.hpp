@@ -29,7 +29,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include <algorithm>
 #include "pointpattern.hpp"
 #include "splitstring.hpp"
-#include "pointmath.hpp"
+#include "triangle.hpp"
 
 class parsetetra
 {
@@ -114,9 +114,9 @@ public:
             triangle::recusiveSubdivide(3, list);
             //std::cout << "subdivision ended" << std::endl;
 
-            for(t : list)
+            for(triangle t : list)
             {
-                for(x : t.p)
+                for(point x : t.p)
                 {
                     pp.addpoint(x.l, x.x, x.y, x.z);
                 }
@@ -139,6 +139,30 @@ public:
 
 
     };
+private:
+    static void dumbShrink (std::vector<point>& p, double f  = 0.95)
+    {
+        if(p.size() == 0) return;
+    
+        // calculate center of mass
+        point com (0,0,0,p[0].l);
+        for(point q : p)
+        {
+            com = com + q;
+        }
+
+        com = com / static_cast<double>(p.size());
+        
+        // shift collection to com = 0
+        // shrink all values
+        // move them back to original com
+        for(point q : p)
+        {
+            q = q + (-1.0)* com;
+            q = q * f;
+            q = q + com;
+        }
+    }
 };
 
 #endif
