@@ -15,12 +15,12 @@ obj/fileloader.o: src/fileloader.*
 obj/pointpattern.o: src/pointpattern.*
 	$(CXX) -c -o obj/pointpattern.o src/pointpattern.cpp
 
-obj/main_luafree.o: src/main.cpp  src/triangle.hpp src/duplicationremover.hpp src/writerpoly.hpp src/writeroff.hpp src/IWriter.hpp src/postprocessing.hpp src/parsexyz.hpp src/parsexyzr.hpp src/parsetetra.hpp src/output.hpp src/colorTable.hpp
+obj/main_luafree.o: src/main.cpp  src/triangle.hpp src/duplicationremover.hpp src/writerpoly.hpp src/writeroff.hpp src/IWriter.hpp src/postprocessing.hpp src/parsexyz.hpp src/parseellipsoids.hpp src/GenericMatrix.h src/parsexyzr.hpp src/parsetetra.hpp src/output.hpp src/colorTable.hpp
 	mkdir -p obj
 	mkdir -p bin
 	$(CXX) -c -o obj/main_luafree.o src/main.cpp 
 
-obj/main.o: src/main.cpp src/triangle.hpp src/duplicationremover.hpp src/writerpoly.hpp src/writeroff.hpp src/IWriter.hpp src/postprocessing.hpp src/parsexyz.hpp src/parsexyzr.hpp src/parsetetra.hpp  src/output.hpp src/colorTable.hpp
+obj/main.o: src/main.cpp src/triangle.hpp src/duplicationremover.hpp src/writerpoly.hpp src/writeroff.hpp src/IWriter.hpp src/postprocessing.hpp src/parsexyz.hpp src/parsexyzr.hpp src/parseellipsoids.hpp src/GenericMatrix.h src/parsetetra.hpp  src/output.hpp src/colorTable.hpp
 	mkdir -p obj
 	mkdir -p bin
 	$(CXX) -c -o obj/main.o src/main.cpp -I/usr/include/lua5.2 $(LUAFLAG)
