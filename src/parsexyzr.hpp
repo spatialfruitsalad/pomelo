@@ -137,7 +137,7 @@ public:
             
             linesloaded++;
             for(int i = 0; i != stepsTheta; ++i)
-            for(int j = 0; j != stepsPhi; ++j)
+            for(int j = 0; j <= stepsPhi; ++j)
             {
                 double theta = static_cast<double>(i) * (1.0/stepsTheta) * std::acos(-1)*2.0;
                 double phi =   std::acos( static_cast<double>(j) * (2.0/stepsPhi) - 1.0);

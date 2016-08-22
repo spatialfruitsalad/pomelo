@@ -46,7 +46,7 @@ public:
 
     parsetetra () : xmin(0),  ymin(0), zmin(0), xmax(0) ,ymax(0), zmax(0), xpbc(false), ypbc(false), zpbc(false)
     {};
-    void parse(std::string const filename, pointpattern& pp)
+    void parse(std::string const filename, pointpattern& pp, double shrink = 0.95)
     {
         std::cout << "parse tetra file" << std::endl;
         std::ifstream infile;
@@ -99,7 +99,7 @@ public:
             zvals.push_back(p4.z);
 
             std::vector<point> p = {p1,p2,p3,p4};
-            dumbShrink( p, 0.95);
+            dumbShrink( p, shrink);
 
             //std::cout << "points loaded" << std::endl;
             triangle t1 (p1, p2, p3); 
@@ -135,8 +135,6 @@ public:
         xmax = *std::max_element(xvals.begin(), xvals.end());
         ymax = *std::max_element(yvals.begin(), yvals.end());
         zmax = *std::max_element(zvals.begin(), zvals.end());
-        
-
 
     };
 private:

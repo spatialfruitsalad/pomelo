@@ -30,6 +30,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include "parsexyz.hpp"
 #include "parsexyzr.hpp"
 #include "parsetetra.hpp"
+#include "parsesphcyl.hpp"
 #include "parseellipsoids.hpp"
 #include "pointpattern.hpp"
 #include "duplicationremover.hpp"
@@ -87,7 +88,7 @@ int main (int argc, char* argv[])
 {
 
     // command line argument parsing
-    if(argc != 4 )
+    if(argc != 4 && argc != 5 )
     {
         std::cerr << "Commandline parameters not correct .... aborting "  << std::endl;
         std::cerr << std::endl <<  "Use pomelo this way:\n\t./pomelo -TYPE [position-file] [outputfolder]"  << std::endl;
@@ -115,17 +116,18 @@ int main (int argc, char* argv[])
     {
         thisMode = SPHEREPOLY;
     }
-    else if (mode == "-TETRA")
+    else if (mode == "-TETRA" || mode =="--TETRA")
     {
         thisMode = TETRA;
     }
-    else if (mode == "-ELLIP")
+    else if (mode == "-ELLIP" || mode == "--ELLIP")
     {
         thisMode = ELLIP;
     }
-    else if (mode == "-SPHCYL")
+    else if (mode == "-SPHCYL" || mode == "--SPHCYL")
     {
         thisMode = SPHCYL;
+        std::cout << "selected mode SPHCYL" << std::endl;
     }
     else if (mode == "-GENERIC" || mode == "--GENERIC")
     {
@@ -160,6 +162,7 @@ int main (int argc, char* argv[])
     char lastCharOfFolder = *folder.rbegin();
     if (lastCharOfFolder != '/')
         folder += '/';
+    std::cout << "creating Folder for output at " << folder << std::endl;
     mkdir(folder.c_str(),0755);
 
 
@@ -322,7 +325,8 @@ int main (int argc, char* argv[])
     else if (thisMode == TETRA)
     {
         parsetetra p;
-        p.parse(filename, pp);
+        double shrink = atof(argv[4]);
+        p.parse(filename, pp, shrink);
     
         std::cout << "epsilon " << epsilon << std::endl;
         xmin = p.xmin;
@@ -335,8 +339,22 @@ int main (int argc, char* argv[])
         ypbc = p.ypbc;
         zpbc = p.zpbc;
     }
+    else if (thisMode == SPHCYL)
+    {
 
+        parsesphcyl p;
+        p.parse(filename, pp);
 
+        xmin = p.xmin;
+        ymin = p.ymin;
+        zmin = p.zmin;
+        xmax = p.xmax;
+        ymax = p.ymax;
+        zmax = p.zmax;
+        xpbc = p.xpbc;
+        ypbc = p.ypbc;
+        zpbc = p.zpbc;
+    }
 
 
     // clean degenerated vertices from particle surface triangulation pointpattern
@@ -543,6 +561,12 @@ int main (int argc, char* argv[])
     std::cout << std::endl << " finished with N= " << ppreduced.points.size() << std::endl;
     std::cout << std::endl;
 
+    if (ppreduced.points.size() == 0)
+    {
+        std::cout << "\nall Voronoi Vertices have been removed. Check for periodic boundary conditions. skipping further calculation." << std::endl;
+        std::cout << "\nworking for you has been nice. Thank you for using me & see you soon. :) "<< std::endl;
+        return 0;
+    }
     // save point pattern output
     if(outMode.savereduced == true)
     {
