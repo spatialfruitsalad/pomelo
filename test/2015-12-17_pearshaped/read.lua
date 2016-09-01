@@ -1,6 +1,6 @@
 stepst = 10
 stepsphi = 10
-shrink = 0.6
+shrink = 0.95
 
 s = {}
 

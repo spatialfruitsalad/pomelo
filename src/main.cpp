@@ -488,23 +488,53 @@ int main (int argc, char* argv[])
                 double yabs2 = yabs*yabs;
                 double zabs2 = zabs*zabs;
 
+                double xabs_alt, yabs_alt, zabs_alt;
+                double xabs2_alt, yabs2_alt, zabs2_alt;
+
                 ref[l][3]=0;
-                if(xabs2 > 4)
+                if(xpbc)
                 {
-                    if(xabs < 0) ref[l][3] = xdist;
-                    else ref[l][3] = -xdist;
+                    if(xabs < 0) xabs_alt = xabs + xdist;
+                    else xabs_alt = xabs - xdist;
+                    
+                    xabs2_alt = xabs_alt*xabs_alt;
+
+                    if(xabs2 < xabs2_alt) ref[l][3] = 0;
+                    else
+                    { 
+                        if(xabs < 0) ref[l][3] = xdist;
+                        else ref[l][3] = -xdist;
+                    }
                 }
                 ref[l][4]=0;
-                if(yabs2 > 4)
+                if(ypbc)
                 {
-                    if(yabs < 0) ref[l][4] = ydist;
-                    else ref[l][4] = -ydist;
+                    if(yabs < 0) yabs_alt = yabs + ydist;
+                    else yabs_alt = yabs - ydist;
+                    
+                    yabs2_alt = yabs_alt*yabs_alt;
+
+                    if(yabs2 < yabs2_alt) ref[l][4] = 0;
+                    else
+                    { 
+                        if(yabs < 0) ref[l][4] = ydist;
+                        else ref[l][4] = -ydist;
+                    }
                 }
                 ref[l][5]=0;
-                if(zabs2 > 4)
+                if(zpbc)
                 {
-                    if(zabs < 0) ref[l][5] = zdist;
-                    else ref[l][5] = -zdist;
+                    if(zabs < 0) zabs_alt = zabs + zdist;
+                    else zabs_alt = zabs - zdist;
+                    
+                    zabs2_alt = zabs_alt*zabs_alt;
+
+                    if(zabs2 < zabs2_alt) ref[l][5] = 0;
+                    else
+                    { 
+                        if(zabs < 0) ref[l][5] = zdist;
+                        else ref[l][5] = -zdist;
+                    }
                 }
 
                 std::vector<int> f; // list of face vertices (bracketed, as ID)
