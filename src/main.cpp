@@ -88,7 +88,7 @@ int main (int argc, char* argv[])
 {
 
     // command line argument parsing
-    if(argc != 4 && argc != 5 )
+    if(argc != 4 && argc != 6 )
     {
         std::cerr << "Commandline parameters not correct .... aborting "  << std::endl;
         std::cerr << std::endl <<  "Use pomelo this way:\n\t./pomelo -TYPE [position-file] [outputfolder]"  << std::endl;
@@ -171,7 +171,7 @@ int main (int argc, char* argv[])
 /////////////////////
     // pp contains the triangulation of the particle surfaces
     pointpattern pp;
-    double epsilon = 1e-12;
+    double epsilon = 1e-9;
     double xmin = 0;
     double ymin = 0;
     double zmin = 0;
@@ -326,8 +326,9 @@ int main (int argc, char* argv[])
     {
         parsetetra p;
         double shrink = atof(argv[4]);
-        p.parse(filename, pp, shrink);
-    
+        int iterations = atoi(argv[5]);
+        p.parse(filename, pp, shrink, iterations);
+        outMode.postprocessing = false; 
         std::cout << "epsilon " << epsilon << std::endl;
         xmin = p.xmin;
         ymin = p.ymin;
@@ -584,6 +585,11 @@ int main (int argc, char* argv[])
         std::cout << "writing poly file" << std::endl;
         std::ofstream file;
         file.open(folder + "cell.poly");
+        if (!file.good())
+        {
+            std::cerr << "error: cannot open poly file for write" << std::endl;
+            throw std::string("error: cannot open poly file for write");
+        }
         file << pw;
         file.close();
     }
@@ -592,6 +598,11 @@ int main (int argc, char* argv[])
     std::cout << "writing off file" << std::endl;
     std::ofstream file;
     file.open(folder+"cell.off");
+    if (!file.good())
+    {
+        std::cerr << "error: cannot open off file for write" << std::endl;
+        throw std::string("error: cannot open off file for write");
+    }
     writeroff wo(pw);
     file << wo;
     file.close();

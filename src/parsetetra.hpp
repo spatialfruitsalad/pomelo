@@ -46,7 +46,7 @@ public:
 
     parsetetra () : xmin(0),  ymin(0), zmin(0), xmax(0) ,ymax(0), zmax(0), xpbc(false), ypbc(false), zpbc(false)
     {};
-    void parse(std::string const filename, pointpattern& pp, double shrink = 0.95)
+    void parse(std::string const filename, pointpattern& pp, double shrink = 0.95, int depth = 3)
     {
         std::cout << "parse tetra file" << std::endl;
         std::ifstream infile;
@@ -111,7 +111,7 @@ public:
             std::vector<triangle> list = {t1, t2, t3, t4}; 
 
             //std::cout << "subdivision started" << std::endl;
-            triangle::recusiveSubdivide(3, list);
+            triangle::recusiveSubdivide(depth, list);
             //std::cout << "subdivision ended" << std::endl;
 
             for(triangle t : list)

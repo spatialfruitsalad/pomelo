@@ -182,6 +182,9 @@ public:
 
         std::cout << "created N = " << pp.points.size() << " points"  << std::endl;
         std::cout << "setting boundaries "<< std::endl;
+        std::cout << "\t nx="<< nx << std::endl;
+        std::cout << "\t nx="<< ny << std::endl;
+        std::cout << "\t nx="<< nz << std::endl;
         
         xmin = 0;
         ymin = 0;
