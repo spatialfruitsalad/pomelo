@@ -68,15 +68,15 @@ public:
     {
         if (dx > xmax || dx < xmin)
         {
-            std::cerr << "Warning: point with label: " << l << " out of X boundaries, adding in outmost subcell" << std::endl;
+            //std::cerr << "Warning: point with label: " << l << " out of X boundaries, adding in outmost subcell" << std::endl;
         }
         if (dy > ymax || dy < ymin)
         {
-            std::cerr << "Warning: point with label: " << l << " out of Y boundaries, adding in outmost subcell" << std::endl;
+            //std::cerr << "Warning: point with label: " << l << " out of Y boundaries, adding in outmost subcell" << std::endl;
         }
         if (dz > zmax || dz < zmin)
         {
-            std::cerr << "Warning: point with label: " << l << " out of Z boundaries, adding in outmost subcell" << std::endl;
+            //std::cerr << "Warning: point with label: " << l << " out of Z boundaries, adding in outmost subcell" << std::endl;
         }
 
         //std::cout << "adding particle " << dx << " " << dy << " "  << dz << " " << zmax  << std::endl;

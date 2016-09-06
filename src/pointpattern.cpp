@@ -148,10 +148,10 @@ point operator/ (const point& p,  double const& f)
 
 point operator* ( double const& f, const point& p)
 {
-    return point(p.x *f, p.y * f, p.z *f, p.l);
+    return point(p.x *f, p.y * f, p.z *f, p.l, p.faceID, p.cellID);
 }
 
 point operator* (const point& p,  double const& f)
 {
-    return point(p.x *f, p.y * f, p.z *f, p.l);
+    return point(p.x *f, p.y * f, p.z *f, p.l, p.faceID, p.cellID);
 }

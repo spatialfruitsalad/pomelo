@@ -46,6 +46,7 @@ public:
 
     parsetetra () : xmin(0),  ymin(0), zmin(0), xmax(0) ,ymax(0), zmax(0), xpbc(false), ypbc(false), zpbc(false)
     {};
+
     void parse(std::string const filename, pointpattern& pp, double shrink = 0.95, int depth = 3)
     {
         std::cout << "parse tetra file" << std::endl;
@@ -60,6 +61,7 @@ public:
         std::vector<double> xvals;
         std::vector<double> yvals;
         std::vector<double> zvals;
+        std::cout << "parse: using shrink of " << shrink << std::endl;
        
         while(std::getline(infile, line))   // parse lines
         {
@@ -102,10 +104,10 @@ public:
             dumbShrink( p, shrink);
 
             //std::cout << "points loaded" << std::endl;
-            triangle t1 (p1, p2, p3); 
-            triangle t2 (p1, p2, p4); 
-            triangle t3 (p1, p3, p4); 
-            triangle t4 (p2, p3, p4); 
+            triangle t1 (p[0], p[1], p[2]); 
+            triangle t2 (p[0], p[1], p[3]); 
+            triangle t3 (p[0], p[2], p[3]); 
+            triangle t4 (p[1], p[2], p[3]); 
             //std::cout << "triangles created" << std::endl;
 
             std::vector<triangle> list = {t1, t2, t3, t4}; 
@@ -140,6 +142,7 @@ public:
 private:
     static void dumbShrink (std::vector<point>& p, double f  = 0.95)
     {
+        //std::cout << "dumbshrink: using shrink of " << f << std::endl;
         if(p.size() == 0) return;
     
         // calculate center of mass
@@ -148,17 +151,23 @@ private:
         {
             com = com + q;
         }
-
+        
         com = com / static_cast<double>(p.size());
+        //std::cout << "center of mass\n" << com.x << " " << com.y << " " << com.z << std::endl;
         
         // shift collection to com = 0
         // shrink all values
         // move them back to original com
-        for(point q : p)
+        for(size_t i = 0; i != p.size(); ++i)
         {
-            q = q + (-1.0)* com;
+            point q = p[i];
+            //std::cout << "calc 1 " << q.x << " " << q.y << " " << q.z << std::endl;
+            q = q + (-1.0)* com; 
+            //std::cout << "calc 2 " << q.x << " " << q.y << " " << q.z << std::endl;
             q = q * f;
-            q = q + com;
+            //std::cout << "calc 3 " << q.x << " " << q.y << " " << q.z << std::endl;
+            p[i] = q + com;
+            //std::cout << "calc 4 " << p[i].x << " " << p[i].y << " " << p[i].z << std::endl;
         }
     }
 };

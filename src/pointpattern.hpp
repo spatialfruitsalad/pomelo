@@ -80,6 +80,8 @@ public:
         if(p.points.empty())
             return f;
         int oldl = p.points[0].l;
+        f << std::fixed;
+        f << std::setprecision(15);
         for (   auto it = p.points.begin();
                 it != p.points.end();
                 ++it)
