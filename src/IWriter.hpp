@@ -73,10 +73,10 @@ public:
         file.close();
     }
 
-    void removeduplicates (double epsilon, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax)
+    void removeduplicates (double epsilon, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, unsigned int nx = 16, unsigned int ny = 16, unsigned int nz = 16 )
     {
         std::cout << "IWriter: remove duplicates" << std::endl;
-        duplicationremover d(16,16,16);
+        duplicationremover d(nx, ny, nz);
         d.setboundaries(xmin, xmax, ymin, ymax, zmin, zmax);
         std::cout << "\tadding points" << std::endl;
         d.addPoints(p, true);

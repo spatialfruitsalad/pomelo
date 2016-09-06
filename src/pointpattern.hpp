@@ -37,6 +37,7 @@ struct point
         y = rhs.y;
         z = rhs.z;
         l = rhs.l;
+        cellID = rhs.cellID;
         return *this;
         
     }

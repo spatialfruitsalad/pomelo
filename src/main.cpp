@@ -606,7 +606,7 @@ int main (int argc, char* argv[])
 
     std::cout << std::endl;
     // remove duplicates and label back indices
-    pw.removeduplicates(epsilon, xmin, xmax, ymin, ymax, zmin, zmax);
+    pw.removeduplicates(epsilon, xmin, xmax, ymin, ymax, zmin, zmax, nx, ny, nz);
 
     std::cout << std::endl;
     // Write poly file for karambola
