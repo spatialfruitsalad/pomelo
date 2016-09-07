@@ -28,6 +28,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include <vector>
 #include <algorithm>
 #include "pointpattern.hpp"
+#include "duplicationremover.hpp"
 #include "splitstring.hpp"
 #include "triangle.hpp"
 
@@ -62,10 +63,14 @@ public:
         std::vector<double> yvals;
         std::vector<double> zvals;
         std::cout << "parse: using shrink of " << shrink << std::endl;
-       
+
+        unsigned long n = 0;
+
         while(std::getline(infile, line))   // parse lines
         {
             if(line.find('#') != std::string::npos) continue;
+            n++;
+            if (n%1000==0) std::cout << "parsed " << n << " lines" << std::endl;
 
             std::istringstream iss(line);
             double x1, y1, z1;
@@ -115,15 +120,22 @@ public:
             //std::cout << "subdivision started" << std::endl;
             triangle::recusiveSubdivide(depth, list);
             //std::cout << "subdivision ended" << std::endl;
-
+            
+            // add the surface points to a pointpattern for this tetrahedra first to make some duplicationchecks
+            pointpattern pptetra; 
             for(triangle t : list)
             {
                 for(point x : t.p)
                 {
-                    pp.addpoint(x.l, x.x, x.y, x.z);
+                    pptetra.addpoint(x.l, x.x, x.y, x.z);
                 }
             }
-
+            
+            pptetra.removeduplicates(1e-9); 
+            for ( point x : pptetra.points)
+            {
+                pp.addpoint(x.l, x.x, x.y, x.z);
+            }
         }
 
         std::cout << "parsed "  << linesloaded << " lines" << std::endl;
