@@ -360,7 +360,7 @@ int main (int argc, char* argv[])
 
     // clean degenerated vertices from particle surface triangulation pointpattern
     std::cout << "remove duplicates in surface triangulation" << std::endl;
-    duplicationremover d(16,16,16);
+    duplicationremover d(40,40,40);
     d.setboundaries(xmin, xmax, ymin, ymax, zmin, zmax);
     d.addPoints(pp);
     d.removeduplicates(epsilon);

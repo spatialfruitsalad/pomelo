@@ -38,6 +38,7 @@ struct point
         z = rhs.z;
         l = rhs.l;
         cellID = rhs.cellID;
+        faceID = rhs.faceID;
         return *this;
         
     }
