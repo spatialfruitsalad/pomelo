@@ -46,6 +46,11 @@ struct point
     {
         return point(point::x + rhs.x, point::y + rhs.y, point::z + rhs.z, point::l);
     }
+
+    double length ( ) const
+    {
+        return std::sqrt(x*x + y*y + z*z);
+    }
 };
 
 point operator/ (const point& p,  double const& f);

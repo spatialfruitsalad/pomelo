@@ -30,6 +30,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include "parsexyz.hpp"
 #include "parsexyzr.hpp"
 #include "parsetetra.hpp"
+#include "parsetetra_blunt.hpp"
 #include "parsesphcyl.hpp"
 #include "parseellipsoids.hpp"
 #include "pointpattern.hpp"
@@ -80,6 +81,7 @@ enum eMode
     SPHERE,
     SPHEREPOLY,
     TETRA,
+    TETRABLUNT,
     ELLIP,
     SPHCYL
 } thisMode;
@@ -92,7 +94,7 @@ int main (int argc, char* argv[])
     {
         std::cerr << "Commandline parameters not correct .... aborting "  << std::endl;
         std::cerr << std::endl <<  "Use pomelo this way:\n\t./pomelo -TYPE [position-file] [outputfolder]"  << std::endl;
-        std::cerr <<  "\twith -TYPE being -SPHERE, -SPHEREPOLY -TETRA, -ELLIP, -SPHCYL"  << std::endl;
+        std::cerr <<  "\twith -TYPE being -SPHERE, -SPHEREPOLY -TETRA, -TETRABLUNT, -ELLIP, -SPHCYL"  << std::endl;
         std::cerr << std::endl <<  "Or in a generic way:\n\t./pomelo -GENERIC [path-to-lua-file] [outputfolder]"  << std::endl;
         return -1;
     }
@@ -119,6 +121,10 @@ int main (int argc, char* argv[])
     else if (mode == "-TETRA" || mode =="--TETRA")
     {
         thisMode = TETRA;
+    }
+    else if (mode == "-TETRABLUNT" || mode =="--TETRABLUNT")
+    {
+        thisMode = TETRABLUNT;
     }
     else if (mode == "-ELLIP" || mode == "--ELLIP")
     {
@@ -325,6 +331,24 @@ int main (int argc, char* argv[])
     else if (thisMode == TETRA)
     {
         parsetetra p;
+        double shrink = atof(argv[4]);
+        int iterations = atoi(argv[5]);
+        p.parse(filename, pp, shrink, iterations);
+        outMode.postprocessing = false; 
+        std::cout << "epsilon " << epsilon << std::endl;
+        xmin = p.xmin;
+        ymin = p.ymin;
+        zmin = p.zmin;
+        xmax = p.xmax;
+        ymax = p.ymax;
+        zmax = p.zmax;
+        xpbc = p.xpbc;
+        ypbc = p.ypbc;
+        zpbc = p.zpbc;
+    }
+    else if (thisMode == TETRABLUNT)
+    {
+        parsetetrablunt p;
         double shrink = atof(argv[4]);
         int iterations = atoi(argv[5]);
         p.parse(filename, pp, shrink, iterations);
