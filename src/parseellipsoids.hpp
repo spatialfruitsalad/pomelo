@@ -31,6 +31,17 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include "splitstring.hpp"
 #include "GenericMatrix.h"
 
+struct ellip
+{
+    double cx, cy, cz;
+    double x1, y1, z1;
+    double x2, y2, z2;
+    double x3, y3, z3;
+    double a, b, c;
+    unsigned long l;
+};
+
+
 class parseellipsoid
 {
 public:
@@ -46,7 +57,10 @@ public:
     bool ypbc;
     bool zpbc;
 
-    parseellipsoid () : xmin(0),  ymin(0), zmin(0), xmax(0) ,ymax(0), zmax(0), shrink ( 0.85), steps(10), xpbc(false), ypbc(false), zpbc(false)
+    std::vector<ellip> ellipsoids;
+    
+
+    parseellipsoid () : xmin(0),  ymin(0), zmin(0), xmax(0) ,ymax(0), zmax(0), shrink (0), steps(10), xpbc(false), ypbc(false), zpbc(false)
     {};
     void parse(std::string const filename, pointpattern& pp)
     {
@@ -108,46 +122,55 @@ public:
                     double v = std::stod(boxsplit[1]);
                     steps = static_cast<int>(v);
                 }
-                if (line.find("shrink") != std::string::npos)
-                {
-                    splitstring split (line.c_str());
-                    std::vector<std::string> boxsplit= split.split('=');
-                    if (boxsplit.size() != 2)
-                    {
-                        throw std::string ("cannot parse nx parameter.");
-                    }
-                    double v = std::stod(boxsplit[1]);
-                    shrink = v;
-                    std::cout << "shrink = " << shrink << std::endl;
-                }
                 continue;
             }
 
             std::istringstream iss(line);
-            double cx, cy, cz;
-            double x1, y1, z1;
-            double x2, y2, z2;
-            double x3, y3, z3;
-            double a, b, c;
-            unsigned long l;
-            if (!(iss >> l >> cx >> cy >> cz >> a >> x1 >> y1 >> z1 >> b >> x2 >> y2 >> z2>> c >> x3 >> y3 >> z3))
+            ellip e;
+            if (!(iss >> e.l >> e.cx >> e.cy >> e.cz >> e.a >> e.x1 >> e.y1 >> e.z1 >> e.b >> e.x2 >> e.y2 >> e.z2>> e.c >> e.x3 >> e.y3 >> e.z3))
             {
                 std::cerr << "error parsing one line in ellip file" << std::endl;
                 std::cout << line << std::endl;
                 break;
             }
             linesloaded++;
-            //std::cout << "line loaded" << std::endl;
-            
             if (steps == 1)
             {
-
-                pp.addpoint(l, cx, cy, cz);
+                pp.addpoint(e.l, e.cx, e.cy, e.cz);
                 continue;
             }
+            else
+            {
+                ellipsoids.push_back(e);
+            }
+        }
 
-            matrix rotate(x1, x2, x3, y1, y2, y3, z1, z2, z3);
-            svec center (cx,cy,cz);
+        if (steps == 1) return;
+        
+        // calc shrink automatically
+
+        double e0mean = 0;
+        double e1mean = 0;
+        double e2mean = 0;
+        for (ellip e : ellipsoids)
+        {
+            e0mean += e.a;
+            e1mean += e.b;
+            e2mean += e.c;
+        }
+        e0mean /= static_cast<double>(ellipsoids.size());
+        e1mean /= static_cast<double>(ellipsoids.size());
+        e2mean /= static_cast<double>(ellipsoids.size());
+
+        // formula by fabian... need to check this
+        shrink = 0.95 * std::pow(e0mean * e1mean * e2mean * 0.4 * 0.4 , 1./3.) * 0.4;
+        std::cout << "shrink corresponds to aspect ratio = 0.4" << std::endl;
+        std::cout << "shrink = " << shrink << std::endl;
+        for (ellip e : ellipsoids)
+        {
+            matrix rotate(e.x1, e.x2, e.x3, e.y1, e.y2, e.y3, e.z1, e.z2, e.z3);
+
+            svec center (e.cx,e.cy,e.cz);
 
 
             double phi = -M_PI;   //-180 - 180
@@ -167,15 +190,15 @@ public:
                 {
                     phi = j*d_phi;
 
-                    x = a * sin(theta) * cos(phi);
-                    y = b * sin(theta) * sin(phi);
-                    z = c * cos(theta);
+                    x = e.a * sin(theta) * cos(phi);
+                    y = e.b * sin(theta) * sin(phi);
+                    z = e.c * cos(theta);
 
                     svec p(x,y,z);
 
-                    x = b * c * sin(theta) * cos(phi);
-                    y = a * c * sin(theta) * sin(phi);
-                    z = a * b * cos(theta);
+                    x = e.b * e.c * sin(theta) * cos(phi);
+                    y = e.a * e.c * sin(theta) * sin(phi);
+                    z = e.a * e.b * cos(theta);
 
                     svec s(x,y,z);
 
@@ -191,7 +214,7 @@ public:
                     p = rotate * p;
                     p = p + center;
                      
-                    pp.addpoint(l, p.x(), p.y(), p.z());
+                    pp.addpoint(e.l, p.x(), p.y(), p.z());
                 }
             }
         }
