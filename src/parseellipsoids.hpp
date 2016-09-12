@@ -46,7 +46,7 @@ public:
     bool ypbc;
     bool zpbc;
 
-    parseellipsoid () : xmin(0),  ymin(0), zmin(0), xmax(0) ,ymax(0), zmax(0), shrink ( 0.95), steps(10), xpbc(false), ypbc(false), zpbc(false)
+    parseellipsoid () : xmin(0),  ymin(0), zmin(0), xmax(0) ,ymax(0), zmax(0), shrink ( 0.85), steps(10), xpbc(false), ypbc(false), zpbc(false)
     {};
     void parse(std::string const filename, pointpattern& pp)
     {
@@ -108,6 +108,18 @@ public:
                     double v = std::stod(boxsplit[1]);
                     steps = static_cast<int>(v);
                 }
+                if (line.find("shrink") != std::string::npos)
+                {
+                    splitstring split (line.c_str());
+                    std::vector<std::string> boxsplit= split.split('=');
+                    if (boxsplit.size() != 2)
+                    {
+                        throw std::string ("cannot parse nx parameter.");
+                    }
+                    double v = std::stod(boxsplit[1]);
+                    shrink = v;
+                    std::cout << "shrink = " << shrink << std::endl;
+                }
                 continue;
             }
 
@@ -168,8 +180,13 @@ public:
                     svec s(x,y,z);
 
                     double norm = s.abs();
+                    
+                    //std::cout << shrink<< std::endl;
                     s = ( s * (1.0/ norm) ) * shrink;
+                    //std::cout << "shift : " << s.x() << " " << s.y() << " " << s.z() << std::endl;
+                    //std::cout << "point : " << p.x() << " " << p.y() << " " << p.z() << std::endl;
                     p =  p - s;
+                    //std::cout << "pointn: " << p.x() << " " << p.y() << " " << p.z() << std::endl;
                     
                     p = rotate * p;
                     p = p + center;
