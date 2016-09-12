@@ -316,6 +316,7 @@ int main (int argc, char* argv[])
     {
         parseellipsoid p;
         p.parse(filename, pp);
+        outMode.postprocessing = false; 
     
         std::cout << "epsilon " << epsilon << std::endl;
         xmin = p.xmin;
