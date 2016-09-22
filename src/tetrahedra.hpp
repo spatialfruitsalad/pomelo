@@ -73,10 +73,15 @@ public:
             fnormals << centerX - a4 << " " << centerY - b4 << " " << centerZ - c4 << " " << d4 << std::endl << std::endl<< std::endl; 
             fnormals.close();
         }
-        std::cout << "1 " << a1 << " " << b1 << " " << c1 << " " << d1 << std::endl;
-        std::cout << "2 " << a2 << " " << b2 << " " << c2 << " " << d2 << std::endl;
-        std::cout << "3 " << a3 << " " << b3 << " " << c3 << " " << d3 << std::endl;
-        std::cout << "4 " << a4 << " " << b4 << " " << c4 << " " << d4 << std::endl;
+
+        point com(centerX, centerY, centerZ +1 , 1);
+        std::cout << "check com inside: " << (checkPointInside(com) ? "true" : "false") << std::endl;
+        std::cout << "check p1 inside: " << (checkPointInside(p1) ? "true" : "false") << std::endl;
+        std::cout << "check p2 inside: " << (checkPointInside(p2) ? "true" : "false") << std::endl;
+        std::cout << "check p3 inside: " << (checkPointInside(p3) ? "true" : "false") << std::endl;
+        std::cout << "check p4 inside: " << (checkPointInside(p4) ? "true" : "false") << std::endl;
+        point origin (0,0,0, 1);
+        std::cout << "check origin inside: " << (checkPointInside(origin) ? "true" : "false") << std::endl;
     }
 
     unsigned long label;
@@ -86,6 +91,18 @@ public:
     double d1, d2, d3, d4;
     
     double centerX, centerY, centerZ;
+    
+
+
+    bool checkPointInside( point p)
+    {
+        int s1 = (a1*p.x + b1*p.y + c1*p.z + d1 > 0) ? 1 : -1;
+        int s2 = (a2*p.x + b2*p.y + c2*p.z + d2 > 0) ? 1 : -1;
+        int s3 = (a3*p.x + b3*p.y + c3*p.z + d3 > 0) ? 1 : -1;
+        int s4 = (a4*p.x + b4*p.y + c4*p.z + d4 > 0) ? 1 : -1;
+
+       return s1 == s2 == s3 == s4; 
+    }
 };
 
 #endif

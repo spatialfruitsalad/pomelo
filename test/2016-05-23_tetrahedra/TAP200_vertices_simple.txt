@@ -1,0 +1,7 @@
+# SampleID: TAP200
+# Packing_fraction_phi: 0.521
+# Contact_number_Z: 8.275
+# All vertices in voxel units, resolution: 1 voxel=100 µm
+# Coordinates: x1 y1 z1 x2 y2 z2 x3 y3 z3 x4 y4 z4 Boundary[yes=1/no=0]
+# Core particles
+-20 -10 0     20 -10 0     0 10 0      0 0 20    0 
