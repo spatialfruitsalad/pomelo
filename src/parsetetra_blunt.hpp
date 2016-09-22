@@ -215,7 +215,7 @@ private:
             {
                 double dist = std::sqrt(distsqr);
                 dist -= lthresh;
-                double g = (lthresh + sqrt(dist) * 0.5);
+                double g = (lthresh + sqrt(dist) * 0.85);
                 double f = g/q.length();
                 
                 q = q*f;
