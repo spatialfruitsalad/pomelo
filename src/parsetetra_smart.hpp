@@ -32,6 +32,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include "splitstring.hpp"
 #include "triangle.hpp"
 #include "tetrahedra.hpp"
+#include "parsetetra_blunt.hpp"
 
 class parsetetrasmart
 {
@@ -45,6 +46,7 @@ public:
     bool xpbc;
     bool ypbc;
     bool zpbc;
+    std::vector<tetrahedra> tetraList;
 
     parsetetrasmart () : xmin(0),  ymin(0), zmin(0), xmax(0) ,ymax(0), zmax(0), xpbc(false), ypbc(false), zpbc(false)
     {};
@@ -67,7 +69,6 @@ public:
 
         unsigned long n = 0;
 
-        std::vector<tetrahedra> tetraList;
 
         while(std::getline(infile, line))   // parse lines
         {
@@ -95,10 +96,6 @@ public:
             point p3(x3,y3,z3,linesloaded);
             point p4(x4,y4,z4,linesloaded);
 
-            tetrahedra t(p1, p2, p3, p4);
-
-            tetraList.push_back(t);
-
             xvals.push_back(p1.x);
             yvals.push_back(p1.y);
             zvals.push_back(p1.z);
@@ -113,13 +110,29 @@ public:
             zvals.push_back(p4.z);
 
             std::vector<point> p = {p1,p2,p3,p4};
-            dumbShrink( p, shrink);
 
-            //std::cout << "points loaded" << std::endl;
-            triangle t1 (p[0], p[1], p[2]); 
-            triangle t2 (p[0], p[1], p[3]); 
-            triangle t3 (p[0], p[2], p[3]); 
-            triangle t4 (p[1], p[2], p[3]); 
+            tetrahedra t(p[0], p[1], p[2], p[3]);
+            tetraList.push_back(t);
+        }
+
+        xmin = *std::min_element(xvals.begin(), xvals.end());
+        ymin = *std::min_element(yvals.begin(), yvals.end());
+        zmin = *std::min_element(zvals.begin(), zvals.end());
+        xmax = *std::max_element(xvals.begin(), xvals.end());
+        ymax = *std::max_element(yvals.begin(), yvals.end());
+        zmax = *std::max_element(zvals.begin(), zvals.end());
+        
+        
+        std::cout << "checking overlaps" << std::endl;
+        n = 0;
+        for (size_t h = 0; h != tetraList.size(); ++ h)
+        {
+            n++;
+            if (n%100==0) std::cout << "worked on " << n << " tetrahedras" << std::endl;
+            triangle t1 (tetraList[h].p[0], tetraList[h].p[1], tetraList[h].p[2]); 
+            triangle t2 (tetraList[h].p[0], tetraList[h].p[1], tetraList[h].p[3]); 
+            triangle t3 (tetraList[h].p[0], tetraList[h].p[2], tetraList[h].p[3]); 
+            triangle t4 (tetraList[h].p[1], tetraList[h].p[2], tetraList[h].p[3]); 
             //std::cout << "triangles created" << std::endl;
 
             std::vector<triangle> list = {t1, t2, t3, t4}; 
@@ -127,35 +140,60 @@ public:
             //std::cout << "subdivision started" << std::endl;
             triangle::recusiveSubdivide(depth, list);
             //std::cout << "subdivision ended" << std::endl;
-            
+
             // add the surface points to a pointpattern for this tetrahedra first to make some duplicationchecks
             pointpattern pptetra; 
-            for(triangle t : list)
+            for(triangle tri : list)
             {
-                for(point x : t.p)
+                for(point x : tri.p)
                 {
                     pptetra.addpoint(x.l, x.x, x.y, x.z);
                 }
             }
             
             pptetra.removeduplicates(1e-9); 
+
+            double l = std::sqrt( 
+  (tetraList[h].p[0].x-tetraList[h].p[1].x) * (tetraList[h].p[0].x-tetraList[h].p[1].x) + 
+  (tetraList[h].p[0].y-tetraList[h].p[1].y) * (tetraList[h].p[0].y-tetraList[h].p[1].y) + 
+  (tetraList[h].p[0].z-tetraList[h].p[1].z) * (tetraList[h].p[0].z-tetraList[h].p[1].z) );
+
+            parsetetrablunt::bluntEdges(pptetra.points, l);
+            dumbShrink( pptetra.points, shrink);
+
             for ( point x : pptetra.points)
             {
+                //std::cout << "after remove " << tetraList[h].totalPoints << std::endl;
+                tetraList[h].totalPoints += 1;
                 pp.addpoint(x.l, x.x, x.y, x.z);
+                for (size_t k = 0; k != tetraList.size(); ++k)
+                {
+                    if (k == h)continue;
+
+                    //std::cout << "after label check" << std::endl;
+                    if (tetraList[k].checkPointInside(x))
+                    {
+                        tetraList[h].wrongPoints += 1;
+                    }
+                }   
             }
         }
+        
+        std::string outfilename = "tetras_shrink" + std::to_string(shrink) + "_subdivide" + std::to_string(depth) + ".dat";
+
+        std::ofstream out(outfilename);
+
+        for (size_t h = 0; h != tetraList.size(); ++ h)
+        {
+            out << tetraList[h].label << " " << tetraList[h].totalPoints << " " << tetraList[h].wrongPoints << std::endl;
+        }
+        out.close();
 
         std::cout << "parsed "  << linesloaded << " lines" << std::endl;
 
         std::cout << "created N = " << pp.points.size() << " points"  << std::endl;
         std::cout << "setting boundaries "<< std::endl;
         
-        xmin = *std::min_element(xvals.begin(), xvals.end());
-        ymin = *std::min_element(yvals.begin(), yvals.end());
-        zmin = *std::min_element(zvals.begin(), zvals.end());
-        xmax = *std::max_element(xvals.begin(), xvals.end());
-        ymax = *std::max_element(yvals.begin(), yvals.end());
-        zmax = *std::max_element(zvals.begin(), zvals.end());
 
     };
 private:
@@ -189,6 +227,7 @@ private:
             //std::cout << "calc 4 " << p[i].x << " " << p[i].y << " " << p[i].z << std::endl;
         }
     }
+
 };
 
 #endif

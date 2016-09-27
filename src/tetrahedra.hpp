@@ -31,9 +31,14 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 class tetrahedra
 {
 public:
-    tetrahedra (point p1, point p2, point p3, point p4)
+    tetrahedra (point p1, point p2, point p3, point p4, bool v = false) : p {p1, p2, p3, p4}
     {
         label = p1.l; 
+        
+
+        totalPoints = 0;
+        wrongPoints = 0;
+
         // create triangles
         triangle t1(p1, p2, p3);   
         triangle t2(p2, p1, p4);   
@@ -43,7 +48,10 @@ public:
         t2.getPlaneEquationCoefficients(a2, b2,c2,d2);
         t3.getPlaneEquationCoefficients(a3, b3,c3,d3);
         t4.getPlaneEquationCoefficients(a4, b4,c4,d4);
+    
+        calculateSideLength();
         
+        if(v)
         {
             std::ofstream fpoints("points.dat");
             fpoints << p1.x << " " << p1.y << " " << p1.z << std::endl; 
@@ -57,7 +65,7 @@ public:
         centerY = (p1.y + p2.y + p3.y + p4.y)/4.0;
         centerZ = (p1.z + p2.z + p3.z + p4.z)/4.0;
 
-
+        if(v)
         {
             std::ofstream fnormals("normals.dat");
             fnormals << centerX << " " << centerY << " " << centerZ << std::endl;
@@ -75,30 +83,42 @@ public:
         }
 
         point com(centerX, centerY, centerZ +1 , 1);
-        std::cout << "check com inside: " << (checkPointInside(com) ? "true" : "false") << std::endl;
-        std::cout << "check p1 inside: " << (checkPointInside(p1) ? "true" : "false") << std::endl;
-        std::cout << "check p2 inside: " << (checkPointInside(p2) ? "true" : "false") << std::endl;
-        std::cout << "check p3 inside: " << (checkPointInside(p3) ? "true" : "false") << std::endl;
-        std::cout << "check p4 inside: " << (checkPointInside(p4) ? "true" : "false") << std::endl;
-        point origin (0,0,0, 1);
-        std::cout << "check origin inside: " << (checkPointInside(origin) ? "true" : "false") << std::endl;
+
+        if (!checkPointInside(com)) std::cerr << "ERROR: Center of Mass not inside Tetrahedra!" << std::endl;
     }
+
+    point p[4];
 
     unsigned long label;
     double a1, a2, a3, a4;
     double b1, b2, b3, b4;
     double c1, c2, c3, c4;
     double d1, d2, d3, d4;
+    double sidelength;
     
     double centerX, centerY, centerZ;
     
+    unsigned long totalPoints;
+    unsigned long wrongPoints;
 
+    void calculateSideLength()
+    {
+        // since they are all of the same size, just use one sidelength
+
+        double dx = p[0].x - p[1].x;
+        double dy = p[0].y - p[1].y;
+        double dz = p[0].z - p[1].z;
+
+        sidelength = std::sqrt(dx * dx + dy * dy + dz * dz);
+    }
 
     bool checkPointInside( point p)
     {
         int s1 = (a1*p.x + b1*p.y + c1*p.z + d1 > 0) ? 1 : -1;
         int s2 = (a2*p.x + b2*p.y + c2*p.z + d2 > 0) ? 1 : -1;
+        if (s1 != s2) return false;
         int s3 = (a3*p.x + b3*p.y + c3*p.z + d3 > 0) ? 1 : -1;
+        if (s1 != s3) return false;
         int s4 = (a4*p.x + b4*p.y + c4*p.z + d4 > 0) ? 1 : -1;
 
        return s1 == s2 == s3 == s4; 

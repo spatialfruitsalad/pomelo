@@ -124,9 +124,9 @@ public:
 
             // add the surface points to a pointpattern for this tetrahedra first to make some duplicationchecks
             pointpattern pptetra; 
-            for(triangle t : list)
+            for(triangle tri : list)
             {
-                for(point x : t.p)
+                for(point x : tri.p)
                 {
                     pptetra.addpoint(x.l, x.x, x.y, x.z);
                 }
@@ -190,6 +190,7 @@ private:
         }
     };
 
+public:
     // p contains all points of one tetrahedra, l is the tetrahedra side length
     static void bluntEdges (std::vector<point>& p, double l)
     {   
@@ -215,7 +216,7 @@ private:
             {
                 double dist = std::sqrt(distsqr);
                 dist -= lthresh;
-                double g = (lthresh + sqrt(dist) * 0.85);
+                double g = (lthresh + sqrt(dist) * 0.95);
                 double f = g/q.length();
                 
                 q = q*f;
