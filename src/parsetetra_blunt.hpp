@@ -194,7 +194,7 @@ public:
     // p contains all points of one tetrahedra, l is the tetrahedra side length
     static void bluntEdges (std::vector<point>& p, double l)
     {   
-        double lthresh = std::sqrt(1.25) * l *0.95/3.0;
+        double lthresh = std::sqrt(1.25) * l *0.98/3.0;
         // calculate center of mass
         point com (0,0,0,p[0].l);
         for(point q : p)
@@ -203,6 +203,8 @@ public:
         }
         com = com / static_cast<double>(p.size());
 
+        double lmax = sqrt(0.75) * l * 2.0/3.0;
+        double dmax = lmax - lthresh;
 
         for(size_t i = 0; i != p.size(); ++i)
         {
@@ -216,13 +218,35 @@ public:
             {
                 double dist = std::sqrt(distsqr);
                 dist -= lthresh;
-                double g = (lthresh + sqrt(dist) * 0.95);
-                double f = g/q.length();
+                // dist is between 0 and lmax
+
+                // drel is between 0 and 1
+                double drel = dist / (dmax);
+
+                double g = q.length();
+                //std::cout << drel << std::endl;
+                if( drel > 0.5)
+                {
+                    // rounding of the vertices
+                    
+                    // blend parameter between unchanged value and maximum exponent
+                    double blend = (drel - 0.5)/0.25;
+                    if (blend > 1) blend = 1;
+
+                    double e = (0.4) * blend + 1 * ( 1-blend);
+                    //if(drel > 1) drel = 1;
+                    g = (lthresh + std::pow(drel, e)*dmax);
+                }
+                else
+                {
+                    // blunting the lines
+                    g = (lthresh + std::pow(drel, 1.0)*dmax);
+                }
                 
+                double f = g/q.length();
                 q = q*f;
 
                 p[i] = q + com;
-
             }
             else
             {

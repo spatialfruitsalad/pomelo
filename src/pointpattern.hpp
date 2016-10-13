@@ -77,6 +77,12 @@ public:
     void removeduplicates ( double epsilon);
     void removeduplicates ( double epsilon, pointpattern& p);
 
+    inline void clear()
+    {
+        points.clear();
+        indexShift.clear();
+    }
+
     std::vector<point> points;
     std::map<unsigned int, long> indexShift;    // first is particle ID, second is new Index or -1
     

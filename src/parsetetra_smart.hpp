@@ -141,7 +141,7 @@ public:
             triangle::recusiveSubdivide(depth, list);
             //std::cout << "subdivision ended" << std::endl;
 
-            // add the surface points to a pointpattern for this tetrahedra first to make some duplicationchecks
+            // add the surface points to a pointpattern for this tetrahedra to check for duplicats
             pointpattern pptetra; 
             for(triangle tri : list)
             {
@@ -153,29 +153,38 @@ public:
             
             pptetra.removeduplicates(1e-9); 
 
+            // use bluntedges on this tetrahedra
             double l = std::sqrt( 
   (tetraList[h].p[0].x-tetraList[h].p[1].x) * (tetraList[h].p[0].x-tetraList[h].p[1].x) + 
   (tetraList[h].p[0].y-tetraList[h].p[1].y) * (tetraList[h].p[0].y-tetraList[h].p[1].y) + 
   (tetraList[h].p[0].z-tetraList[h].p[1].z) * (tetraList[h].p[0].z-tetraList[h].p[1].z) );
-
             parsetetrablunt::bluntEdges(pptetra.points, l);
+
+
+            // shrink the points ot this tetrahedra
             dumbShrink( pptetra.points, shrink);
 
             for ( point x : pptetra.points)
             {
-                //std::cout << "after remove " << tetraList[h].totalPoints << std::endl;
+                bool add = true;
                 tetraList[h].totalPoints += 1;
-                pp.addpoint(x.l, x.x, x.y, x.z);
+                //std::cout << "after remove " << tetraList[h].totalPoints << std::endl;
                 for (size_t k = 0; k != tetraList.size(); ++k)
                 {
+                    // do not check this tetrahedra with it's own points.
                     if (k == h)continue;
 
                     //std::cout << "after label check" << std::endl;
                     if (tetraList[k].checkPointInside(x))
                     {
                         tetraList[h].wrongPoints += 1;
+                        add = false;
                     }
                 }   
+                if (add)
+                {
+                    pp.addpoint(x.l, x.x, x.y, x.z);
+                }
             }
         }
         

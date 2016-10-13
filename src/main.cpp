@@ -409,18 +409,19 @@ int main (int argc, char* argv[])
 
 
     // clean degenerated vertices from particle surface triangulation pointpattern
-    std::cout << "remove duplicates in surface triangulation" << std::endl;
-    duplicationremover d(40,40,40);
-    d.setboundaries(xmin, xmax, ymin, ymax, zmin, zmax);
-    d.addPoints(pp);
-    d.removeduplicates(epsilon);
-    d.getallPoints(pp);
-    std::cout << std::endl;
-
+    {
+        std::cout << "remove duplicates in surface triangulation" << std::endl;
+        duplicationremover d(40,40,40);
+        d.setboundaries(xmin, xmax, ymin, ymax, zmin, zmax);
+        d.addPoints(pp);
+        d.removeduplicates(epsilon);
+        d.getallPoints(pp);
+        std::cout << std::endl;
+    }
     // print out pointpattern file
     if (outMode.savesurface == true)
     {
-        std::cout << "save point pattern file" << std::endl;
+        std::cout << "save surface triangulation file" << std::endl;
         std::ofstream file;
         file.open(folder + "surface_triangulation.xyz");
         file << pp;
@@ -464,6 +465,14 @@ int main (int argc, char* argv[])
     unsigned long long numberofpoints = labelidmap.size();
     std::cout << "finished" << std::endl;
     
+    std::cout << "clear Surface Triangulation ... ";
+
+    pp.clear();
+
+    std::cout << "done" << std::endl;
+
+
+
     // setting up voro++ container
     int nx, ny, nz;
     pcon.guess_optimal(nx,ny,nz);
@@ -641,6 +650,9 @@ int main (int argc, char* argv[])
     }
     std::cout << std::endl << " finished with N= " << ppreduced.points.size() << std::endl;
     std::cout << std::endl;
+
+    con.clear();
+    
 
     if (ppreduced.points.size() == 0)
     {

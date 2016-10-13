@@ -20,7 +20,7 @@ obj/main_luafree.o: src/main.cpp  src/triangle.hpp src/duplicationremover.hpp sr
 	mkdir -p bin
 	$(CXX) -c -o obj/main_luafree.o src/main.cpp 
 
-obj/main.o: src/main.cpp src/triangle.hpp src/duplicationremover.hpp src/writerpoly.hpp src/writeroff.hpp src/IWriter.hpp src/postprocessing.hpp src/parsexyz.hpp src/parsexyzr.hpp src/parseellipsoids.hpp src/parsesphcyl.hpp src/GenericMatrix.h src/parsetetra.hpp  src/output.hpp src/colorTable.hpp src/parsetetra_blunt.hpp src/parsetetra_smart.hp src/tetrahedra.hppp
+obj/main.o: src/main.cpp src/triangle.hpp src/duplicationremover.hpp src/writerpoly.hpp src/writeroff.hpp src/IWriter.hpp src/postprocessing.hpp src/parsexyz.hpp src/parsexyzr.hpp src/parseellipsoids.hpp src/parsesphcyl.hpp src/GenericMatrix.h src/parsetetra.hpp  src/output.hpp src/colorTable.hpp src/parsetetra_blunt.hpp src/parsetetra_smart.hpp src/tetrahedra.hpp
 	mkdir -p obj
 	mkdir -p bin
 	$(CXX) -c -o obj/main.o src/main.cpp -I/usr/include/lua5.2 $(LUAFLAG)
