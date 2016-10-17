@@ -90,11 +90,12 @@ int main (int argc, char* argv[])
 {
 
     // command line argument parsing
-    if(argc != 4 && argc != 6 )
+    if(argc != 4 && argc != 5 && argc != 6 )
     {
         std::cerr << "Commandline parameters not correct .... aborting "  << std::endl;
-        std::cerr << std::endl <<  "Use pomelo this way:\n\t./pomelo -TYPE [position-file] [outputfolder]"  << std::endl;
-        std::cerr <<  "\twith -TYPE being -SPHERE, -SPHEREPOLY -TETRA, -TETRABLUNT, -ELLIP, -SPHCYL"  << std::endl;
+        std::cerr << std::endl <<  "Use pomelo this way:\n\t./pomelo -TYPE [position-file] [outputfolder] (-POLY)"  << std::endl;
+        std::cerr <<  "\twith -TYPE being -SPHERE, -SPHEREPOLY -TETRA, -ELLIP, -SPHCYL"  << std::endl;
+        std::cerr <<  "\t-POLY is optional and gives you only cell.poly"  << std::endl;
         std::cerr << std::endl <<  "Or in a generic way:\n\t./pomelo -GENERIC [path-to-lua-file] [outputfolder]"  << std::endl;
         return -1;
     }
@@ -108,6 +109,11 @@ int main (int argc, char* argv[])
     const std::string mode = argv[1];
     const std::string filename = argv[2];
     std::string folder = argv[3];
+    std::string OnlyPoly;
+    if(argc == 5)
+        OnlyPoly = argv[4];
+    else
+        OnlyPoly = "";
     try
     {
     if (mode == "-SPHERE" || mode == "--SPHERE")
@@ -139,6 +145,11 @@ int main (int argc, char* argv[])
     {
 #ifdef USELUA
         thisMode = GENERIC;
+        if(OnlyPoly == "-POLY" || OnlyPoly == "--POLY") 
+        {
+            std::cerr << std::endl <<  "Please write Output information in your lua-file"  << std::endl;
+            return -1;
+        }
 #else
         throw std::string ("unknown mode " + mode + ".\n to enable GENERIC mode, you must build pomelo with 'make GENERIC'");
 
@@ -296,6 +307,15 @@ int main (int argc, char* argv[])
         xpbc = p.xpbc;
         ypbc = p.ypbc;
         zpbc = p.zpbc;
+
+        if(OnlyPoly == "-POLY" || OnlyPoly == "--POLY") 
+        {
+            outMode.savesurface = false;
+            outMode.savepoly = true;
+            outMode.saveoff = false;
+            outMode.savereduced = false;
+            outMode.postprocessing = false;
+        }
     }
     else if (thisMode == SPHEREPOLY)
     {
@@ -311,6 +331,15 @@ int main (int argc, char* argv[])
         xpbc = p.xpbc;
         ypbc = p.ypbc;
         zpbc = p.zpbc;
+
+        if(OnlyPoly == "-POLY" || OnlyPoly == "--POLY") 
+        {
+            outMode.savesurface = false;
+            outMode.savepoly = true;
+            outMode.saveoff = false;
+            outMode.savereduced = false;
+            outMode.postprocessing = false;
+        }
     }
     else if (thisMode == ELLIP)
     {
@@ -328,6 +357,15 @@ int main (int argc, char* argv[])
         xpbc = p.xpbc;
         ypbc = p.ypbc;
         zpbc = p.zpbc;
+
+        if(OnlyPoly == "-POLY" || OnlyPoly == "--POLY") 
+        {
+            outMode.savesurface = false;
+            outMode.savepoly = true;
+            outMode.saveoff = false;
+            outMode.savereduced = false;
+            outMode.postprocessing = false;
+        }
     }
     else if (thisMode == TETRA)
     {
@@ -380,6 +418,15 @@ int main (int argc, char* argv[])
         xpbc = p.xpbc;
         ypbc = p.ypbc;
         zpbc = p.zpbc;
+
+        if(OnlyPoly == "-POLY" || OnlyPoly == "--POLY") 
+        {
+            outMode.savesurface = false;
+            outMode.savepoly = true;
+            outMode.saveoff = false;
+            outMode.savereduced = false;
+            outMode.postprocessing = false;
+        }
     }
 
 
