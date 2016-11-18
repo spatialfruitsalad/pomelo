@@ -173,12 +173,12 @@ public:
 
                 }
 
+        std::cout << "\tfixing index shifts" << std::endl;
         for (
             auto it = list.begin();
             it != list.end();
             ++it)
         {
-
             for (auto it2 = (*it).indexShift.begin();
                     it2 != (*it).indexShift.end();
                     ++it2)
@@ -188,7 +188,7 @@ public:
         }
     };
 
-    unsigned int getindex (unsigned int cx, unsigned int cy, unsigned int cz)
+    inline unsigned int getindex (unsigned int cx, unsigned int cy, unsigned int cz)
     {
         return cx + x * cy + x*y*cz;
     }

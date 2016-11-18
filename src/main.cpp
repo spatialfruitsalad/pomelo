@@ -307,6 +307,7 @@ int main (int argc, char* argv[])
     {
         parsexyzr p;
         p.parse(filename, pp);
+        outMode.postprocessing = false; 
 
         xmin = p.xmin;
         ymin = p.ymin;

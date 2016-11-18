@@ -70,15 +70,15 @@ public:
         {
             if(line.find('#') != std::string::npos) continue;
             n++;
-            if (n%1000==0) std::cout << "parsed " << n << " lines" << std::endl;
+            if (n%100==0) std::cout << "parsed " << n << " lines" << std::endl;
 
             std::istringstream iss(line);
             double x1, y1, z1;
             double x2, y2, z2;
             double x3, y3, z3;
             double x4, y4, z4;
-            double bounds;
-            if (!(iss >> x1 >> y1 >> z1 >> x2 >> y2 >> z2>> x3 >> y3 >> z3 >> x4 >> y4 >> z4 >> bounds))
+            unsigned int label;
+            if (!(iss >> label >> x1 >> y1 >> z1 >> x2 >> y2 >> z2>> x3 >> y3 >> z3 >> x4 >> y4 >> z4))
             {
                 std::cerr << "error parsing one line in XYZ file" << std::endl;
                 std::cout << line << std::endl;
@@ -87,10 +87,10 @@ public:
             linesloaded++;
         //std::cout << "line loaded" << std::endl;
             
-            point p1(x1,y1,z1,linesloaded);
-            point p2(x2,y2,z2,linesloaded);
-            point p3(x3,y3,z3,linesloaded);
-            point p4(x4,y4,z4,linesloaded);
+            point p1(x1,y1,z1,label);
+            point p2(x2,y2,z2,label);
+            point p3(x3,y3,z3,label);
+            point p4(x4,y4,z4,label);
 
             xvals.push_back(p1.x);
             yvals.push_back(p1.y);

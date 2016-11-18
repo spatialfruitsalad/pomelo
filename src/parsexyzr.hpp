@@ -54,7 +54,7 @@ public:
         infile.open(filename);
         if (infile.fail())
         {
-            throw std::string("cannot open xyz input file");
+            throw std::string("cannot open xyzr input file");
         }
         std::string line = "";
         unsigned long linesloaded = 0;
@@ -74,7 +74,7 @@ public:
                     throw std::string("cannot parse parameters from XYZ file");
                 
                 double v = std::stod(boxsplit[1]);
-                std::cout << "xyz parser boxsize: " << v << std::endl;
+                std::cout << "xyzr parser boxsize: " << v << std::endl;
                 xmin = 0;
                 ymin = 0;
                 zmin = 0;
@@ -88,12 +88,12 @@ public:
                 splitstring split (s.c_str());
                 std::vector<std::string> pbcsplit= split.split('=');
                 if (pbcsplit.size() != 2)
-                    throw std::string("cannot parse parameters from XYZ file");
+                    throw std::string("cannot parse parameters from XYZR file");
 
                 if (pbcsplit[1].find("periodic_cuboidal") != std::string::npos)
                 {
                     xpbc = ypbc = zpbc = true;
-                    std::cout << "xyz parser boundaries: " << pbcsplit[1] << std::endl;
+                    std::cout << "xyzr parser boundaries: " << pbcsplit[1] << std::endl;
                 }
             }
             else if (s.find("shrink") != std::string::npos)
@@ -131,7 +131,7 @@ public:
             double x ,y, z, r;
             if (!(iss >> x >> y >> z >> r))
             {
-                std::cerr << "error parsing one line in XYZ file" << std::endl;
+                std::cerr << "error parsing one line in XYZR file" << std::endl;
                 break;
             }
             
@@ -141,10 +141,10 @@ public:
             {
                 double theta = static_cast<double>(i) * (1.0/stepsTheta) * std::acos(-1)*2.0;
                 double phi =   std::acos( static_cast<double>(j) * (2.0/stepsPhi) - 1.0);
-                std::cout << phi << " " << theta << std::endl;
-                double xp = x + cos(theta) * sin(phi)*(r*shrink);
-                double yp = y + sin(theta) * sin(phi)*(r*shrink);
-                double zp = z + cos(phi)*(r * shrink);
+                //std::cout << phi << " " << theta << std::endl;
+                double xp = x + cos(theta) * sin(phi)*(r-shrink);
+                double yp = y + sin(theta) * sin(phi)*(r-shrink);
+                double zp = z + cos(phi)*(r - shrink);
                 pp.addpoint(linesloaded, xp, yp, zp);
             }
 

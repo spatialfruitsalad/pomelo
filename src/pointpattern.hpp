@@ -40,7 +40,6 @@ struct point
         cellID = rhs.cellID;
         faceID = rhs.faceID;
         return *this;
-        
     }
     point operator+ ( point const& rhs) const
     {
@@ -113,11 +112,11 @@ public:
     {
         if(p.points.empty())
             return f;
-	double xx = p.points[0].x;
-	double yy = p.points[0].y;
-	double zz = p.points[0].z;
-        int oldf = p.points[0].faceID;
-	int oldc = p.points[0].cellID;
+    double xx = p.points[0].x;
+    double yy = p.points[0].y;
+    double zz = p.points[0].z;
+    int oldf = p.points[0].faceID;
+    int oldc = p.points[0].cellID;
         for (   auto it = p.points.begin();
                 it != p.points.end();
                 ++it)
