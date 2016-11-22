@@ -135,6 +135,7 @@ public:
                 break;
             }
             
+            if (r < shrink) std::cerr << "WARNING: Shrink larger than particle radius. The result will be a negative radius" << std::endl;
             linesloaded++;
             for(int i = 0; i != stepsTheta; ++i)
             for(int j = 0; j <= stepsPhi; ++j)
