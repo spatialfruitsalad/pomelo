@@ -40,7 +40,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include "postprocessing.hpp"
 #include "output.hpp"
 
-std::string version = "0.1.1";
+std::string version = "0.1.2";
 #ifdef USELUA 
 using namespace sel;
 #endif
@@ -139,7 +139,6 @@ int main (int argc, char* argv[])
     else if (mode == "-SPHCYL" || mode == "--SPHCYL")
     {
         thisMode = SPHCYL;
-        std::cout << "selected mode SPHCYL" << std::endl;
     }
     else if (mode == "-GENERIC" || mode == "--GENERIC")
     {
