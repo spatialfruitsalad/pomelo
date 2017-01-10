@@ -63,28 +63,6 @@ inline void DoPostProcessing(std::string folder)
     
     // calculate volume histogram
 
-
-    // the following Code to calculate volume distributions does not seem to work right no, so it stays commented until it will work
-    /*double minVol = *std::min_element(vecVolume.begin(), vecVolume.end());
-    double maxVol = *std::max_element(vecVolume.begin(), vecVolume.end());
-    double count = vecVolume.size();
-
-
-    double binCount = count/5;
-    if (binCount >= 100)
-        binCount = 100;
-
-    double dv = (maxVol - minVol)/(binCount + 1);
-
-    std::vector<long> histogramVolume (binCount+1, 0);
-    for (double v : vecVolume)
-    {
-        unsigned int idx = static_cast<unsigned int>((v -minVol)/dv);
-        histogramVolume[idx] += 1;
-    }
-*/
-    // save output 
-    
     {
         std::ofstream outFaces (folder+"faces.stat");
         outFaces << "#NumberOfFaces Occurrence" << std::endl;
@@ -95,18 +73,6 @@ inline void DoPostProcessing(std::string folder)
         }
         outFaces.close();
     }
-/*
-    {
-        std::ofstream outVolumes(folder+"volumes.stat");
-        outVolumes << "#volume  occurrence" << std::endl;
-        for (unsigned int i = 0; i != histogramVolume.size(); ++i)
-        {
-            double v = minVol + i * dv;
-            double c = histogramVolume[i];
-
-            outVolumes << v << " " << c << std::endl;
-        }
-    }*/
 }
 
 #endif

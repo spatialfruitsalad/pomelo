@@ -460,7 +460,8 @@ int main (int argc, char* argv[])
     // label ID map is used to  map surface point IDs to the respective particle label
     std::cout << "creating label id map " ;
     std::map < unsigned long long, unsigned long long > labelidmap;
-
+    // volumemap is a map from particlelabel to voronoi cell volume
+    std::map < unsigned long long, double> volumeMap;
     std::vector<std::vector<double> > ref;
     {
         unsigned long long id = 0;
@@ -471,6 +472,10 @@ int main (int argc, char* argv[])
             pcon.put(id, it->x, it->y, it->z);
             unsigned int l = it->l;
             labelidmap[id] = l;
+            if (outMode.postprocessing == true)
+            {
+                volumeMap[l] = 0;  // also set up volume map
+            }
             ++id;
             if(ref.size() < l+1) ref.resize(l+1);
             if(ref[l].size() == 0)
@@ -485,6 +490,8 @@ int main (int argc, char* argv[])
         }
     }
     unsigned long long numberofpoints = labelidmap.size();
+    
+
     std::cout << "finished" << std::endl;
     
     std::cout << "clear Surface Triangulation ... ";
@@ -529,7 +536,7 @@ int main (int argc, char* argv[])
     // cell currently worked on
     unsigned long long status = 0;
     // counter for process output
-    double tenpercentSteps = 0.1*static_cast<double>(numberofpoints);
+    double tenpercentSteps = 0.01*static_cast<double>(numberofpoints);
     double target = tenpercentSteps;
 
     double xdist = xmax - xmin;
@@ -550,7 +557,7 @@ int main (int argc, char* argv[])
                 if ( status >= target)
                 {
                     target += tenpercentSteps;
-                    std::cout << static_cast<int>(static_cast<double>(status)/static_cast<double>(numberofpoints)*100) << " \%\t" << std::flush;
+                    std::cout << static_cast<int>(static_cast<double>(status)/static_cast<double>(numberofpoints)*100) << " \% " << std::flush;
                 }
                 //std::cout << "computed"  << std::endl;
                 double xc = 0;
@@ -558,10 +565,15 @@ int main (int argc, char* argv[])
                 double zc = 0;
                 // Get the position of the current particle under consideration
                 cla.pos(xc,yc,zc);
+                
+
 
                 unsigned int id = cla.pid();
                 unsigned long long l = labelidmap[id];
-
+                if (outMode.postprocessing == true)
+                {
+                    volumeMap[l] += c.volume();  
+                }
                 double xabs = (xc-ref[l][0]);
                 double yabs = (yc-ref[l][1]);
                 double zabs = (zc-ref[l][2]);
@@ -674,7 +686,20 @@ int main (int argc, char* argv[])
     std::cout << std::endl;
 
     con.clear();
-    
+
+    if(outMode.postprocessing == true)
+    {
+        std::cout << "save set voronoi cell volumes" << std::endl;
+        // save set voronoi volumes
+        std::ofstream out(folder+"setVoronoiVolumes.dat");
+        out << "#1_particle label #2_set voronoi cell volume\n";
+        for (auto it = volumeMap.begin(); it != volumeMap.end(); ++it)
+        {
+            out << it->first << " " << it->second << "\n";
+        }
+        out.close();
+
+    } 
 
     if (ppreduced.points.size() == 0)
     {
@@ -709,17 +734,17 @@ int main (int argc, char* argv[])
     }
     if(outMode.saveoff == true)
     {
-    std::cout << "writing off file" << std::endl;
-    std::ofstream file;
-    file.open(folder+"cell.off");
-    if (!file.good())
-    {
-        std::cerr << "error: cannot open off file for write" << std::endl;
-        throw std::string("error: cannot open off file for write");
-    }
-    writeroff wo(pw);
-    file << wo;
-    file.close();
+        std::cout << "writing off file" << std::endl;
+        std::ofstream file;
+        file.open(folder+"cell.off");
+        if (!file.good())
+        {
+            std::cerr << "error: cannot open off file for write" << std::endl;
+            throw std::string("error: cannot open off file for write");
+        }
+        writeroff wo(pw);
+        file << wo;
+        file.close();
     }
 
     std::cout << "\nworking for you has been nice. Thank you for using me & see you soon. :) "<< std::endl;
