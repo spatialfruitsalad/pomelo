@@ -98,7 +98,7 @@ public:
                 }
                 f << r << " " << g << " " << b <<  " 1" << "" << std::endl;
             }
-            else std::cout << testing.size() << " " << cellID << std::endl;
+//            else std::cout << testing.size() << " " << cellID << std::endl;
         }
 
         f << "\n";

@@ -49,7 +49,7 @@ public:
                 it != p.points.end();
                 ++it)
         {
-            f << it->l << ":    " <<  std::setprecision(12) << it->x << " " << std::setprecision(12) << it-> y << " " << std::setprecision(12) << it->z<< std::endl;
+            f << it->l << ":    " <<  std::setprecision(20) << it->x << " " << std::setprecision(20) << it-> y << " " << std::setprecision(20) << it->z<< std::endl;
         }
 
         f << "POLYS" <<  std::endl;
@@ -84,7 +84,7 @@ public:
                 }
                 f << "< c(0, 0, 0, " << cellID << ")" << std::endl;
             }
-            else std::cout << testing.size() << " " << cellID << std::endl;
+  //          else std::cout << testing.size() << " " << cellID << std::endl;
         }
 
         f << "END";
