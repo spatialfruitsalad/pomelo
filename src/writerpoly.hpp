@@ -49,10 +49,11 @@ public:
                 it != p.points.end();
                 ++it)
         {
-            f << it->l << ":    " <<  std::setprecision(12) << it->x << " " << std::setprecision(12) << it-> y << " " << std::setprecision(12) << it->z<< std::endl;
+            f << it->l << ":    " <<  std::setprecision(20) << it->x << " " << std::setprecision(20) << it-> y << " " << std::setprecision(20) << it->z<< std::endl;
         }
 
         f << "POLYS" <<  std::endl;
+        int removedFaces = 0;
         for (
             auto it = faces.begin();
             it != faces.end();
@@ -77,14 +78,15 @@ public:
             }
             if(2 < testing.size())
             {
-                f << it->first << ":    ";
+                f << it->first-removedFaces << ":    ";
                 for(unsigned int kk = 0; kk < testing.size(); kk++ )
                 {
                     f << testing[kk] << " ";
                 }
                 f << "< c(0, 0, 0, " << cellID << ")" << std::endl;
             }
-            else std::cout << testing.size() << " " << cellID << std::endl;
+            else removedFaces++;
+  //          else std::cout << testing.size() << " " << cellID << std::endl;
         }
 
         f << "END";

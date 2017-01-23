@@ -53,8 +53,34 @@ public:
         }
         std::vector<rgb> colors = colorTable::getRandomColors(maxCellID);
 
+        int removedFaces = 0;
+        for (
+            auto it = faces.begin();
+            it != faces.end();
+            ++ it)
+        {
+            std::vector<unsigned int> testing;
+            for (auto it2 = it->second.rbegin(); it2 != it->second.rend(); ++it2)
+            {
+                bool doppelt = false;
+                for(unsigned int kk = 0; kk < testing.size(); kk++ )
+                {
+                    if(testing[kk] == (*it2) )
+                    {
+                        doppelt = true;
+                        break;
+                    }
+                }
+                if(doppelt) continue;
+                testing.push_back( (*it2) );
+            }
+            if(3 > testing.size())
+            {
+            removedFaces++;
+            }
+        }
 
-        f << "OFF\n" << p.points.size() << " " << faces.size() << " 0\n";
+        f << "OFF\n" << p.points.size() << " " << faces.size()-removedFaces << " 0\n";
         f << std::fixed;
         for(auto it =  p.points.begin();
                 it != p.points.end();
@@ -90,7 +116,6 @@ public:
             }
             if(2 < testing.size())
             {
-                //f << it->first << ":    ";
                 f << testing.size() << " ";
                 for(unsigned int kk = 0; kk < testing.size(); kk++ )
                 {
@@ -98,7 +123,7 @@ public:
                 }
                 f << r << " " << g << " " << b <<  " 1" << "" << std::endl;
             }
-            else std::cout << testing.size() << " " << cellID << std::endl;
+//            else std::cout << testing.size() << " " << cellID << std::endl;
         }
 
         f << "\n";
