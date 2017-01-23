@@ -103,6 +103,7 @@ public:
                 if (shrinksplit.size() != 2)
                     throw std::string("cannot parse parameters from XYZ file");
                 shrink = std::stod(shrinksplit[1]);
+                std::cout << "loaded a shrink value of " << shrink << std::endl;
             }
             else if (s.find("stepstheta") != std::string::npos)
             {
@@ -135,7 +136,7 @@ public:
                 break;
             }
             
-            if (r < shrink) std::cerr << "WARNING: Shrink larger than particle radius. The result will be a negative radius" << std::endl;
+            if (r < shrink) std::cerr << "WARNING: Shrink (s=" << shrink << ") larger than particle (i=" << linesloaded << "9 radius (r= " << r << "). The result will be a negative radius" << std::endl;
             linesloaded++;
             for(int i = 0; i != stepsTheta; ++i)
             for(int j = 0; j <= stepsPhi; ++j)

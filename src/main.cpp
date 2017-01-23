@@ -319,8 +319,9 @@ int main (int argc, char* argv[])
     else if (thisMode == SPHEREPOLY)
     {
         parsexyzr p;
+        std::cout << "loading file: " << filename << std::endl;
         p.parse(filename, pp);
-        outMode.postprocessing = false; 
+        outMode.postprocessing = true; 
 
         xmin = p.xmin;
         ymin = p.ymin;
@@ -461,7 +462,8 @@ int main (int argc, char* argv[])
     std::cout << "creating label id map " ;
     std::map < unsigned long long, unsigned long long > labelidmap;
     // volumemap is a map from particlelabel to voronoi cell volume
-    std::map < unsigned long long, double> volumeMap;
+    std::vector <double> volumeMap;
+    unsigned long long maxParticleLabel = 0;
     std::vector<std::vector<double> > ref;
     {
         unsigned long long id = 0;
@@ -472,10 +474,8 @@ int main (int argc, char* argv[])
             pcon.put(id, it->x, it->y, it->z);
             unsigned int l = it->l;
             labelidmap[id] = l;
-            if (outMode.postprocessing == true)
-            {
-                volumeMap[l] = 0;  // also set up volume map
-            }
+            if (l > maxParticleLabel) maxParticleLabel =l;
+            
             ++id;
             if(ref.size() < l+1) ref.resize(l+1);
             if(ref[l].size() == 0)
@@ -491,6 +491,11 @@ int main (int argc, char* argv[])
     }
     unsigned long long numberofpoints = labelidmap.size();
     
+    if (outMode.postprocessing == true)
+    {
+
+        volumeMap.resize(maxParticleLabel+1, 0);
+    }
 
     std::cout << "finished" << std::endl;
     
@@ -693,9 +698,9 @@ int main (int argc, char* argv[])
         // save set voronoi volumes
         std::ofstream out(folder+"setVoronoiVolumes.dat");
         out << "#1_particle label #2_set voronoi cell volume\n";
-        for (auto it = volumeMap.begin(); it != volumeMap.end(); ++it)
+        for (unsigned long long i = 0; i != volumeMap.size(); ++i)
         {
-            out << it->first << " " << it->second << "\n";
+            out << i << " " << std::setprecision(12) << volumeMap[i] << "\n";
         }
         out.close();
 
