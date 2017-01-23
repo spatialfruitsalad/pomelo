@@ -26,6 +26,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include <limits>
 #include <sys/stat.h>
 #include "include.hpp"
+#include "cmdlparser.hpp"
 #include "fileloader.hpp"
 #include "parsexyz.hpp"
 #include "parsexyzr.hpp"
@@ -40,7 +41,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include "postprocessing.hpp"
 #include "output.hpp"
 
-std::string version = "0.1.2";
+std::string version = "0.1.3";
 #ifdef USELUA 
 using namespace sel;
 #endif
@@ -75,95 +76,34 @@ void  getFaceVerticesOfFace( std::vector<int>& f, unsigned int k, std::vector<un
     }
 }
 
-enum eMode
-{
-    GENERIC,
-    SPHERE,
-    SPHEREPOLY,
-    TETRA,
-    TETRABLUNT,
-    ELLIP,
-    SPHCYL
-} thisMode;
 
 int main (int argc, char* argv[])
 {
-
-    // command line argument parsing
-    if(argc != 4 && argc != 5 && argc != 6 )
-    {
-        std::cerr << "Commandline parameters not correct .... aborting "  << std::endl;
-        std::cerr << std::endl <<  "Use pomelo this way:\n\t./pomelo -TYPE [position-file] [outputfolder] (-POLY)"  << std::endl;
-        std::cerr <<  "\twith -TYPE being -SPHERE, -SPHEREPOLY -TETRA, -TETRABLUNT, -ELLIP, -SPHCYL"  << std::endl;
-        std::cerr <<  "\t-POLY is optional and gives you only cell.poly"  << std::endl;
-        std::cerr << std::endl <<  "Or in a generic way:\n\t./pomelo -GENERIC [path-to-lua-file] [outputfolder]"  << std::endl;
-        return -1;
-    }
+    
 
     std::cout << "\nP O M E L O\n\nVersion " << version << "\nCopyright (C) 2016\nSimon Weis and Philipp Schoenhoefer\n\n";
     std::cout << "pomelo home:\t\t http://www.theorie1.physik.uni-erlangen.de/" << std::endl << std::endl << std::endl;
 
+
 /////////////////////
 // Parse Command line arguments
 /////////////////////
-    const std::string mode = argv[1];
-    const std::string filename = argv[2];
-    std::string folder = argv[3];
-    std::string OnlyPoly;
-    if(argc == 5)
-        OnlyPoly = argv[4];
-    else
-        OnlyPoly = "";
+    cmdlParser cp;
     try
     {
-    if (mode == "-SPHERE" || mode == "--SPHERE")
-    {
-        thisMode = SPHERE;
+        cp.parseArguments(argc, argv); 
+        cp.sanityCheckParameters();
     }
-    else if (mode == "-SPHEREPOLY" || mode == "--SPHEREPOLY")
+    catch(std::string& e)
     {
-        thisMode = SPHEREPOLY;
-    }
-    else if (mode == "-TETRA" || mode =="--TETRA")
-    {
-        thisMode = TETRA;
-    }
-    else if (mode == "-TETRABLUNT" || mode =="--TETRABLUNT")
-    {
-        thisMode = TETRABLUNT;
-    }
-    else if (mode == "-ELLIP" || mode == "--ELLIP")
-    {
-        thisMode = ELLIP;
-    }
-    else if (mode == "-SPHCYL" || mode == "--SPHCYL")
-    {
-        thisMode = SPHCYL;
-    }
-    else if (mode == "-GENERIC" || mode == "--GENERIC")
-    {
-#ifdef USELUA
-        thisMode = GENERIC;
-        if(OnlyPoly == "-POLY" || OnlyPoly == "--POLY") 
-        {
-            std::cerr << std::endl <<  "Please write Output information in your lua-file"  << std::endl;
-            return -1;
-        }
-#else
-        throw std::string ("unknown mode " + mode + ".\n to enable GENERIC mode, you must build pomelo with 'make GENERIC'");
-
-#endif
-    }
-    else
-    {
-        throw std::string ("unknown mode " + mode);
-    }
-    }
-    catch (std::string const &  e)
-    {
-        std::cerr << "an error occurred: " << e << std::endl;
+        cp.printHelp();
+        std::cerr << e << std::endl;
         return -1;
     }
+
+
+    std::string folder = cp.outfolder;
+    
 /////////////////////
 // check if folder is ok and create it
 /////////////////////
@@ -203,15 +143,15 @@ int main (int argc, char* argv[])
 // Load Particles in GENERIC Mode
 /////////////////////
 #ifdef USELUA
-    if (thisMode == GENERIC)
+    if (cp.thisMode == GENERIC)
     {
-        std::cout << "command line arguments parsed:\nLUA Parameter File: " << filename << "\noutfolder: " << folder << std::endl << std::endl;
+        std::cout << "command line arguments parsed:\nLUA Parameter File: " << cp.filename << "\noutfolder: " << folder << std::endl << std::endl;
 
         // lua state for the global parameter file
         State state {true};
-        if(!state.Load(filename))
+        if(!state.Load(cp.filename))
         {
-            std::cerr << "error loading lua parameter file: " << filename << std::endl;
+            std::cerr << "error loading lua parameter file: " << cp.filename << std::endl;
             return -1;
         }
 
@@ -292,10 +232,20 @@ int main (int argc, char* argv[])
         std::cout << std::endl;
     }
 #endif
-    if (thisMode == SPHERE)
+
+    if(cp.polyswitch)
+    {
+        outMode.savesurface = false;
+        outMode.savepoly = true;
+        outMode.saveoff = false;
+        outMode.savereduced = false;
+        outMode.postprocessing = false;
+    }
+    
+    if (cp.thisMode == SPHERE)
     {
         parsexyz p;
-        p.parse(filename, pp);
+        p.parse(cp.filename, pp);
 
         xmin = p.xmin;
         ymin = p.ymin;
@@ -307,20 +257,12 @@ int main (int argc, char* argv[])
         ypbc = p.ypbc;
         zpbc = p.zpbc;
 
-        if(OnlyPoly == "-POLY" || OnlyPoly == "--POLY") 
-        {
-            outMode.savesurface = false;
-            outMode.savepoly = true;
-            outMode.saveoff = false;
-            outMode.savereduced = false;
-            outMode.postprocessing = false;
-        }
     }
-    else if (thisMode == SPHEREPOLY)
+    else if (cp.thisMode == SPHEREPOLY)
     {
         parsexyzr p;
-        std::cout << "loading file: " << filename << std::endl;
-        p.parse(filename, pp);
+        std::cout << "loading file: " << cp.filename << std::endl;
+        p.parse(cp.filename, pp);
         outMode.postprocessing = true; 
 
         xmin = p.xmin;
@@ -332,20 +274,11 @@ int main (int argc, char* argv[])
         xpbc = p.xpbc;
         ypbc = p.ypbc;
         zpbc = p.zpbc;
-
-        if(OnlyPoly == "-POLY" || OnlyPoly == "--POLY") 
-        {
-            outMode.savesurface = false;
-            outMode.savepoly = true;
-            outMode.saveoff = false;
-            outMode.savereduced = false;
-            outMode.postprocessing = false;
-        }
     }
-    else if (thisMode == ELLIP)
+    else if (cp.thisMode == ELLIP)
     {
         parseellipsoid p;
-        p.parse(filename, pp);
+        p.parse(cp.filename, pp);
         outMode.postprocessing = false; 
     
         std::cout << "epsilon " << epsilon << std::endl;
@@ -359,21 +292,13 @@ int main (int argc, char* argv[])
         ypbc = p.ypbc;
         zpbc = p.zpbc;
 
-        if(OnlyPoly == "-POLY" || OnlyPoly == "--POLY") 
-        {
-            outMode.savesurface = false;
-            outMode.savepoly = true;
-            outMode.saveoff = false;
-            outMode.savereduced = false;
-            outMode.postprocessing = false;
-        }
     }
-    else if (thisMode == TETRA)
+    else if (cp.thisMode == TETRA)
     {
         parsetetra p;
-        double shrink = atof(argv[4]);
-        int iterations = atoi(argv[5]);
-        p.parse(filename, pp, shrink, iterations);
+        double shrink = cp.shrink;
+        int iterations = cp.iterations;
+        p.parse(cp.filename, pp, shrink, iterations);
         outMode.postprocessing = false; 
         std::cout << "epsilon " << epsilon << std::endl;
         xmin = p.xmin;
@@ -386,12 +311,12 @@ int main (int argc, char* argv[])
         ypbc = p.ypbc;
         zpbc = p.zpbc;
     }
-    else if (thisMode == TETRABLUNT)
+    else if (cp.thisMode == TETRABLUNT)
     {
         parsetetrablunt p;
-        double shrink = atof(argv[4]);
-        int iterations = atoi(argv[5]);
-        p.parse(filename, pp, shrink, iterations);
+        double shrink = cp.shrink;
+        int iterations = cp.iterations;
+        p.parse(cp.filename, pp, shrink, iterations);
         outMode.postprocessing = false; 
         std::cout << "epsilon " << epsilon << std::endl;
         xmin = p.xmin;
@@ -404,11 +329,11 @@ int main (int argc, char* argv[])
         ypbc = p.ypbc;
         zpbc = p.zpbc;
     }
-    else if (thisMode == SPHCYL)
+    else if (cp.thisMode == SPHCYL)
     {
 
         parsesphcyl p;
-        p.parse(filename, pp);
+        p.parse(cp.filename, pp);
 
         xmin = p.xmin;
         ymin = p.ymin;
@@ -419,15 +344,6 @@ int main (int argc, char* argv[])
         xpbc = p.xpbc;
         ypbc = p.ypbc;
         zpbc = p.zpbc;
-
-        if(OnlyPoly == "-POLY" || OnlyPoly == "--POLY") 
-        {
-            outMode.savesurface = false;
-            outMode.savepoly = true;
-            outMode.saveoff = false;
-            outMode.savereduced = false;
-            outMode.postprocessing = false;
-        }
     }
 
 
