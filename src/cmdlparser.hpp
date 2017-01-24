@@ -41,10 +41,10 @@ public:
     void printHelp()
     {
         std::cerr << "Commandline parameters not correct .... aborting "  << std::endl;
-        std::cerr << std::endl <<  "Use pomelo this way:\n\t./pomelo -TYPE [position-file] [outputfolder] (-POLY)"  << std::endl;
-        std::cerr <<  "\twith -TYPE being -SPHERE, -SPHEREPOLY -TETRA, -TETRABLUNT, -ELLIP, -SPHCYL"  << std::endl;
-        std::cerr <<  "\t-POLY is optional and gives you only cell.poly"  << std::endl;
-        std::cerr << std::endl <<  "Or in a generic way:\n\t./pomelo -GENERIC [path-to-lua-file] [outputfolder]"  << std::endl;
+        std::cerr << std::endl <<  "Use pomelo this way:\n\t./pomelo -mode=[MODE] -i [position-file] -o [outputfolder] (-POLY)"  << std::endl;
+        std::cerr <<  "\twith [MODE] being SPHERE, SPHEREPOLY TETRA, TETRABLUNT, ELLIP, SPHCYL"  << std::endl;
+        std::cerr <<  "\tPOLY is optional and gives you only cell.poly"  << std::endl;
+        std::cerr << std::endl <<  "Or in a generic way:\n\t./pomelo -mode=GENERIC -i [path-to-lua-file] -o [outputfolder]"  << std::endl;
     }
 
 
@@ -61,7 +61,7 @@ public:
         // loop over all arguments
         for (int i = 1; i != argc; ++i)
         {
-            parseMode(argv, i);
+            parseMode(argc, argv, i);
             parseFileName(argc, argv, i);
             parseOut(argc, argv, i);
             parsePoly(argv, i);
@@ -171,17 +171,15 @@ private:
         }
     }
 
-    void parseMode(char* argv[], int& i)
+    void parseMode(int argc, char* argv[], int& i)
     {
         std::string a = argv[i]; 
         if (a.find("-mode") != std::string::npos || a.find("--mode") != std::string::npos)
         {
             if (modeset) std::cerr << "WARNING: Mode has already been set. Overwriting old mode." << std::endl;
             modeset = true;
-            splitstring modestr  =  a.c_str();
-            auto split = modestr.split('=');
-            if (split.size() != 2) std::cerr << "Warning: Mode Selection went wrong: " << a << std::endl;
-            std::string mode = split[1]; 
+            if (i == argc -1) throw std::string("cannot parse mode");
+            std::string mode = argv[i+1];
             if (mode == "SPHERE" || mode == "SPHERE")
             {
                 thisMode = SPHERE;
