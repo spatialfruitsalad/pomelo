@@ -48,8 +48,14 @@ make GENERIC
 To use pomelo to calculate the voronoi tesselation of spheres, you can use the normal mode. Switch to the bin directory and type 
 
 ```
-./pomelo -SPHERE ../test/2016-05-13_xyz/hs-16384_0.50.xyz [output folder]
+./pomelo -mode SPHERE -i ../test/2016-05-13_xyz/hs-16384_0.50.xyz -o [output folder]
 ```
+
+The options have the following meaning:
+-mode selects the mode. There are the following modes available: SPHERE, SPHEREPOLY, TETRA, TETRABLUNT, ELLIP, SPHCYL and GENERIC. While the last one has to be compiled with make GENERIC and thus requires selene, the other modes work fine. 
+-i specifies the input file. In the case above, the SPHERE Mode expects a xyz file, that lists the particle's (spheres) center coordinates.
+-o specifies the outpput folder. This folder will be created by pomelo and output will be written to it.
+
 
 Use any other xyz file and adapt the comment line as shown in the test case.
 
@@ -66,7 +72,7 @@ Pomelo allows you to use your own position file (e.g. the output of a simulation
 To invoke Pomelo, switch to the bin directory. For the generic mode to work, you will have to build the generic binary of pomelo. There you can call Pomelo by typing 
 
 ```
-./pomelo -GENERIC [file to lua path] [output folder]
+./pomelo -mode GENERIC -i [file to lua path] -o [output folder]
 ```
 
 The passed lua file is a parameter file, which contains all the information needed by pomelo. The output folder is the folder which will contain the calculated output. 
