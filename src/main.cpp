@@ -127,7 +127,7 @@ int main (int argc, char* argv[])
 /////////////////////
     // pp contains the triangulation of the particle surfaces
     pointpattern pp;
-    double epsilon = 1e-9;
+    double epsilon = 1e-12;
     double xmin = 0;
     double ymin = 0;
     double zmin = 0;
@@ -263,7 +263,7 @@ int main (int argc, char* argv[])
         parsexyzr p;
         std::cout << "loading file: " << cp.filename << std::endl;
         p.parse(cp.filename, pp);
-        outMode.postprocessing = true; 
+        outMode.postprocessing = false; 
 
         xmin = p.xmin;
         ymin = p.ymin;
@@ -568,7 +568,8 @@ int main (int argc, char* argv[])
                     if (labelidmap[n] == l)
                     {
                         // discard this neighbour/face, since they have the same id
-                        // std::cout << "discarding face " << l << " " << labelidmap[n] << std::endl;
+                        //std::cout << "discarding face " << l << " " << labelidmap[n] << std::endl;
+
                     }
                     else
                     {
@@ -642,8 +643,9 @@ int main (int argc, char* argv[])
     // Write poly file for karambola
     if(outMode.savepoly == true)
     {
-        std::cout << "writing poly file" << std::endl;
+        std::cout << "writing poly file: " << folder + "cell.poly" << std::endl;
         std::ofstream file;
+
         file.open(folder + "cell.poly");
         if (!file.good())
         {

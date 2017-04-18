@@ -112,6 +112,7 @@ public:
                 if (stepsThetaSplit.size() != 2)
                     throw std::string("cannot parse parameters from XYZ file");
                 stepsTheta = std::stoi(stepsThetaSplit[1]);
+                std::cout << "stepsTheta: " << stepsTheta << std::endl;
             }
             else if (s.find("stepsphi") != std::string::npos)
             {
@@ -120,6 +121,7 @@ public:
                 if (stepsPhiSplit.size() != 2)
                     throw std::string("cannot parse parameters from XYZ file");
                 stepsPhi = std::stoi(stepsPhiSplit[1]);
+                std::cout << "stepsPhi: " << stepsPhi << std::endl;
             }
 
         }
