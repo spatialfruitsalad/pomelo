@@ -1,9 +1,8 @@
 # pomelo
 
 calculate generic set voronoi diagrams with c++11
-![2d visualisation of a Set Voronoi diagram of two pear shaped particles](https://cloud.githubusercontent.com/assets/17979038/25128704/e8dfaed2-243a-11e7-98b6-df2d2b926107.png)
-![3d rendering of a Voronoi diagram of spheres](http://url/to/img.pn://cloud.githubusercontent.com/assets/17979038/25128693/dea86b48-243a-11e7-8a95-6b9cc504605d.png)
-o
+![3d rendering of a Voronoi diagram of spheres](https://cloud.githubusercontent.com/assets/17979038/25128693/dea86b48-243a-11e7-8a95-6b9cc504605d.png)
+
 ## GENERAL 
 
 This is pomelo, a tool that allows you to calculate set voronoi tessellations. 
@@ -23,6 +22,11 @@ External libraries are
  - Selene for parsing Lua scripts (https://github.com/jeremyong/Selene)
 
 If you use Pomelo, we would be happy if you let us know. You can contact us at simon.weis@fau.de or philipp.schoenhoefer@fau.de
+
+
+![2d visualisation of a Set Voronoi diagram of two pear shaped particles](https://cloud.githubusercontent.com/assets/17979038/25128704/e8dfaed2-243a-11e7-98b6-df2d2b926107.png)
+
+
 
 ## System Requirements
  
