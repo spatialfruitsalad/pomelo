@@ -379,6 +379,7 @@ int main (int argc, char* argv[])
     std::map < unsigned long long, unsigned long long > labelidmap;
     // volumemap is a map from particlelabel to voronoi cell volume
     std::vector <double> volumeMap;
+    std::vector<std::vector<double> > neighbourcell;
     unsigned long long maxParticleLabel = 0;
     std::vector<std::vector<double> > ref;
     {
@@ -411,6 +412,7 @@ int main (int argc, char* argv[])
     {
 
         volumeMap.resize(maxParticleLabel+1, 0);
+        neighbourcell.resize(maxParticleLabel+1);
     }
 
     std::cout << "finished" << std::endl;
@@ -573,6 +575,22 @@ int main (int argc, char* argv[])
                     }
                     else
                     {
+                        if (outMode.postprocessing == true && l != 0 && labelidmap[n] != 0)
+                        {
+                            bool NotAlreadyNeighbour = true;
+                            for( unsigned long long kk = 0; kk != neighbourcell[l].size(); ++kk){
+                                if(labelidmap[n] == neighbourcell[l][kk]){
+                                    NotAlreadyNeighbour = false;
+                                    break;
+                                }
+                            }
+
+                            if(NotAlreadyNeighbour){
+                                neighbourcell[l].push_back(labelidmap[n]);
+                                neighbourcell[labelidmap[n]].push_back(l);
+                            }
+                        }
+
                         std::vector<unsigned int> facevertexlist;
                         getFaceVerticesOfFace(f, k, facevertexlist);
                         std::vector<double> positionlist;
@@ -621,6 +639,17 @@ int main (int argc, char* argv[])
         }
         out.close();
 
+        std::cout << "save number of neighbours" << std::endl;
+        std::ofstream nout(folder+"setVoronoiNeighbours.dat");
+        nout << "#1_particle label #2_number of neighbours\n";
+        for (unsigned long long i = 0; i != neighbourcell.size(); ++i)
+        {
+            nout << i << " " << neighbourcell[i].size() << " ( ";
+            for (unsigned long long ii = 0; ii != neighbourcell[i].size(); ++ii)
+                nout << neighbourcell[i][ii] << " ";
+            nout << ")\n";
+        }
+        nout.close();
     } 
 
     if (ppreduced.points.size() == 0)
