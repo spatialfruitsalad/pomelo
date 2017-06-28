@@ -224,6 +224,11 @@ int main (int argc, char* argv[])
         else if (boundary == "none")
         {
             std::cout << "boundary condition mode 'none' selected." << std::endl;
+            std::string ignoreboundarycells = state["ignoreboundarycells"];
+        }
+        else if (boundary == "ignore")
+        {
+           cp.ignoreBoundaryCellsswitch = true;
         }
         else
         {
@@ -436,12 +441,14 @@ int main (int argc, char* argv[])
     // postprocessing for normal voronoi Output
     if(outMode.postprocessing == true)
     {
+        if( cp.ignoreBoundaryCellsswitch == false) 
+        {
+            std::cout << "Performing Postprocessing for normal (unmerged) Voronoi Cells" << std::endl;
 
-        std::cout << "Performing Postprocessing for normal (unmerged) Voronoi Cells" << std::endl;
-
-        std::string customFileName = folder + "custom.dat";
-        con.print_custom("%i %s %v", customFileName.c_str());
-        DoPostProcessing(folder);
+            std::string customFileName = folder + "custom.dat";
+            con.print_custom("%i %s %v", customFileName.c_str());
+            DoPostProcessing(folder);
+        }
     }
     else
     {
@@ -467,6 +474,12 @@ int main (int argc, char* argv[])
     double zdist = zmax - zmin;
 
     //unsigned long long refl = 0;
+    
+    std::map<unsigned long, bool> ignoreMap;
+    for (unsigned int ii = 0; ii != maxParticleLabel; ++ii)
+    {
+        ignoreMap[ii] = false;
+    }
 
     if(cla.start())
     {
@@ -488,14 +501,38 @@ int main (int argc, char* argv[])
                 double zc = 0;
                 // Get the position of the current particle under consideration
                 cla.pos(xc,yc,zc);
-                
+                 
 
 
                 unsigned int id = cla.pid();
                 unsigned long long l = labelidmap[id];
                 if (outMode.postprocessing == true)
                 {
-                    volumeMap[l] += c.volume();  
+                    if (cp.ignoreBoundaryCellsswitch)
+                    {
+                        // check neighbor cells
+                        std::vector<int> w; // neighbors of faces
+                        c.neighbors(w);
+                        // for this cell, loop over all faces and get the corresponding neighbors
+                        for (unsigned long long k = 0; k != w.size(); ++k)
+                        {
+                            // compare if id for this cell and the face-neighbor is the same
+                            int n = w[k];   // ID of neighbor cell
+                            if (labelidmap[n] == 0)
+                            {
+                                ignoreMap[l] = true;
+                                break;
+                            }
+                        }
+                    } 
+                    if (ignoreMap[l] == false)
+                    {
+                        volumeMap[l] += c.volume();  
+                    }
+                    else
+                    {
+                        volumeMap[l] = 0;
+                    }
                 }
                 double xabs = (xc-ref[l][0]);
                 double yabs = (yc-ref[l][1]);

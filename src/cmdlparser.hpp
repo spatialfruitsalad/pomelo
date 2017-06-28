@@ -54,6 +54,7 @@ public:
         fileset=false;
         outset=false;
         polyswitch = false;
+        ignoreBoundaryCellsswitch = false;
         shrink=1;
         shrinkset=false;
         iterations = 1;
@@ -70,20 +71,30 @@ public:
         }
     }
 
+    // mode in which pomelo operates. 
     eMode thisMode;
     bool modeset;
 
+    // the filname of the input file (or config.lua in GENERIC mode)
     std::string filename;
     bool fileset;
 
+    // the output folder path ( folder will be created by pomelo)
     std::string outfolder;
     bool outset;
     
+    // if this is true, all other output is ignored. only poly file will be written
     bool polyswitch;
 
+    // only important for volume calculation. Will ignore all cells that touch the cell which belongs to particle ID 0 
+    // -- very hand for calculating packing fraction distributions in systems with non periodic boundaries. currently set only in GENERIC mode by boundary = "ignore" in the config. lua file
+    bool ignoreBoundaryCellsswitch;
+
+    // shrink value, only used for tetrahedra
     double shrink;
     bool shrinkset;
 
+    // iterations value, only used for tetrahedra
     int iterations;
     bool itset;
 
