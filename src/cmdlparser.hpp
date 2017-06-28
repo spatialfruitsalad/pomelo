@@ -44,7 +44,7 @@ public:
         std::cerr << std::endl <<  "Use pomelo this way:\n\t./pomelo -mode [MODE] -i [position-file] -o [outputfolder] (-POLY)"  << std::endl;
         std::cerr <<  "\twith [MODE] being SPHERE, SPHEREPOLY TETRA, TETRABLUNT, ELLIP, SPHCYL"  << std::endl;
         std::cerr <<  "\tPOLY is optional and gives you only cell.poly"  << std::endl;
-        std::cerr << std::endl <<  "Or in a generic way:\n\t./pomelo -mode=GENERIC -i [path-to-lua-file] -o [outputfolder]"  << std::endl;
+        std::cerr << std::endl <<  "Or in a generic way:\n\t./pomelo -mode GENERIC -i [path-to-lua-file] -o [outputfolder]"  << std::endl;
     }
 
 
@@ -180,31 +180,31 @@ private:
             modeset = true;
             if (i == argc -1) throw std::string("cannot parse mode");
             std::string mode = argv[i+1];
-            if (mode == "SPHERE" || mode == "SPHERE")
+            if (mode == "SPHERE" || mode == "sphere")
             {
                 thisMode = SPHERE;
             }
-            else if (mode == "SPHEREPOLY" || mode == "SPHEREPOLY")
+            else if (mode == "SPHEREPOLY" || mode == "spherepoly")
             {
                 thisMode = SPHEREPOLY;
             }
-            else if (mode == "TETRA" || mode =="TETRA")
+            else if (mode == "TETRA" || mode =="tetra")
             {
                 thisMode = TETRA;
             }
-            else if (mode == "TETRABLUNT" || mode =="TETRABLUNT")
+            else if (mode == "TETRABLUNT" || mode =="tetrablunt")
             {
                 thisMode = TETRABLUNT;
             }
-            else if (mode == "ELLIP" || mode == "ELLIP")
+            else if (mode == "ELLIP" || mode == "ellip")
             {
                 thisMode = ELLIP;
             }
-            else if (mode == "SPHCYL" || mode == "SPHCYL")
+            else if (mode == "SPHCYL" || mode == "sphcyl")
             {
                 thisMode = SPHCYL;
             }
-            else if (mode == "GENERIC" || mode == "GENERIC")
+            else if (mode == "GENERIC" || mode == "generic")
             {
 #ifdef USELUA
                 thisMode = GENERIC;

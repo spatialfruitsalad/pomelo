@@ -106,6 +106,7 @@ public:
                 std::cerr << "error parsing one line in XYZ file" << std::endl;
                 break;
             }
+            //std::cout << "parsed particle: " << x << " " << y << " " << z << std::endl;
             linesloaded++;
             pp.addpoint(linesloaded, x,y,z);
         }
