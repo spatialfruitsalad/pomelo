@@ -1,9 +1,7 @@
 # pomelo
 
 calculate generic set voronoi diagrams with c++11
-![2d visualisation of a Set Voronoi diagram of two pear shaped particles](https://cloud.githubusercontent.com/assets/17979038/25128704/e8dfaed2-243a-11e7-98b6-df2d2b926107.png)
-![3d rendering of a Voronoi diagram of spheres](http://url/to/img.pn://cloud.githubusercontent.com/assets/17979038/25128693/dea86b48-243a-11e7-8a95-6b9cc504605d.png)
-o
+![3d rendering of a Voronoi diagram of spheres](https://cloud.githubusercontent.com/assets/17979038/25128693/dea86b48-243a-11e7-8a95-6b9cc504605d.png)
 ## GENERAL 
 
 This is pomelo, a tool that allows you to calculate set voronoi tessellations. 
@@ -23,6 +21,11 @@ External libraries are
  - Selene for parsing Lua scripts (https://github.com/jeremyong/Selene)
 
 If you use Pomelo, we would be happy if you let us know. You can contact us at simon.weis@fau.de or philipp.schoenhoefer@fau.de
+
+
+![2d visualisation of a Set Voronoi diagram of two pear shaped particles](https://cloud.githubusercontent.com/assets/17979038/25128704/e8dfaed2-243a-11e7-98b6-df2d2b926107.png)
+
+
 
 ## System Requirements
  
@@ -46,8 +49,8 @@ make GENERIC
 
 ## Usage 
 
-### Calling Pomelo 
-To use pomelo to calculate the voronoi tesselation of spheres, you can use the normal mode. Switch to the bin directory and type 
+### Running Pomelo on a system of spheres
+To use pomelo to calculate the Voronoi tesselation of spheres, you can use the mode `SPHERE`. Switch to the bin directory and type 
 
 ```
 ./pomelo -mode SPHERE -i ../test/2016-05-13_xyz/hs-16384_0.50.xyz -o [output folder]
@@ -59,7 +62,18 @@ The options have the following meaning:
 -o specifies the outpput folder. This folder will be created by pomelo and output will be written to it.
 
 
-Use any other xyz file and adapt the comment line as shown in the test case.
+The example file is a small part of a system of a hard spheres simulation. Use any other xyz file and adapt the comment line as shown in the test case.
+The first lines of an xyz file should look similar to this example:
+```
+18
+boundary_condition = periodic_cuboidal, infile = hs-16384_0.50-coord.dat, num_sph = 18, boxsz = 51.583743, repr = 0 
+P 16.5855262696469 14.8968505096529 24.7938151355899
+P 23.2206174557173 45.9892223675941 4.14961702400604
+...
+```
+
+The first line are the number of particles.
+The second line is a comment line, which contains information needed for running pomelo correctly. The boundary conditions can be `periodic_cuboidal` or `none`. the parameter `boxsz` is the size of the box that is used by pomelo. The other parameters are not important for pomelo.
 
 
 ### Pomelo workflow (generic) 
