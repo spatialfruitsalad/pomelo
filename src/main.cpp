@@ -352,6 +352,11 @@ int main (int argc, char* argv[])
     }
 
 
+    std::cout << "boundarybox\n";
+    std::cout << "nx: [" << xmin << ", " << xmax << "]\n";
+    std::cout << "ny: [" << ymin << ", " << ymax << "]\n";
+    std::cout << "nz: [" << zmin << ", " << zmax << "]\n";
+     
     // clean degenerated vertices from particle surface triangulation pointpattern
     {
         std::cout << "remove duplicates in surface triangulation" << std::endl;
@@ -475,6 +480,7 @@ int main (int argc, char* argv[])
 
     //unsigned long long refl = 0;
     
+    // create ignore map 
     std::map<unsigned long, bool> ignoreMap;
     for (unsigned int ii = 0; ii != maxParticleLabel; ++ii)
     {

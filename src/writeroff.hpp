@@ -82,12 +82,10 @@ public:
 
         f << "OFF\n" << p.points.size() << " " << faces.size()-removedFaces << " 0\n";
         f << std::fixed;
-        for(auto it =  p.points.begin();
-                it != p.points.end();
-                ++it)
-        {
-            f << std::setprecision(12) << it->x << " " << std::setprecision(12) << it-> y << " " << std::setprecision(12) << it->z<< std::endl;
-        }
+    for(auto p : p.points )
+    {
+        f << std::setprecision(12) << p.x << " " << std::setprecision(12) << p.y << " " << std::setprecision(12) << p.z<< "\n";
+    }
 
         for (
             auto it = faces.begin();
