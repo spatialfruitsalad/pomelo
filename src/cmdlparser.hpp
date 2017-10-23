@@ -57,7 +57,7 @@ public:
         ignoreBoundaryCellsswitch = false;
         shrink=1;
         shrinkset=false;
-        iterations = 1;
+        iterations = 4;
         itset=false;
         // loop over all arguments
         for (int i = 1; i != argc; ++i)
@@ -136,6 +136,7 @@ private:
             if (i == argc -1) throw std::string("cannot parse shrink");
             shrink = std::stod(argv[i+1]);
             ++i; 
+            std::cout << "shrink set to: " << shrink << std::endl;
         }
     }
 
@@ -144,11 +145,12 @@ private:
         std::string a = argv[i]; 
         if (a.find("-iterations") != std::string::npos || a.find("--iterations") != std::string::npos)
         {
-            if (shrinkset) std::cerr << "WARNING: iterations has aready been set. Overwriting old value" << std::endl;
+            if (itset) std::cerr << "WARNING: iterations has aready been set. Overwriting old value" << std::endl;
             itset = true;
             if (i == argc -1) throw std::string("cannot parse iterations");
             iterations = std::stoi(argv[i+1]);
             ++i; 
+            std::cout << "iterations set to: " << iterations << std::endl;
         }
     }
 
@@ -172,7 +174,7 @@ private:
     void parseFileName(int argc, char* argv[], int& i)
     {
         std::string a = argv[i]; 
-        if (a.find("-i") != std::string::npos || a.find("--i") != std::string::npos)
+        if ((a.find("-i") != std::string::npos || a.find("--i") != std::string::npos) && a.find("-iter") == std::string::npos )
         {
             if (fileset) std::cerr << "WARNING: FileName has aready been set. Overwriting old filename" << std::endl;
             fileset = true;

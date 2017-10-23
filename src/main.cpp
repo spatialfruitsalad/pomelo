@@ -268,7 +268,6 @@ int main (int argc, char* argv[])
         parsexyzr p;
         std::cout << "loading file: " << cp.filename << std::endl;
         p.parse(cp.filename, pp);
-        outMode.postprocessing = false; 
 
         xmin = p.xmin;
         ymin = p.ymin;
@@ -321,8 +320,13 @@ int main (int argc, char* argv[])
         parsetetrablunt p;
         double shrink = cp.shrink;
         int iterations = cp.iterations;
+        std::cout << "number of iterations: " << iterations << std::endl;
         p.parse(cp.filename, pp, shrink, iterations);
-        outMode.postprocessing = false; 
+        outMode.postprocessing = true; 
+        outMode.saveoff = false; 
+        outMode.savesurface = false;
+        outMode.savereduced = false;
+        epsilon = 1e-9;
         std::cout << "epsilon " << epsilon << std::endl;
         xmin = p.xmin;
         ymin = p.ymin;

@@ -1,5 +1,5 @@
 18
-boundary_condition = periodic_cuboidal, infile = hs-16384_0.50-coord.dat, num_sph = 16384, boxsz = 51.583743, repr = 0
+boundary_condition = periodic_cuboidal, infile = hs-16384_0.50-coord.dat, num_sph = 18, boxsx =100, boxsy = 51.58374 , boxsz = 51.583743
 P 16.5855262696469 14.8968505096529 24.7938151355899
 P 23.2206174557173 45.9892223675941 4.14961702400604
 P 32.9824233143202 31.7922818870178 31.1072183073097
