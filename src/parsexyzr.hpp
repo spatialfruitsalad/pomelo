@@ -64,6 +64,11 @@ public:
        
         std::vector<std::string> parameters = commentline.split(','); 
 
+        bool setsize = false;
+        xmin = 0;
+        ymin = 0;
+        zmin = 0;
+
         for (auto s:parameters)
         {
             if (s.find("boxsz") != std::string::npos)
@@ -74,14 +79,38 @@ public:
                     throw std::string("cannot parse parameters from XYZ file");
                 
                 double v = std::stod(boxsplit[1]);
-                std::cout << "xyzr parser boxsize: " << v << std::endl;
-                xmin = 0;
-                ymin = 0;
-                zmin = 0;
-                xmax = v;
-                ymax = v;
+                std::cout << "xyz parser boxsize: " << v << std::endl;
+                if (!setsize)
+                {
+                    xmax = v;
+                    ymax = v;
+                }
                 zmax = v;
                             
+            }
+            else if (s.find("boxsy") != std::string::npos)
+            {
+                splitstring split (s.c_str());
+                std::vector<std::string> boxsplit= split.split('=');
+                if (boxsplit.size() != 2)
+                    throw std::string("cannot parse parameters from XYZ file");
+                
+                double v = std::stod(boxsplit[1]);
+                std::cout << "xyz parser boxsize X: " << v << std::endl;
+                ymax = v;
+                setsize = true;
+            }
+            else if (s.find("boxsx") != std::string::npos)
+            {
+                splitstring split (s.c_str());
+                std::vector<std::string> boxsplit= split.split('=');
+                if (boxsplit.size() != 2)
+                    throw std::string("cannot parse parameters from XYZ file");
+                
+                double v = std::stod(boxsplit[1]);
+                std::cout << "xyz parser boxsize X: " << v << std::endl;
+                xmax = v;
+                setsize = true;
             }
             else if (s.find("boundary_condition") != std::string::npos)
             {
