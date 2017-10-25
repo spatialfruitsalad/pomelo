@@ -34,6 +34,7 @@ If you use Pomelo, we would be happy if you let us know. You can contact us at s
 
 
 ## Compilation
+### Linux
 There are two version of Pomelo, the normal one and the generic one. The normal one can process simple tasks, while the generic one is more complex and can process any type of particles.
 
 To compile the normal version of Pomelo, just call `make`. This will invoke the Makefile, which builds Pomelo.
@@ -46,6 +47,22 @@ If you want to use the generic version of Pomelo, call
 ```
 make GENERIC
 ```
+
+### Windows (cygwin)
+Pomelo can also be run on Windows, using cygwin. Therefore you need to download cygwin (64 bit version is recommended, as the 32 bit version is limited to 4GB of memory) from the [cygwin website](http://www.cygwin.com/install.html).
+
+You need to install cygwin and add some packages during the installation: `git`, `make`, `clang`, `lua`, `lua-devel`. We also recommend you install the text editor of your choice.
+After that, start cygwin, clone this repository with
+```
+git clone git@github.com:spatialfruitsalad/pomelo.git
+```
+and call 
+```
+make
+```
+
+As the filenames and paths of the lua libraries are different for different linux distributions and of course for cygwin, you will need to make some small changes to the `Makefile` if you want to use GENERIC mode:
+For the targets `obj/main.o` and `LINK` you need to change `-I/usr/include/lua5.2` to `-I/usr/include/lua` and `-llua5.2` to `llua`. That should do the trick.
 
 ## Usage 
 
