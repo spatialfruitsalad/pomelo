@@ -17,3 +17,4 @@ postprocessing = true
 savepoly = true
 savereduced = true
 savesurface = true
+saveoff = true

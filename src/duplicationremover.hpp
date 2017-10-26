@@ -27,7 +27,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 class duplicationremover
 {
 public:
-    duplicationremover(unsigned int _x, unsigned int _y, unsigned int _z) : x(_x), y(_y), z(_z)
+    duplicationremover(const unsigned int _x, const unsigned int _y, const unsigned int _z) : x(_x), y(_y), z(_z)
     {
         list.resize(x*y*z);
     };
@@ -54,7 +54,7 @@ public:
     }
 
     // TODO periodic Boundaries
-    void setboundaries (double xmi, double xma, double ymi, double yma, double zmi, double zma)
+    void setboundaries (const double xmi, const double xma, const double ymi, const double yma, const double zmi, const double zma)
     {
         xmin = xmi;
         ymin = ymi;
@@ -64,7 +64,7 @@ public:
         zmax = zma;
     }
 
-    void addpoint(double dx, double dy, double dz, unsigned long long l, long cellID = -1)
+    void addpoint(const double dx, const double dy, const double dz, const unsigned long long l, const long cellID = -1)
     {
         if (dx > xmax || dx < xmin)
         {
@@ -80,9 +80,9 @@ public:
         }
 
         //std::cout << "adding particle " << dx << " " << dy << " "  << dz << " " << zmax  << std::endl;
-        double sx = (xmax-xmin)/x;
-        double sy = (ymax-ymin)/y;
-        double sz = (zmax-zmin)/z;
+        const double sx = (xmax-xmin)/x;
+        const double sy = (ymax-ymin)/y;
+        const double sz = (zmax-zmin)/z;
 
         int cx = static_cast<int>((dx - xmin)/sx);
         int cy = static_cast<int>((dy - ymin)/sy);
@@ -98,7 +98,7 @@ public:
         while (static_cast<unsigned int>(cy) >= y ) cy--;
         while (static_cast<unsigned int>(cz) >= z ) cz--;
 
-        unsigned int index = getindex(cx,cy,cz);
+        const unsigned int index = getindex(cx,cy,cz);
         if (cellID == -1)
         {
             list[index].addpoint(l, dx,dy,dz);

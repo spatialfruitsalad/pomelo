@@ -55,6 +55,7 @@ public:
         infile.open(filename);
         if (infile.fail())
         {
+            std::cerr << "cannot open tetra input file" << filename << std::endl;
             throw std::string("cannot open tetra input file");
         }
         std::string line = "";

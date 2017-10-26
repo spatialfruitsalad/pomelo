@@ -14,4 +14,4 @@ epsilon = 1e-6
 boundary = "none"
 
 postprocessing = false
-
+writepoly = true

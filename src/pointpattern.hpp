@@ -27,7 +27,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include <cmath>
 struct point
 {
-    point(double cx, double cy, double cz, int cl, long cf = -1, long cC = -1): x(cx), y (cy), z(cz), l(cl), faceID(cf), cellID(cC) {};
+    point(const double cx, const double cy, const double cz, const int cl, const long cf = -1, const long cC = -1): x(cx), y (cy), z(cz), l(cl), faceID(cf), cellID(cC) {};
     double x, y, z;
     int l;
     long faceID, cellID;
@@ -53,16 +53,16 @@ struct point
 };
 
 point operator/ (const point& p,  double const& f);
-point operator* ( double const& f, const point& p);
+point operator* (double const& f, const point& p);
 point operator* (const point& p,  double const& f);
 
 
 
-inline bool checkdistancecloserthan (point& a, point& b, double e)
+inline bool checkdistancecloserthan (point const& a, point const& b, double e)
 {
-    double dx =fabs(a.x - b.x);
-    double dy =fabs(a.y - b.y);
-    double dz =fabs(a.z - b.z);
+    const double dx =fabs(a.x - b.x);
+    const double dy =fabs(a.y - b.y);
+    const double dz =fabs(a.z - b.z);
 
     return (dx < e && dy < e && dz < e);
 };
@@ -70,11 +70,11 @@ inline bool checkdistancecloserthan (point& a, point& b, double e)
 class pointpattern
 {
 public:
-    void addpoint(int l, double x, double y, double z);
-    void addpointForCell(double x, double y, double z, int l, long cf, long cC);
-    void print();
-    void removeduplicates ( double epsilon);
-    void removeduplicates ( double epsilon, pointpattern& p);
+    void addpoint(const int l, const double x, const double y, const double z);
+    void addpointForCell(const double x, const double y, const double z, const int l, const long cf, const long cC);
+    void print() const;
+    void removeduplicates ( const double epsilon);
+    void removeduplicates ( const double epsilon, pointpattern& p);
 
     inline void clear()
     {
@@ -88,7 +88,7 @@ public:
         p = nullptr;
         for (unsigned long i = 0; i != points.size(); ++i)
         {
-            if (points[i].l == idx)
+            if (points[i].l == static_cast<long>(idx))
             {
                 p = &points[i];
                 break;
