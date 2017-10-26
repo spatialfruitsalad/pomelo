@@ -66,6 +66,13 @@ For the targets `obj/main.o` and `LINK` you need to change `-I/usr/include/lua5.
 
 ## Usage 
 
+### Run the unit tests
+to compile and run the tests, just call 
+```
+make test
+```
+
+
 ### Running Pomelo on a system of spheres
 To use pomelo to calculate the Voronoi tesselation of spheres, you can use the mode `SPHERE`. Switch to the bin directory and type 
 
