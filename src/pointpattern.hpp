@@ -83,18 +83,6 @@ public:
     }
 
     std::vector<point> points;
-    inline void getPoint (unsigned long idx, point* p)
-    {
-        p = nullptr;
-        for (unsigned long i = 0; i != points.size(); ++i)
-        {
-            if (points[i].l == static_cast<long>(idx))
-            {
-                p = &points[i];
-                break;
-            }
-        }   
-    }
     std::map<unsigned int, long> indexShift;    // first is particle ID, second is new Index or -1
     
 
