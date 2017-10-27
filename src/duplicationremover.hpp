@@ -29,6 +29,8 @@ class duplicationremover
 public:
     duplicationremover(const unsigned int _x, const unsigned int _y, const unsigned int _z) : x(_x), y(_y), z(_z)
     {
+        if (_x == 0 || _y == 0 || _z == 0) 
+            throw std::string("ERROR: cannot perform cell subdivision with number of cells = 0 in at least one axis.");
         list.resize(x*y*z);
     };
 
@@ -107,7 +109,6 @@ public:
         {
             list[index].addpointForCell(dx,dy,dz,l,cellID,cellID);
         }
-
     }
 
     // store all points to passed parameter p

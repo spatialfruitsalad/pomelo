@@ -49,7 +49,7 @@ public:
                 it != p.points.end();
                 ++it)
         {
-            f << it->l << ":    " <<  std::setprecision(20) << it->x << " " << std::setprecision(20) << it-> y << " " << std::setprecision(20) << it->z<< std::endl;
+            f << it->l << ":    " <<  std::setprecision(10) << it->x << " " << std::setprecision(10) << it-> y << " " << std::setprecision(10) << it->z<< std::endl;
         }
 
         f << "POLYS" <<  std::endl;

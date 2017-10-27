@@ -326,7 +326,7 @@ int main (int argc, char* argv[])
         outMode.saveoff = false; 
         outMode.savesurface = false;
         outMode.savereduced = false;
-        epsilon = 1e-9;
+        epsilon = 1e-11;
         std::cout << "epsilon " << epsilon << std::endl;
         xmin = p.xmin;
         ymin = p.ymin;

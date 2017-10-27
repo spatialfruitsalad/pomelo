@@ -15,8 +15,11 @@ obj/fileloader.o: src/fileloader.*
 obj/pointpattern.o: src/pointpattern.*
 	$(CXX) -c -o obj/pointpattern.o src/pointpattern.cpp
 
-obj/testpointpatter.o: src/pointpattern.* src/unittests/testpointpattern.cpp
-	$(CXX) -c -o obj/testpointpatter.o src/unittests/testpointpattern.cpp
+obj/testduplicationremover.o: src/pointpattern.* src/unittests/testduplicationremover.cpp
+	$(CXX) -c -o obj/testduplicationremover.o src/unittests/testduplicationremover.cpp
+
+obj/testpointpattern.o: src/pointpattern.* src/unittests/testpointpattern.cpp
+	$(CXX) -c -o obj/testpointpattern.o src/unittests/testpointpattern.cpp
 
 obj/main_luafree.o: src/main.cpp  src/triangle.hpp src/duplicationremover.hpp src/writerpoly.hpp src/writeroff.hpp src/IWriter.hpp src/postprocessing.hpp src/parsexyz.hpp src/parseellipsoids.hpp src/parsesphcyl.hpp  src/GenericMatrix.h src/parsexyzr.hpp src/parsetetra.hpp src/output.hpp src/colorTable.hpp src/parsetetra_blunt.hpp src/tetrahedra.hpp src/cmdlparser.hpp
 	mkdir -p obj
@@ -36,9 +39,13 @@ LINK: obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o
 	$(CXX) obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o -o bin/pomelo -llua5.2 -I/usr/include/lua5.2 $(LUAFLAG) 
 
 
-test: obj/pointpattern.o src/pointpattern.hpp src/pointpattern.cpp  obj/testpointpatter.o
-	$(CXX) obj/pointpattern.o obj/testpointpatter.o -o bin/testpointpattern
+test: obj/pointpattern.o src/pointpattern.hpp src/pointpattern.cpp  obj/testpointpattern.o obj/testduplicationremover.o
+	$(CXX) obj/pointpattern.o obj/testpointpattern.o -o bin/testpointpattern
+	$(CXX) obj/pointpattern.o obj/testduplicationremover.o -o bin/testduplicationremover
+	$(CXX) src/unittests/testcmdlparser.cpp -o bin/testcmdlparser
 	bin/testpointpattern
+	bin/testduplicationremover
+	bin/testcmdlparser
 
 clean:
 	rm obj/*
