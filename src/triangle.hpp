@@ -32,9 +32,6 @@ class triangle
 public:
     triangle(point px, point py, point pz): p{ px,  py , pz}
     {
-//        p[0] = px;
-//        p[1] = py;
-//        p[2] = pz;
     };
 
     point p[3];
@@ -42,21 +39,24 @@ public:
     
     void getPlaneEquationCoefficients(double& a, double& b, double& c, double& d)
     {
-        double e1x = p[1].x - p[0].x;
-        double e1y = p[1].y - p[0].y;
-        double e1z = p[1].z - p[0].z;
+        const double e1x = p[1].x - p[0].x;
+        const double e1y = p[1].y - p[0].y;
+        const double e1z = p[1].z - p[0].z;
 
-        double e2x = p[2].x - p[0].x;
-        double e2y = p[2].y - p[0].y;
-        double e2z = p[2].z - p[0].z;
+        const double e2x = p[2].x - p[0].x;
+        const double e2y = p[2].y - p[0].y;
+        const double e2z = p[2].z - p[0].z;
+
+        const double nx = e1y*e2z - e1z*e2y;
+        const double ny = e1z*e2x - e1x*e2z;
+        const double nz = e1x*e2y - e1y*e2x;
         
-        double nx = e1y*e2z - e1z*e2y;
-        double ny = e1z*e2x - e1x*e2z;
-        double nz = e1x*e2y - e1y*e2x;
-        
-        a = nx;
-        b = ny;
-        c = nz;
+        const double l = sqrt(nx*nx + ny*ny + nz*nz);
+
+
+        a = nx/l;
+        b = ny/l;
+        c = nz/l;
 
         d = -a * p[0].x - b * p[0].y - c*p[0].z;
     }

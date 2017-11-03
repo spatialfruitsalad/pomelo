@@ -1,5 +1,5 @@
-CXX = clang++ -Wall -Wextra -O3 -std=c++11 
-CXXVORO = clang++ -std=c++11 -g -O3
+CXX = clang++ -Wall -Wextra -O3 -std=c++1y 
+CXXVORO = clang++ -std=c++1y -g -O3
 LUAFLAG = -DUSELUA
 
 all:  LINK_luafree
@@ -43,9 +43,13 @@ test: obj/pointpattern.o src/pointpattern.hpp src/pointpattern.cpp  obj/testpoin
 	$(CXX) obj/pointpattern.o obj/testpointpattern.o -o bin/testpointpattern
 	$(CXX) obj/pointpattern.o obj/testduplicationremover.o -o bin/testduplicationremover
 	$(CXX) src/unittests/testcmdlparser.cpp -o bin/testcmdlparser
+	$(CXX) src/unittests/testsplitstring.cpp -o bin/testsplitstring
+	$(CXX) src/unittests/testtriangle.cpp obj/pointpattern.o -o bin/testtriangle
 	bin/testpointpattern
 	bin/testduplicationremover
 	bin/testcmdlparser
+	bin/testsplitstring
+	bin/testtriangle
 
 clean:
 	rm obj/*

@@ -28,7 +28,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 
 #include "csplitstring.hpp"
 
-void fileloader::read(std::string filename, std::vector<particleparameterset>& set)
+void fileloader::read(const std::string filename, std::vector<particleparameterset>& set)
 {
     std::ifstream infile;
     infile.open(filename, std::ifstream::in);
@@ -41,16 +41,28 @@ void fileloader::read(std::string filename, std::vector<particleparameterset>& s
     cSplitString line("");
     unsigned int linesloaded = 0;
     std::getline(infile, line);
+    unsigned long firstwidth = 0;
     while (std::getline(infile, line))
     {
         if(line.find("#")!=std::string::npos) continue; // ignore comment lines
 
         std::vector<std::string> thisparams = line.split(' ');
+        if (firstwidth == 0)
+        {
+            firstwidth = thisparams.size();
+        }
+        else
+        {
+            if (firstwidth != thisparams.size())
+            {
+                std::cerr << "WARNING: number of particle parameters are not same for each line." << std::endl;
+            }
+        }
 
         particleparameterset p;
-        for (auto it = thisparams.begin(); it != thisparams.end(); ++it)
+        for (auto s : thisparams)
         {
-            double d = std::stof((*it));
+            const double d = std::stod(s);
             p.push_back(d);
         }
         linesloaded++;

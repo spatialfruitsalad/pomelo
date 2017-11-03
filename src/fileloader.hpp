@@ -27,7 +27,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 class fileloader
 {
 public:
-    void read(std::string filename, std::vector<particleparameterset>& set);
+    void read(const std::string filename, std::vector<particleparameterset>& set);
 
 };
 
