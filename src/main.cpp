@@ -127,7 +127,7 @@ int main (int argc, char* argv[])
 /////////////////////
     // pp contains the triangulation of the particle surfaces
     pointpattern pp;
-    double epsilon = 1e-12;
+    double epsilon = 1e-10;
     double xmin = 0;
     double ymin = 0;
     double zmin = 0;
@@ -283,7 +283,7 @@ int main (int argc, char* argv[])
     {
         parseellipsoid p;
         p.parse(cp.filename, pp);
-        outMode.postprocessing = false; 
+        outMode.postprocessing = true; 
     
         std::cout << "epsilon " << epsilon << std::endl;
         xmin = p.xmin;
@@ -324,8 +324,8 @@ int main (int argc, char* argv[])
         p.parse(cp.filename, pp, shrink, iterations);
         outMode.postprocessing = true; 
         outMode.saveoff = false; 
-        outMode.savesurface = false;
-        outMode.savereduced = false;
+        outMode.savesurface = true;
+        outMode.savereduced = true;
         epsilon = 1e-11;
         std::cout << "epsilon " << epsilon << std::endl;
         xmin = p.xmin;
@@ -511,8 +511,6 @@ int main (int argc, char* argv[])
                 double zc = 0;
                 // Get the position of the current particle under consideration
                 cla.pos(xc,yc,zc);
-                 
-
 
                 unsigned int id = cla.pid();
                 unsigned long long l = labelidmap[id];
@@ -673,6 +671,15 @@ int main (int argc, char* argv[])
     std::cout << std::endl;
 
     con.clear();
+
+    // write parameter file
+    {
+        std::ofstream out(folder + "parameter.dat");
+        out << "Input File Name: " << cp.filename + "\n";
+        out << "Mode: " << cp.thisMode << "\n";
+        out << "Output Folder: " << cp.outfolder << "\n";
+        out << "Shrink (cmdl parser): " << cp.shrink << "\n";       
+    }
 
     if(outMode.postprocessing == true)
     {
