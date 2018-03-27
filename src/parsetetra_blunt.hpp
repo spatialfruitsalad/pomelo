@@ -1,5 +1,5 @@
 /* 
-Copyright 2016 Simon Weis and Philipp Schoenhoefer
+Copyright 2018 Simon Weis and Philipp Schoenhoefer
 
 This file is part of Pomelo.
 

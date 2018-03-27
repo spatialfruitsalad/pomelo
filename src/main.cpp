@@ -1,5 +1,5 @@
 /* 
-Copyright 2016 Simon Weis and Philipp Schoenhoefer
+Copyright 2018 Simon Weis and Philipp Schoenhoefer
 
 This file is part of Pomelo.
 
@@ -41,7 +41,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include "postprocessing.hpp"
 #include "output.hpp"
 
-std::string version = "0.1.3";
+std::string version = "0.1.4";
 #ifdef USELUA 
 using namespace sel;
 #endif
