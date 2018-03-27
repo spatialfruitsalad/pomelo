@@ -6,6 +6,8 @@ calculate generic set voronoi diagrams with c++11
 
 This is pomelo, a tool that allows you to calculate set voronoi tessellations. 
 If you want to learn about set voronoi diagrams, refer to http://www.tandfonline.com/doi/abs/10.1080/14786435.2013.834389#.Vulxk9qdJLU  (DOI:10.1080/14786435.2013.834389) where the algorithm is described.
+If you use this program or results of this program for scientific publications, we would acknowledge the citation of the following paper:
+- https://epjwoc.epj.org/articles/epjconf/abs/2017/09/epjconf162065/epjconf162065.html (DOI: 10.1051/epjconf/201714006007, arxiv: https://arxiv.org/abs/1703.03643 )
 
 Pomelo is designed to be as generic as possible. This is acquired by being independent of input format for the particles on which you want to calculate a set voronoi diagram of.
 You provide a so called position file (e.g. the output of your simulation or image analysis) and a read file. The read file is a lua script, which allows you to spawn points according to the values in the position file.
