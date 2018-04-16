@@ -83,11 +83,20 @@ public:
         std::string faceString = "";
         // building edges and bodies data structures
         int removedFaces = 0;
+        unsigned long count = 0;
+        unsigned long all = 0;
         for (
             auto it = faces.begin();
             it != faces.end();
             ++ it)
         {
+            count++;
+            if (count%100 == 0)
+            {
+                all+= count;
+                count = 0;
+                std::cout << static_cast<double>(all)/static_cast<double>(faces.size()) * 100.0 << "% " << std::endl;
+            }
             unsigned int faceID = it->first;
             unsigned int cellID = faceCellMap.at(faceID);
             std::vector<unsigned int> testing;
@@ -124,8 +133,6 @@ public:
                     
                     if (edgeID > 0)
                         f << edgeID << " " << v1  << " " <<  v2 << "\n";
-                    else 
-                        std::cout << edgeID << " " << v1  << " " <<  v2 << "\n";
 
 
                     faceString += std::to_string(edgeID) + " ";

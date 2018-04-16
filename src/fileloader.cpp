@@ -40,7 +40,7 @@ void fileloader::read(const std::string filename, std::vector<particleparameters
 #pragma GCC diagnostic ignored "-Wwrite-strings"
     cSplitString line("");
     unsigned int linesloaded = 0;
-    std::getline(infile, line);
+    //std::getline(infile, line);
     unsigned long firstwidth = 0;
     while (std::getline(infile, line))
     {

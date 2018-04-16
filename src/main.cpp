@@ -221,7 +221,7 @@ int main (int argc, char* argv[])
             xpbc = state["xpbc"];
             ypbc = state["ypbc"];
             zpbc = state["zpbc"];
-            std::cout << "x: " << xpbc << "\ny: " << ypbc << "\nz: " << zpbc << std::endl;
+            std::cout << "\nx: " << xpbc << "\ny: " << ypbc << "\nz: " << zpbc << std::endl;
         }
         else if (boundary == "none")
         {
