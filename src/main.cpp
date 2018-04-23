@@ -167,6 +167,15 @@ int main (int argc, char* argv[])
 
         std::cout << "Parsing Position File... \nWorking on " << posfile << " " << readfile << std::endl;
 
+        {
+            std::ifstream in(readfile);
+            if (!in.good())
+            {
+                std::cerr << "Error in GENERIC mode: readfile " << readfile << " not found!\n\nAborting." << std::endl;
+                return 5;
+            }
+        }
+
         // read particle parameters and positions
         std::vector<particleparameterset> setlist;
         fileloader loader;
