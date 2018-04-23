@@ -36,6 +36,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include "parseellipsoids.hpp"
 #include "pointpattern.hpp"
 #include "duplicationremover.hpp"
+#include "writerfe.hpp"
 #include "writerpoly.hpp"
 #include "writeroff.hpp"
 #include "postprocessing.hpp"
@@ -160,6 +161,7 @@ int main (int argc, char* argv[])
         outMode.savepoly = state["savepoly"];
         outMode.saveoff = state["saveoff"];
         outMode.savereduced = state["savereduced"];
+        outMode.savefe = state["savefe"];
         outMode.postprocessing = state["postprocessing"];
         // parse global parameters from lua file
         std::string posfile = state["positionfile"];
@@ -228,7 +230,7 @@ int main (int argc, char* argv[])
             xpbc = state["xpbc"];
             ypbc = state["ypbc"];
             zpbc = state["zpbc"];
-            std::cout << "x: " << xpbc << "\ny: " << ypbc << "\nz: " << zpbc << std::endl;
+            std::cout << "\nx: " << xpbc << "\ny: " << ypbc << "\nz: " << zpbc << std::endl;
         }
         else if (boundary == "none")
         {
@@ -253,6 +255,7 @@ int main (int argc, char* argv[])
         outMode.savepoly = true;
         outMode.saveoff = false;
         outMode.savereduced = false;
+        outMode.savefe = false;
         outMode.postprocessing = false;
     }
     
@@ -759,6 +762,20 @@ int main (int argc, char* argv[])
         }
         writeroff wo(pw);
         file << wo;
+        file.close();
+    }
+    if (outMode.savefe == true)
+    {
+        std::cout << "writing fe file" << std::endl;
+        std::ofstream file;
+        file.open(folder+"cell.fe");
+        if (!file.good())
+        {
+            std::cerr << "error: cannot open fe file for write!" << std::endl;
+            throw std::string("error: cannot open fe file for write!");
+        }
+        writerfe wf(pw);
+        file << wf;
         file.close();
     }
 
