@@ -102,6 +102,8 @@ int main (int argc, char* argv[])
         return -1;
     }
 
+    std::cout << "#commandline parser arguments:\n#\tinfine: " << cp.filename << "\n";
+    std::cout << "#\toutfolder: " << cp.outfolder << "\n";
 
     std::string folder = cp.outfolder;
     
