@@ -369,6 +369,14 @@ int main (int argc, char* argv[])
         zpbc = p.zpbc;
     }
 
+    // write parameter file
+    {
+        std::ofstream out(folder + "parameter.dat");
+        out << "Input File Name: " << cp.filename + "\n";
+        out << "Mode: " << cp.thisMode << "\n";
+        out << "Output Folder: " << cp.outfolder << "\n";
+        out << "Shrink (cmdl parser): " << cp.shrink << "\n";       
+    }
 
     std::cout << "boundarybox\n";
     std::cout << "nx: [" << xmin << ", " << xmax << "]\n";
@@ -686,14 +694,6 @@ int main (int argc, char* argv[])
 
     con.clear();
 
-    // write parameter file
-    {
-        std::ofstream out(folder + "parameter.dat");
-        out << "Input File Name: " << cp.filename + "\n";
-        out << "Mode: " << cp.thisMode << "\n";
-        out << "Output Folder: " << cp.outfolder << "\n";
-        out << "Shrink (cmdl parser): " << cp.shrink << "\n";       
-    }
 
     if(outMode.postprocessing == true)
     {
