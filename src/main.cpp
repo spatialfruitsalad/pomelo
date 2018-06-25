@@ -30,6 +30,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include "fileloader.hpp"
 #include "parsexyz.hpp"
 #include "parsexyzr.hpp"
+#include "parsepolymer.hpp"
 #include "parsetetra.hpp"
 #include "parsetetra_blunt.hpp"
 #include "parsesphcyl.hpp"
@@ -280,6 +281,22 @@ int main (int argc, char* argv[])
     else if (cp.thisMode == SPHEREPOLY)
     {
         parsexyzr p;
+        std::cout << "loading file: " << cp.filename << std::endl;
+        p.parse(cp.filename, pp);
+
+        xmin = p.xmin;
+        ymin = p.ymin;
+        zmin = p.zmin;
+        xmax = p.xmax;
+        ymax = p.ymax;
+        zmax = p.zmax;
+        xpbc = p.xpbc;
+        ypbc = p.ypbc;
+        zpbc = p.zpbc;
+    }
+    else if (cp.thisMode == POLYMER)
+    {
+        parsepolymer p;
         std::cout << "loading file: " << cp.filename << std::endl;
         p.parse(cp.filename, pp);
 

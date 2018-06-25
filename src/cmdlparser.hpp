@@ -28,6 +28,7 @@ enum eMode
     GENERIC,
     SPHERE,
     SPHEREPOLY,
+    POLYMER,
     TETRA,
     TETRABLUNT,
     ELLIP,
@@ -42,7 +43,7 @@ public:
     {
         std::cerr << "Commandline parameters not correct .... aborting "  << std::endl;
         std::cerr << std::endl <<  "Use pomelo this way:\n\t./pomelo -mode [MODE] -i [position-file] -o [outputfolder] (-POLY)"  << std::endl;
-        std::cerr <<  "\twith [MODE] being SPHERE, SPHEREPOLY TETRA, TETRABLUNT, ELLIP, SPHCYL"  << std::endl;
+        std::cerr <<  "\twith [MODE] being SPHERE, SPHEREPOLY, POLYMER, TETRA, TETRABLUNT, ELLIP, SPHCYL"  << std::endl;
         std::cerr <<  "\tPOLY is optional and gives you only cell.poly"  << std::endl;
         std::cerr << std::endl <<  "Or in a generic way:\n\t./pomelo -mode GENERIC -i [path-to-lua-file] -o [outputfolder]"  << std::endl;
     }
@@ -200,6 +201,10 @@ private:
             else if (mode == "SPHEREPOLY" || mode == "spherepoly")
             {
                 thisMode = SPHEREPOLY;
+            }
+            else if (mode == "POLYMER" || mode == "polymer")
+            {
+                thisMode = POLYMER;
             }
             else if (mode == "TETRA" || mode =="tetra")
             {
