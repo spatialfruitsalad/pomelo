@@ -127,7 +127,7 @@ public:
 
         while(std::getline(infile, line))   // parse lines
         {
-            line = line.substr(2, line.size()); // remove "P "
+            if(line.find('#') != std::string::npos) continue;
             std::istringstream iss(line);
             double x ,y, z;
             int member;
