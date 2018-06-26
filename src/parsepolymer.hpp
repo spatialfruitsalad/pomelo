@@ -55,7 +55,6 @@ public:
         }
         std::string line = "";
         unsigned long linesloaded = 0;
-        std::getline(infile, line); // ignore first line
         splitstring commentline;
         std::getline(infile, commentline); // parse comment line
        
