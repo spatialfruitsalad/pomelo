@@ -432,6 +432,7 @@ int main (int argc, char* argv[])
     std::map < unsigned long long, unsigned long long > labelidmap;
     // volumemap is a map from particlelabel to voronoi cell volume
     std::vector <double> volumeMap;
+    std::vector <double> areaMap;
     std::vector<std::vector<double> > neighbourcell;
     unsigned long long maxParticleLabel = 0;
     std::vector<std::vector<double> > ref;
@@ -465,6 +466,7 @@ int main (int argc, char* argv[])
     {
 
         volumeMap.resize(maxParticleLabel+1, 0);
+        areaMap.resize(maxParticleLabel+1, 0);
         neighbourcell.resize(maxParticleLabel+1);
     }
 
@@ -641,6 +643,10 @@ int main (int argc, char* argv[])
                 std::vector<int> f; // list of face vertices (bracketed, as ID)
                 c.face_vertices(f);
 
+                std::vector<double> fa; // list of face areas
+                c.face_areas(fa);
+
+
                 std::vector<double> vertices;   // all vertices for this cell
                 c.vertices(xc,yc,zc, vertices);
 
@@ -674,6 +680,8 @@ int main (int argc, char* argv[])
                                 neighbourcell[labelidmap[n]].push_back(l);
                             }
                         }
+
+                        areaMap[l] += fa[k];
 
                         std::vector<unsigned int> facevertexlist;
                         getFaceVerticesOfFace(f, k, facevertexlist);
@@ -723,6 +731,16 @@ int main (int argc, char* argv[])
             out << i << " " << std::setprecision(12) << volumeMap[i] << "\n";
         }
         out.close();
+
+        std::cout << "save set voronoi cell interface areas" << std::endl;
+        // save set voronoi areas
+        std::ofstream aout(folder+"setVoronoiAreas.dat");
+        aout << "#1_particle label #2_set voronoi cell interface area\n";
+        for (unsigned long long i = 0; i != areaMap.size(); ++i)
+        {
+            aout << i << " " << std::setprecision(12) << areaMap[i] << "\n";
+        }
+        aout.close();
 
         std::cout << "save number of neighbours" << std::endl;
         std::ofstream nout(folder+"setVoronoiNeighbours.dat");
