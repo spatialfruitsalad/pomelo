@@ -45,6 +45,10 @@ struct point
     {
         return point(point::x + rhs.x, point::y + rhs.y, point::z + rhs.z, point::l);
     }
+    point operator- ( point const& rhs) const
+    {
+        return point(point::x - rhs.x, point::y - rhs.y, point::z - rhs.z, point::l);
+    }
 
     double length ( ) const
     {

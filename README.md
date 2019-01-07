@@ -99,7 +99,13 @@ P 23.2206174557173 45.9892223675941 4.14961702400604
 ```
 
 The first line are the number of particles.
-The second line is a comment line, which contains information needed for running pomelo correctly. The boundary conditions can be `periodic_cuboidal` or `none`. the parameter `boxsz` is the size of the box that is used by pomelo. The other parameters are not important for pomelo.
+The second line is a comment line, which contains information needed for running pomelo correctly. The boundary conditions can be: 
+`periodic_cuboidal`: periodic in all three directions
+`periodic_xy`,`periodic_xz`,`periodic_yz`: periodic in two directions and hard wall in the other direction
+`periodic_x`,`periodic_y`,`periodic_z`: periodc in one direction and hard walls in the other two directions
+`none`: system inside a hard box
+
+The parameter `boxsz` is the size of the box that is used by pomelo. The parameter `percolating_cluster` changes output files for a more convenient handling of cells with percolating features. The other parameters are not important for pomelo.
 
 
 ### Pomelo workflow (generic) 

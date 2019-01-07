@@ -43,7 +43,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include "postprocessing.hpp"
 #include "output.hpp"
 
-std::string version = "0.1.4";
+std::string version = "0.1.5";
 #ifdef USELUA 
 using namespace sel;
 #endif
@@ -132,15 +132,16 @@ int main (int argc, char* argv[])
     // pp contains the triangulation of the particle surfaces
     pointpattern pp;
     double epsilon = 1e-10;
-    double xmin = 0;
-    double ymin = 0;
-    double zmin = 0;
-    double xmax = 0;
-    double ymax = 0;
-    double zmax = 0;
+    xmin = 0;
+    ymin = 0;
+    zmin = 0;
+    xmax = 0;
+    ymax = 0;
+    zmax = 0;
     bool xpbc = false;
     bool ypbc = false;
     bool zpbc = false;
+    bool percstruct = false;
     output outMode;
     
 /////////////////////
@@ -225,6 +226,7 @@ int main (int argc, char* argv[])
         xpbc = false;
         ypbc = false;
         zpbc = false;
+        percstruct = false;
 
         std::string boundary = state["boundary"];
         if(boundary == "periodic")
@@ -233,7 +235,8 @@ int main (int argc, char* argv[])
             xpbc = state["xpbc"];
             ypbc = state["ypbc"];
             zpbc = state["zpbc"];
-            std::cout << "\nx: " << xpbc << "\ny: " << ypbc << "\nz: " << zpbc << std::endl;
+            percstruct = state["percolation"];
+            std::cout << "\nx: " << xpbc << "\ny: " << ypbc << "\nz: " << zpbc << "\npercolating structure:" << percstruct << std::endl;
         }
         else if (boundary == "none")
         {
@@ -276,6 +279,7 @@ int main (int argc, char* argv[])
         xpbc = p.xpbc;
         ypbc = p.ypbc;
         zpbc = p.zpbc;
+        percstruct = p.percstruct;
 
     }
     else if (cp.thisMode == SPHEREPOLY)
@@ -293,6 +297,7 @@ int main (int argc, char* argv[])
         xpbc = p.xpbc;
         ypbc = p.ypbc;
         zpbc = p.zpbc;
+        percstruct = p.percstruct;
     }
     else if (cp.thisMode == POLYMER)
     {
@@ -309,6 +314,7 @@ int main (int argc, char* argv[])
         xpbc = p.xpbc;
         ypbc = p.ypbc;
         zpbc = p.zpbc;
+        percstruct = p.percstruct;
     }
     else if (cp.thisMode == ELLIP)
     {
@@ -326,6 +332,7 @@ int main (int argc, char* argv[])
         xpbc = p.xpbc;
         ypbc = p.ypbc;
         zpbc = p.zpbc;
+        percstruct = p.percstruct;
 
     }
     else if (cp.thisMode == TETRA)
@@ -345,6 +352,7 @@ int main (int argc, char* argv[])
         xpbc = p.xpbc;
         ypbc = p.ypbc;
         zpbc = p.zpbc;
+        percstruct = p.percstruct;
     }
     else if (cp.thisMode == TETRABLUNT)
     {
@@ -368,6 +376,7 @@ int main (int argc, char* argv[])
         xpbc = p.xpbc;
         ypbc = p.ypbc;
         zpbc = p.zpbc;
+        percstruct = p.percstruct;
     }
     else if (cp.thisMode == SPHCYL)
     {
@@ -384,6 +393,7 @@ int main (int argc, char* argv[])
         xpbc = p.xpbc;
         ypbc = p.ypbc;
         zpbc = p.zpbc;
+        percstruct = p.percstruct;
     }
 
     // write parameter file
@@ -595,7 +605,7 @@ int main (int argc, char* argv[])
                 double xabs2_alt, yabs2_alt, zabs2_alt;
 
                 ref[l][3]=0;
-                if(xpbc)
+                if(xpbc && !percstruct)
                 {
                     if(xabs < 0) xabs_alt = xabs + xdist;
                     else xabs_alt = xabs - xdist;
@@ -610,7 +620,7 @@ int main (int argc, char* argv[])
                     }
                 }
                 ref[l][4]=0;
-                if(ypbc)
+                if(ypbc && !percstruct)
                 {
                     if(yabs < 0) yabs_alt = yabs + ydist;
                     else yabs_alt = yabs - ydist;
@@ -625,7 +635,7 @@ int main (int argc, char* argv[])
                     }
                 }
                 ref[l][5]=0;
-                if(zpbc)
+                if(zpbc && !percstruct)
                 {
                     if(zabs < 0) zabs_alt = zabs + zdist;
                     else zabs_alt = zabs - zdist;
@@ -696,9 +706,9 @@ int main (int argc, char* argv[])
                             double y = vertices[vertexindex*3+1];
                             double z = vertices[vertexindex*3+2];
 
-                            if(xpbc) x += ref[l][3];
-                            if(ypbc) y += ref[l][4];
-                            if(zpbc) z += ref[l][5];
+                            if(xpbc && !percstruct) x += ref[l][3];
+                            if(ypbc && !percstruct) y += ref[l][4];
+                            if(zpbc && !percstruct) z += ref[l][5];
 
                             ppreduced.addpoint(l,x,y,z);
                             positionlist.push_back(x);
@@ -811,8 +821,16 @@ int main (int argc, char* argv[])
             std::cerr << "error: cannot open fe file for write!" << std::endl;
             throw std::string("error: cannot open fe file for write!");
         }
-        writerfe wf(pw);
-        file << wf;
+        if(percstruct)
+        {
+            writerfe_perc wf(pw);
+            file << wf;
+        }
+        else
+        {
+            writerfe wf(pw);
+            file << wf;
+        }
         file.close();
     }
 

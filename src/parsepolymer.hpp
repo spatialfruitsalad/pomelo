@@ -42,8 +42,9 @@ public:
     bool xpbc;
     bool ypbc;
     bool zpbc;
+    bool percstruct;
 
-    parsepolymer () : xmin(0),  ymin(0), zmin(0), xmax(0) ,ymax(0), zmax(0), xpbc(false), ypbc(false), zpbc(false)
+    parsepolymer () : xmin(0),  ymin(0), zmin(0), xmax(0) ,ymax(0), zmax(0), xpbc(false), ypbc(false), zpbc(false), percstruct(false)
     {};
     void parse(std::string const filename, pointpattern& pp)
     {
@@ -120,6 +121,40 @@ public:
                     xpbc = ypbc = zpbc = true;
                     std::cout << "polymer parser boundaries: " << pbcsplit[1] << std::endl;
                 }
+                else if (pbcsplit[1].find("periodic_xy") != std::string::npos)
+                {
+                    xpbc = ypbc =  true;
+                    std::cout << "polymer parser boundaries: " << pbcsplit[1] << std::endl;
+                }
+                else if (pbcsplit[1].find("periodic_xz") != std::string::npos)
+                {
+                    xpbc = zpbc =  true;
+                    std::cout << "polymer parser boundaries: " << pbcsplit[1] << std::endl;
+                }
+                else if (pbcsplit[1].find("periodic_yz") != std::string::npos)
+                {
+                    ypbc = zpbc =  true;
+                    std::cout << "polymer parser boundaries: " << pbcsplit[1] << std::endl;
+                }
+                else if (pbcsplit[1].find("periodic_x") != std::string::npos)
+                {
+                    xpbc =  true;
+                    std::cout << "polymer parser boundaries: " << pbcsplit[1] << std::endl;
+                }
+                else if (pbcsplit[1].find("periodic_y") != std::string::npos)
+                {
+                    ypbc =  true;
+                    std::cout << "polymer parser boundaries: " << pbcsplit[1] << std::endl;
+                }
+                else if (pbcsplit[1].find("periodic_z") != std::string::npos)
+                {
+                    zpbc =  true;
+                    std::cout << "polymer parser boundaries: " << pbcsplit[1] << std::endl;
+                }
+            }
+            else if (s.find("percolating_cluster") != std::string::npos)
+            {
+                percstruct = true;
             }
         }
         
