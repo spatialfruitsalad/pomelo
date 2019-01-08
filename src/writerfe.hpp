@@ -180,10 +180,10 @@ double xmax,xmin;
 double ymax,ymin;
 double zmax,zmin;
 
-class writerfe_perc : public IWriter
+class writerfe_perc : public IWriter 
 {
 public:
-    writerfe_perc()
+    writerfe_perc() // designed for surface structures 
     {
     };
     writerfe_perc(IWriter const& other)
@@ -211,7 +211,7 @@ public:
 
         long perc_count = 1;
 
-        for(auto pt : p.points)
+        for(auto pt : p.points) // map vertices from outside the box inside and remove duplicates
         {
             point_label.push_back(0);
             perc_x.push_back(init_dir);
@@ -295,6 +295,7 @@ public:
 
         edgeManager em;
         em.currentEdgeID = 1;
+        std::vector<unsigned long>  bodies;
         std::string facetString = "";
         // building edges and bodies data structures
         int removedFaces = 0;
@@ -338,6 +339,7 @@ public:
                 if(testing.size() > 2)
                 {
                     facetString += std::to_string(face_count) + " ";
+                    bodies.push_back(face_count);
 
                     face_count++;
                     for (unsigned long kk = 0; kk < testing.size()-1; ++kk)
@@ -348,7 +350,7 @@ public:
                         unsigned long v2 = point_label[vv2];
                         long edgeID = em.getEdgeID(v1,v2);
                         
-                        if (edgeID > 0)
+                        if (edgeID > 0) // considering periodic boundary conditions
                         {
                             f << edgeID << " " << v1  << " " <<  v2;
 
@@ -476,7 +478,7 @@ public:
                     unsigned long v2 = point_label[vv2];
                     long edgeID = em.getEdgeID(v1,v2);
 
-                    if (edgeID > 0)
+                    if (edgeID > 0) // considering periodic boundary conditions
                     {
                         f << edgeID << " " << v1  << " " <<  v2;
 
@@ -605,6 +607,14 @@ public:
         }
         f << "\nfacets // oriented\n";
         f << facetString << "\n";
+
+        f << "\nbodies\n";
+        f << "1 ";
+        for (unsigned long kk = 0; kk < bodies.size(); ++kk)
+        {
+            f << bodies[kk] << " ";
+        }
+        f << "\n";
     };
 
 

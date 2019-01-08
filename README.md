@@ -105,7 +105,7 @@ The second line is a comment line, which contains information needed for running
 `periodic_x`,`periodic_y`,`periodic_z`: periodc in one direction and hard walls in the other two directions
 `none`: system inside a hard box
 
-The parameter `boxsz` is the size of the box that is used by pomelo. The parameter `percolating_cluster` changes output files for a more convenient handling of cells with percolating features. The other parameters are not important for pomelo.
+The parameter `boxsz` is the size of the box that is used by pomelo. The parameter `percolating_cluster` changes output files for a more convenient handling of cells with percolating features (for now it is designed for generating surface structures). The other parameters are not important for pomelo.
 
 
 ### Pomelo workflow (generic) 
