@@ -62,6 +62,7 @@ public:
         std::vector<std::string> parameters = commentline.split(','); 
 
         bool setsize = false;
+        bool origin_center = false;
         xmin = 0;
         ymin = 0;
         zmin = 0;
@@ -156,6 +157,21 @@ public:
             {
                 percstruct = true;
             }
+            else if (s.find("box_origin_center") != std::string::npos)
+            {
+                origin_center = true;
+            }
+        }
+
+        if(origin_center){
+            xmax *= 0.5;
+            xmin = -xmax;
+
+            ymax *= 0.5;
+            ymin = -ymax;
+
+            zmax *= 0.5;
+            zmin = -zmax;
         }
         
 
@@ -170,6 +186,15 @@ public:
                 std::cerr << "error parsing one line in Polymer file" << std::endl;
                 break;
             }
+
+            if(member<1)
+            {
+                std::cerr << "error parsing one line in polymer file: polymer label is equal to " << member << std::endl;
+                std::cerr << "please make sure that all labels are greater than 0!" << std::endl;
+                std::cerr << "exiting Pomelo!" << std::endl;
+                exit(-1);
+            }
+            
             
             linesloaded++;
             pp.addpoint(member, x, y, z);

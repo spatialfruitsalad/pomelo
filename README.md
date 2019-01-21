@@ -83,7 +83,7 @@ To use pomelo to calculate the Voronoi tesselation of spheres, you can use the m
 ```
 
 The options have the following meaning:
--mode selects the mode. There are the following modes available: SPHERE, SPHEREPOLY, TETRA, TETRABLUNT, ELLIP, SPHCYL and GENERIC. While the last one has to be compiled with make GENERIC and thus requires selene, the other modes work fine. 
+-mode selects the mode. There are the following modes available: SPHERE, SPHEREPOLY, POLYMER, TETRA, TETRABLUNT, ELLIP, SPHCYL and GENERIC. While the last one has to be compiled with make GENERIC and thus requires selene, the other modes work fine. 
 -i specifies the input file. In the case above, the SPHERE Mode expects a xyz file, that lists the particle's (spheres) center coordinates.
 -o specifies the outpput folder. This folder will be created by pomelo and output will be written to it.
 
@@ -105,7 +105,7 @@ The second line is a comment line, which contains information needed for running
 `periodic_x`,`periodic_y`,`periodic_z`: periodc in one direction and hard walls in the other two directions
 `none`: system inside a hard box
 
-The parameter `boxsz` is the size of the box that is used by pomelo. The parameter `percolating_cluster` changes output files for a more convenient handling of cells with percolating features (for now it is designed for generating surface structures). The other parameters are not important for pomelo.
+The parameters `boxsx`,`boxsy`,`boxsz` define the size of the box in x,y and z direction that is used by pomelo. By only stating `boxsz` the other values are set to the same value as well. By adding the parameter `box_origin_center` the box dimensions go from -boxs(*xyz)/2 to boxs(*xyz)/2. Otherwise the box dimensions go from 0 to boxs(*xyz). The parameter `percolating_cluster` changes output files for a more convenient handling of cells with percolating features (for now it is designed for generating surface structures). The other parameters are not important for pomelo.
 
 
 ### Pomelo workflow (generic) 

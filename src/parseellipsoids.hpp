@@ -96,7 +96,7 @@ public:
                     std::vector<std::string> boxsplit= split.split('=');
                     if (boxsplit.size() != 2)
                     {
-                        throw std::string ("cannot parse nx parameter.");
+                        throw std::string ("cannot parse ny parameter.");
                     }
                     double v = std::stod(boxsplit[1]);
                     ymax = static_cast<int>(v);
@@ -107,7 +107,7 @@ public:
                     std::vector<std::string> boxsplit= split.split('=');
                     if (boxsplit.size() != 2)
                     {
-                        throw std::string ("cannot parse nx parameter.");
+                        throw std::string ("cannot parse nz parameter.");
                     }
                     double v = std::stod(boxsplit[1]);
                     zmax = static_cast<int>(v);

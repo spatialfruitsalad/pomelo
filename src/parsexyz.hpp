@@ -62,6 +62,7 @@ public:
         std::vector<std::string> parameters = commentline.split(','); 
 
         bool setsize = false;
+        bool origin_center = false;
         xmin = 0;
         ymin = 0;
         zmin = 0;
@@ -76,7 +77,7 @@ public:
                     throw std::string("cannot parse parameters from XYZ file");
                 
                 double v = std::stod(boxsplit[1]);
-                std::cout << "xyz parser boxsize: " << v << std::endl;
+                std::cout << "polymer parser boxsize: " << v << std::endl;
                 if (!setsize)
                 {
                     xmax = v;
@@ -93,7 +94,7 @@ public:
                     throw std::string("cannot parse parameters from XYZ file");
                 
                 double v = std::stod(boxsplit[1]);
-                std::cout << "xyz parser boxsize X: " << v << std::endl;
+                std::cout << "polymer parser boxsize X: " << v << std::endl;
                 ymax = v;
                 setsize = true;
             }
@@ -105,7 +106,7 @@ public:
                     throw std::string("cannot parse parameters from XYZ file");
                 
                 double v = std::stod(boxsplit[1]);
-                std::cout << "xyz parser boxsize X: " << v << std::endl;
+                std::cout << "polymer parser boxsize X: " << v << std::endl;
                 xmax = v;
                 setsize = true;
             }
@@ -156,10 +157,24 @@ public:
             {
                 percstruct = true;
             }
-
+            else if (s.find("box_origin_center") != std::string::npos)
+            {
+                origin_center = true;
+            }
         }
         
         std::cout << "xyz boxsize: "<< xmax << " " << ymax << " " << zmax << std::endl;
+
+        if(origin_center){
+            xmax *= 0.5;
+            xmin = -xmax;
+
+            ymax *= 0.5;
+            ymin = -ymax;
+
+            zmax *= 0.5;
+            zmin = -zmax;
+        }
 
         while(std::getline(infile, line))   // parse lines
         {

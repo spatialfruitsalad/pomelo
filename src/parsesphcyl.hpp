@@ -67,6 +67,8 @@ public:
        
         std::vector<std::string> parameters = commentline.split(','); 
 
+        bool setsize = false;
+        bool origin_center = false;
         xmin = 0;
         ymin = 0;
         zmin = 0;
@@ -81,18 +83,13 @@ public:
                     throw std::string("cannot parse parameters from XYZ file");
                 
                 double v = std::stod(boxsplit[1]);
+                std::cout << "polymer parser boxsize: " << v << std::endl;
+                if (!setsize)
+                {
+                    xmax = v;
+                    ymax = v;
+                }
                 zmax = v;
-                            
-            }
-            else if (s.find("boxsx") != std::string::npos)
-            {
-                splitstring split (s.c_str());
-                std::vector<std::string> boxsplit= split.split('=');
-                if (boxsplit.size() != 2)
-                    throw std::string("cannot parse parameters from XYZ file");
-                
-                double v = std::stod(boxsplit[1]);
-                xmax = v;
                             
             }
             else if (s.find("boxsy") != std::string::npos)
@@ -103,8 +100,21 @@ public:
                     throw std::string("cannot parse parameters from XYZ file");
                 
                 double v = std::stod(boxsplit[1]);
+                std::cout << "polymer parser boxsize X: " << v << std::endl;
                 ymax = v;
-                            
+                setsize = true;
+            }
+            else if (s.find("boxsx") != std::string::npos)
+            {
+                splitstring split (s.c_str());
+                std::vector<std::string> boxsplit= split.split('=');
+                if (boxsplit.size() != 2)
+                    throw std::string("cannot parse parameters from XYZ file");
+                
+                double v = std::stod(boxsplit[1]);
+                std::cout << "polymer parser boxsize X: " << v << std::endl;
+                xmax = v;
+                setsize = true;
             }
             else if (s.find("boundary_condition") != std::string::npos)
             {
@@ -153,6 +163,10 @@ public:
             {
                 percstruct = true;
             }
+            else if (s.find("box_origin_center") != std::string::npos)
+            {
+                origin_center = true;
+            }
             else if (s.find("shrink") != std::string::npos)
             {
                 splitstring split (s.c_str());
@@ -185,6 +199,17 @@ public:
                     throw std::string("cannot parse parameters from XYZ file");
                 stepsZ = std::stoi(stepsZSplit[1]);
             }
+        }
+
+        if(origin_center){
+            xmax *= 0.5;
+            xmin = -xmax;
+
+            ymax *= 0.5;
+            ymin = -ymax;
+
+            zmax *= 0.5;
+            zmin = -zmax;
         }
         
 
