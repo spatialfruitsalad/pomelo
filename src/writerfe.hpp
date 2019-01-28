@@ -218,6 +218,12 @@ public:
             perc_y.push_back(init_dir);
             perc_z.push_back(init_dir);
 
+            bool on_bound=false;
+            if((pt.x-xmin)*(pt.x-xmin) < 1e-8 || (pt.x-xmax)*(pt.x-xmax) < 1e-8 ){
+                on_bound = true;
+                pt.x += 0.001;
+            }
+
             if(pt.x < xmin )
             {
                 pt.x += (xmax - xmin);
@@ -232,6 +238,16 @@ public:
                     pt.x -= (xmax - xmin);
                     perc_x[pt.l-1].perc=1;
                 }
+            }
+
+            if(on_bound){
+                on_bound = false;
+                pt.x -= 0.001;
+            }
+
+            if((pt.y-ymin)*(pt.y-ymin) < 1e-8 || (pt.y-ymax)*(pt.y-ymax) < 1e-8 ){
+                on_bound = true;
+                pt.y += 0.001;
             }
 
             if(pt.y < ymin )
@@ -250,6 +266,16 @@ public:
                 }
             }
 
+            if(on_bound){
+                on_bound = false;
+                pt.y -= 0.001;
+            }
+
+            if((pt.z-zmin)*(pt.z-zmin) < 1e-8 || (pt.z-zmax)*(pt.z-zmax) < 1e-8 ){
+                on_bound = true;
+                pt.z += 0.001;
+            }
+
             if(pt.z < zmin )
             {
                 pt.z += (zmax - zmin);
@@ -264,6 +290,11 @@ public:
                     pt.z -= (zmax - zmin);
                     perc_z[pt.l-1].perc=1;
                 }
+            }
+
+            if(on_bound){
+                on_bound = false;
+                pt.z -= 0.001;
             }
 
             double nodouble_found = true;
