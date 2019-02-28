@@ -45,8 +45,10 @@ public:
     bool ypbc;
     bool zpbc;
     bool percstruct;
+    unsigned int cellmin;
+    unsigned int cellmax;
 
-    parsetetra () : xmin(0),  ymin(0), zmin(0), xmax(0) ,ymax(0), zmax(0), xpbc(false), ypbc(false), zpbc(false), percstruct(false)
+    parsetetra () : xmin(0),  ymin(0), zmin(0), xmax(0) ,ymax(0), zmax(0), xpbc(false), ypbc(false), zpbc(false), percstruct(false),cellmin(0),cellmax(0)
     {};
 
     void parse(std::string const filename, pointpattern& pp, double shrink = 0.95, int depth = 4)

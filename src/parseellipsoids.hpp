@@ -57,15 +57,16 @@ public:
     bool ypbc;
     bool zpbc;
     bool percstruct;
+    unsigned int cellmin;
+    unsigned int cellmax;
 
     std::vector<ellip> ellipsoids;
     
 
-    parseellipsoid () : xmin(0),  ymin(0), zmin(0), xmax(0) ,ymax(0), zmax(0), shrink (0), steps(10), xpbc(false), ypbc(false), zpbc(false),percstruct(false)
+    parseellipsoid () : xmin(0),  ymin(0), zmin(0), xmax(0) ,ymax(0), zmax(0), shrink (0), steps(10), xpbc(false), ypbc(false), zpbc(false),percstruct(false),cellmin(0),cellmax(0)
     {};
     void parse(std::string const filename, pointpattern& pp)
     {
-        std::cout << "parse ellip file" << std::endl;
         std::ifstream infile;
         infile.open(filename);
         if (infile.fail())
@@ -74,63 +75,169 @@ public:
         }
         std::string line = "";
         unsigned long linesloaded = 0;
+        splitstring commentline;
+        std::getline(infile, commentline); // parse comment line
+       
+        std::vector<std::string> parameters = commentline.split(','); 
+
+        bool setsize = false;
+        bool origin_center = false;
+        xmin = 0;
+        ymin = 0;
+        zmin = 0;
+
+        for (auto s:parameters)
+        {
+            if (s.find("boxsz") != std::string::npos)
+            {
+                splitstring split (s.c_str());
+                std::vector<std::string> boxsplit= split.split('=');
+                if (boxsplit.size() != 2)
+                    throw std::string("cannot parse parameters from ELLIP file");
+                
+                double v = std::stod(boxsplit[1]);
+                std::cout << "polymer parser boxsize: " << v << std::endl;
+                if (!setsize)
+                {
+                    xmax = v;
+                    ymax = v;
+                }
+                zmax = v;
+                            
+            }
+            else if (s.find("boxsy") != std::string::npos)
+            {
+                splitstring split (s.c_str());
+                std::vector<std::string> boxsplit= split.split('=');
+                if (boxsplit.size() != 2)
+                    throw std::string("cannot parse parameters from ELLIP file");
+                
+                double v = std::stod(boxsplit[1]);
+                std::cout << "polymer parser boxsize X: " << v << std::endl;
+                ymax = v;
+                setsize = true;
+            }
+            else if (s.find("boxsx") != std::string::npos)
+            {
+                splitstring split (s.c_str());
+                std::vector<std::string> boxsplit= split.split('=');
+                if (boxsplit.size() != 2)
+                    throw std::string("cannot parse parameters from ELLIP file");
+                
+                double v = std::stod(boxsplit[1]);
+                std::cout << "polymer parser boxsize X: " << v << std::endl;
+                xmax = v;
+                setsize = true;
+            }
+            else if (s.find("boundary_condition") != std::string::npos)
+            {
+                splitstring split (s.c_str());
+                std::vector<std::string> pbcsplit= split.split('=');
+                if (pbcsplit.size() != 2)
+                    throw std::string("cannot parse parameters from ELLIP file");
+
+                if (pbcsplit[1].find("periodic_cuboidal") != std::string::npos)
+                {
+                    xpbc = ypbc = zpbc = true;
+                    std::cout << "ellipsoid parser boundaries: " << pbcsplit[1] << std::endl;
+                }
+                else if (pbcsplit[1].find("periodic_xy") != std::string::npos)
+                {
+                    xpbc = ypbc =  true;
+                    std::cout << "ellipsoid parser boundaries: " << pbcsplit[1] << std::endl;
+                }
+                else if (pbcsplit[1].find("periodic_xz") != std::string::npos)
+                {
+                    xpbc = zpbc =  true;
+                    std::cout << "ellipsoid parser boundaries: " << pbcsplit[1] << std::endl;
+                }
+                else if (pbcsplit[1].find("periodic_yz") != std::string::npos)
+                {
+                    ypbc = zpbc =  true;
+                    std::cout << "ellipsoid parser boundaries: " << pbcsplit[1] << std::endl;
+                }
+                else if (pbcsplit[1].find("periodic_x") != std::string::npos)
+                {
+                    xpbc =  true;
+                    std::cout << "ellipsoid parser boundaries: " << pbcsplit[1] << std::endl;
+                }
+                else if (pbcsplit[1].find("periodic_y") != std::string::npos)
+                {
+                    ypbc =  true;
+                    std::cout << "ellipsoid parser boundaries: " << pbcsplit[1] << std::endl;
+                }
+                else if (pbcsplit[1].find("periodic_z") != std::string::npos)
+                {
+                    zpbc =  true;
+                    std::cout << "ellipsoid parser boundaries: " << pbcsplit[1] << std::endl;
+                }
+            }
+            else if (s.find("percolating_cluster") != std::string::npos)
+            {
+                percstruct = true;
+            }
+            else if (s.find("box_origin_center") != std::string::npos)
+            {
+                origin_center = true;
+            }
+            else if (s.find("shrink") != std::string::npos)
+            {
+                splitstring split (s.c_str());
+                std::vector<std::string> shrinksplit = split.split('=');
+                if (shrinksplit.size() != 2)
+                    throw std::string("cannot parse parameters from ELLIP file");
+                shrink = std::stod(shrinksplit[1]);
+            }
+            else if (s.find("steps") != std::string::npos)
+            {
+                splitstring split (s.c_str());
+                std::vector<std::string> stepsSplit = split.split('=');
+                if (stepsSplit.size() != 2)
+                throw std::string("cannot parse parameters from ELLIP file");
+                steps = std::stoi(stepsSplit[1]);
+            }
+            else if (s.find("poly_subset") != std::string::npos)
+            {
+                splitstring split (s.c_str());
+                std::vector<std::string> stepsSplit = split.split('=');
+                if (stepsSplit.size() != 2)
+                throw std::string("cannot parse parameters from ELLIP file");
+
+                splitstring split2 (stepsSplit[1].c_str());
+                std::vector<std::string> stepsSplit2 = split2.split('-');
+                if (stepsSplit2.size() != 2)
+                throw std::string("cannot parse parameters from ELLIP file");
+
+                cellmin=std::stoi(stepsSplit2[0]);
+                cellmax=std::stoi(stepsSplit2[1]);
+
+                if(cellmin > cellmax){
+                    throw std::string("poly_output in wrong order");
+                    cellmin=0;
+                    cellmax=0;
+                }
+            }
+        }
+
+        if(origin_center){
+            xmax *= 0.5;
+            xmin = -xmax;
+
+            ymax *= 0.5;
+            ymin = -ymax;
+
+            zmax *= 0.5;
+            zmin = -zmax;
+        }
 
         while(std::getline(infile, line))   // parse lines
         {
-            if(line.find('#') != std::string::npos)
-            {
-                if (line.find("nx") != std::string::npos)
-                {
-                    splitstring split (line.c_str());
-                    std::vector<std::string> boxsplit= split.split('=');
-                    if (boxsplit.size() != 2)
-                    {
-                        throw std::string ("cannot parse nx parameter.");
-                    }
-                    double v = std::stod(boxsplit[1]);
-                    xmax = static_cast<int>(v);
-                }
-                if (line.find("ny") != std::string::npos)
-                {
-                    splitstring split (line.c_str());
-                    std::vector<std::string> boxsplit= split.split('=');
-                    if (boxsplit.size() != 2)
-                    {
-                        throw std::string ("cannot parse ny parameter.");
-                    }
-                    double v = std::stod(boxsplit[1]);
-                    ymax = static_cast<int>(v);
-                }
-                if (line.find("nz") != std::string::npos)
-                {
-                    splitstring split (line.c_str());
-                    std::vector<std::string> boxsplit= split.split('=');
-                    if (boxsplit.size() != 2)
-                    {
-                        throw std::string ("cannot parse nz parameter.");
-                    }
-                    double v = std::stod(boxsplit[1]);
-                    zmax = static_cast<int>(v);
-                }
-                if (line.find("steps") != std::string::npos)
-                {
-                    splitstring split (line.c_str());
-                    std::vector<std::string> boxsplit= split.split('=');
-                    if (boxsplit.size() != 2)
-                    {
-                        throw std::string ("cannot parse nx parameter.");
-                    }
-                    double v = std::stod(boxsplit[1]);
-                    steps = static_cast<int>(v);
-                }
-                continue;
-            }
-
+            if (line[0] == '#') continue;
             std::istringstream iss(line);
             ellip e;
             if (!(iss >> e.l >> e.cx >> e.cy >> e.cz >> e.a >> e.x1 >> e.y1 >> e.z1 >> e.b >> e.x2 >> e.y2 >> e.z2>> e.c >> e.x3 >> e.y3 >> e.z3))
             {
-                std::cerr << "error parsing one line in ellip file" << std::endl;
+                std::cerr << "error parsing one line in ellipsoid file" << std::endl;
                 std::cout << line << std::endl;
                 break;
             }

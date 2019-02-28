@@ -91,10 +91,10 @@ The options have the following meaning:
 The example file is a small part of a system of a hard spheres simulation. Use any other xyz file and adapt the comment line as shown in the test case.
 The first lines of an xyz file should look similar to this example:
 ```
-18
 boundary_condition = periodic_cuboidal, infile = hs-16384_0.50-coord.dat, num_sph = 18, boxsz = 51.583743, repr = 0 
-P 16.5855262696469 14.8968505096529 24.7938151355899
-P 23.2206174557173 45.9892223675941 4.14961702400604
+# x y z
+16.5855262696469 14.8968505096529 24.7938151355899
+23.2206174557173 45.9892223675941 4.14961702400604
 ...
 ```
 
@@ -105,7 +105,11 @@ The second line is a comment line, which contains information needed for running
 `periodic_x`,`periodic_y`,`periodic_z`: periodc in one direction and hard walls in the other two directions
 `none`: system inside a hard box
 
-The parameters `boxsx`,`boxsy`,`boxsz` define the size of the box in x,y and z direction that is used by pomelo. By only stating `boxsz` the other values are set to the same value as well. By adding the parameter `box_origin_center` the box dimensions go from -boxs(*xyz)/2 to boxs(*xyz)/2. Otherwise the box dimensions go from 0 to boxs(*xyz). The parameter `percolating_cluster` changes output files for a more convenient handling of cells with percolating features (for now it is designed for generating surface structures). The other parameters are not important for pomelo.
+The parameters `boxsx`,`boxsy`,`boxsz` define the size of the box in x,y and z direction that is used by pomelo. By only stating `boxsz` the other values are set to the same value as well. By adding the parameter `box_origin_center` the box dimensions go from -boxs(*xyz)/2 to boxs(*xyz)/2. Otherwise the box dimensions go from 0 to boxs(*xyz). 
+
+The parameter 'poly_subset' defines a subset and creates polyfiles for every particle individually in a specific range. The range is indicated by the labels cellmin and cellmax and separated by "-": poly_subset=cellmin-cellmax.
+
+The parameter `percolating_cluster` changes output files for a more convenient handling of cells with percolating features (for now it is designed for generating surface structures). The other parameters are not important for pomelo.
 
 
 ### Pomelo workflow (generic) 

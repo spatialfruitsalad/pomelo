@@ -43,8 +43,10 @@ public:
     bool ypbc;
     bool zpbc;
     bool percstruct;
+    unsigned int cellmin;
+    unsigned int cellmax;
 
-    parsepolymer () : xmin(0),  ymin(0), zmin(0), xmax(0) ,ymax(0), zmax(0), xpbc(false), ypbc(false), zpbc(false), percstruct(false)
+    parsepolymer () : xmin(0),  ymin(0), zmin(0), xmax(0) ,ymax(0), zmax(0), xpbc(false), ypbc(false), zpbc(false), percstruct(false),cellmin(0),cellmax(0)
     {};
     void parse(std::string const filename, pointpattern& pp)
     {
@@ -160,6 +162,27 @@ public:
             else if (s.find("box_origin_center") != std::string::npos)
             {
                 origin_center = true;
+            }
+            else if (s.find("poly_subset") != std::string::npos)
+            {
+                splitstring split (s.c_str());
+                std::vector<std::string> stepsSplit = split.split('=');
+                if (stepsSplit.size() != 2)
+                throw std::string("cannot parse parameters from ELLIP file");
+
+                splitstring split2 (stepsSplit[1].c_str());
+                std::vector<std::string> stepsSplit2 = split2.split('-');
+                if (stepsSplit2.size() != 2)
+                throw std::string("cannot parse parameters from ELLIP file");
+
+                cellmin=std::stoi(stepsSplit2[0]);
+                cellmax=std::stoi(stepsSplit2[1]);
+
+                if(cellmin > cellmax){
+                    throw std::string("poly_output in wrong order");
+                    cellmin=0;
+                    cellmax=0;
+                }
             }
         }
 

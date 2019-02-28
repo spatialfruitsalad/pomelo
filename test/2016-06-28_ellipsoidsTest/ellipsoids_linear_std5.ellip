@@ -1,8 +1,4 @@
-#infolder = /home/sweis/daten/TomogrammAnalysen/2014-12-18_pom_silikonspray_00500taps_min/
-#parameters:
-#nx = 1132
-#ny = 1132
-#nz = 1000
+boundary_condition = periodic_cuboidal, boxsx = 1132, boxsy = 1132, boxsz = 1000, steps = 7
 #             #Label           #center_x           #center_y           #center_z      #length_axis_1            #axis1_x            #axis1_y            #axis1_z      #length_axis_2            #axis2_x            #axis2_y            #axis2_z      #length_axis_3            #axis3_x            #axis3_y            #axis3_z
                    1       200                 200                 100                 27.188372701      1.000000000000      0                   0.000000000000       27.3113381924     0.000000000000      1.000000000000      0.000000000000       27.6379116555      0.000000000000      0.000000000000     1.0000000000000
                    2       300                 200                 100                 50.188372701      0.000000000000      1                   0.000000000000       27.3113381924     1.000000000000      0.000000000000      0.000000000000       27.6379116555      0.000000000000      0.000000000000     1.0000000000000

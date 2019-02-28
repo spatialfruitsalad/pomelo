@@ -142,6 +142,8 @@ int main (int argc, char* argv[])
     bool ypbc = false;
     bool zpbc = false;
     bool percstruct = false;
+    unsigned int cellmin=0;
+    unsigned int cellmax=0;
     output outMode;
     
 /////////////////////
@@ -227,6 +229,8 @@ int main (int argc, char* argv[])
         ypbc = false;
         zpbc = false;
         percstruct = false;
+        cellmin=0;
+        cellmax=0;
 
         std::string boundary = state["boundary"];
         if(boundary == "periodic")
@@ -280,6 +284,8 @@ int main (int argc, char* argv[])
         ypbc = p.ypbc;
         zpbc = p.zpbc;
         percstruct = p.percstruct;
+        cellmin=p.cellmin;
+        cellmax=p.cellmax;
 
     }
     else if (cp.thisMode == SPHEREPOLY)
@@ -298,6 +304,8 @@ int main (int argc, char* argv[])
         ypbc = p.ypbc;
         zpbc = p.zpbc;
         percstruct = p.percstruct;
+        cellmin=p.cellmin;
+        cellmax=p.cellmax;
     }
     else if (cp.thisMode == POLYMER)
     {
@@ -315,6 +323,8 @@ int main (int argc, char* argv[])
         ypbc = p.ypbc;
         zpbc = p.zpbc;
         percstruct = p.percstruct;
+        cellmin=p.cellmin;
+        cellmax=p.cellmax;
     }
     else if (cp.thisMode == ELLIP)
     {
@@ -333,6 +343,8 @@ int main (int argc, char* argv[])
         ypbc = p.ypbc;
         zpbc = p.zpbc;
         percstruct = p.percstruct;
+        cellmin=p.cellmin;
+        cellmax=p.cellmax;
 
     }
     else if (cp.thisMode == TETRA)
@@ -353,6 +365,8 @@ int main (int argc, char* argv[])
         ypbc = p.ypbc;
         zpbc = p.zpbc;
         percstruct = p.percstruct;
+        cellmin=p.cellmin;
+        cellmax=p.cellmax;
     }
     else if (cp.thisMode == TETRABLUNT)
     {
@@ -377,6 +391,8 @@ int main (int argc, char* argv[])
         ypbc = p.ypbc;
         zpbc = p.zpbc;
         percstruct = p.percstruct;
+        cellmin=p.cellmin;
+        cellmax=p.cellmax;
     }
     else if (cp.thisMode == SPHCYL)
     {
@@ -394,6 +410,8 @@ int main (int argc, char* argv[])
         ypbc = p.ypbc;
         zpbc = p.zpbc;
         percstruct = p.percstruct;
+        cellmin=p.cellmin;
+        cellmax=p.cellmax;
     }
 
     // write parameter file
@@ -521,6 +539,8 @@ int main (int argc, char* argv[])
     
     pointpattern ppreduced;
     writerpoly pw;
+    std::vector<writerpoly> pw_cells;
+    pw_cells.resize(cellmax+1);
     // loop over all voronoi cells
     c_loop_all cla(con);
     // cell currently worked on
@@ -716,6 +736,8 @@ int main (int argc, char* argv[])
                             positionlist.push_back(z);
                         }
                         pw.addface(positionlist, l);
+                        if(cellmax!= 0) 
+                            if(l<=cellmax && l>=cellmin) pw_cells[l].addface(positionlist, l);
 
                     }
                 }
@@ -778,8 +800,15 @@ int main (int argc, char* argv[])
     }
 
     std::cout << std::endl;
+
     // remove duplicates and label back indices
     pw.removeduplicates(epsilon, xmin, xmax, ymin, ymax, zmin, zmax, nx, ny, nz);
+
+    if(cellmax != 0){
+        for (unsigned int ii = cellmin; ii <= cellmax; ++ii){
+        pw_cells[ii].removeduplicates(epsilon, xmin, xmax, ymin, ymax, zmin, zmax, nx, ny, nz);
+        }
+    }
 
     std::cout << std::endl;
     // Write poly file for karambola
@@ -796,6 +825,21 @@ int main (int argc, char* argv[])
         }
         file << pw;
         file.close();
+
+        if(cellmax != 0){
+
+            for (unsigned int ii = cellmin; ii <= cellmax; ++ii){
+
+                file.open(folder + "cell" + std::to_string(ii) + ".poly");
+                if (!file.good())
+                {
+                    std::cerr << "error: cannot open poly file for write" << std::endl;
+                    throw std::string("error: cannot open poly file for write");
+                }
+                file << pw_cells[ii];
+                file.close();
+            }
+        }
     }
     if(outMode.saveoff == true)
     {

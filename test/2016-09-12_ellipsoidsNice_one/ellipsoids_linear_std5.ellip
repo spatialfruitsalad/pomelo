@@ -1,9 +1,3 @@
-#infolder = /home/sweis/daten/TomogrammAnalysen/2014-10-24_ellipsoids_orange_korund940min_0500taps_zylinder720_preparation_min/
-#parameters:
-#nx = 1132
-#ny = 1132
-#nz = 1000
-#steps = 18
-#shrink = 10
+boundary_condition = periodic_cuboidal, boxsx = 1132, boxsy = 1132, boxsz = 1000, steps = 18, shrink = 10
 #             #Label           #center_x           #center_y           #center_z      #length_axis_1            #axis1_x            #axis1_y            #axis1_z      #length_axis_2            #axis2_x            #axis2_y            #axis2_z      #length_axis_3            #axis3_x            #axis3_y            #axis3_z
                 1468       735.743404399       846.818672698       326.812252755       23.5751595342    -0.0367720239765      0.972421677395      0.230312612735       28.4886442616     -0.853010354664     -0.150605553153      0.499691206842       36.3792421925      0.520596919976     -0.178084386434      0.835023830929
