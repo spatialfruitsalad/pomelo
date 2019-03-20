@@ -709,9 +709,8 @@ int main (int argc, char* argv[])
                                 neighbourcell[l].push_back(labelidmap[n]);
                                 neighbourcell[labelidmap[n]].push_back(l);
                             }
+                            areaMap[l] += fa[k];
                         }
-
-                        areaMap[l] += fa[k];
 
                         std::vector<unsigned int> facevertexlist;
                         getFaceVerticesOfFace(f, k, facevertexlist);
@@ -736,9 +735,9 @@ int main (int argc, char* argv[])
                             positionlist.push_back(z);
                         }
                         pw.addface(positionlist, l);
-                        if(cellmax!= 0) 
+                        if(cellmax!= 0){
                             if(l<=cellmax && l>=cellmin) pw_cells[l].addface(positionlist, l);
-
+                        }
                     }
                 }
 
@@ -797,6 +796,12 @@ int main (int argc, char* argv[])
     if(outMode.savereduced == true)
     {
         pw.savePointPatternForGnuplot(folder + "reduced.xyz");
+
+        if(cellmax != 0){
+            for (unsigned int ii = cellmin; ii <= cellmax; ++ii){
+            pw_cells[ii].savePointPatternForGnuplot(folder + "reduced" + std::to_string(ii)  + ".xyz");
+            }
+        }
     }
 
     std::cout << std::endl;

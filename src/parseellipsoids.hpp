@@ -271,7 +271,7 @@ public:
         e2mean /= static_cast<double>(ellipsoids.size());
 
         // formula by fabian... need to check this
-        shrink = 0.95 * std::pow(e0mean * e1mean * e2mean * 0.4 * 0.4 , 1./3.) * 0.4;
+        shrink = 1 * std::pow(e0mean * e1mean * e2mean * 0.4 * 0.4 , 1./3.) * 0.4;
         std::cout << "shrink corresponds to aspect ratio = 0.4" << std::endl;
         std::cout << "shrink = " << shrink << std::endl;
         for (ellip e : ellipsoids)
