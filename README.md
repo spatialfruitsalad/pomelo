@@ -156,5 +156,24 @@ Calling pomelo on this examples creates some output which can then be visualized
 This is thus the tool to make surface triangulations for your own particles. If you have any implementation of surface triangulation for your own particles, feel free to add a pull request so we can add them to the list.
 
 
+## If you come from 'Analyzing X-ray tomographies of granular packings' or 'Howto calculate the lpf distribution'
+
+ -  createBoundary: Use [this tool](https://github.com/spatialfruitsalad/pomeloTools/tree/master/createboundary) to create a boundary of surface points with label 0 around the actual particle positions. This will be used in pomelo to exclude the outest layer of particles.
+Extract and use this program (with adjusted paths):
+`./createBoundary  particles_centroids_ed5.dat particles_centroids_ed5.dat.border 513 513 513`
+- use Pomelo GENERIC mode with the lua files from the create boundary program. Please adjust file paths in surfacevoxel.lua to your folder structure.
+- copy particles_centroids_ed5.dat to particles_centroids_ed5.dat.wohead and remove the first three lines (two header lines as well as particle with label 0 (air)).
+- create list of particles in correct ellip file format
+`cat particles_centroids_ed5.dat.wohead | awk '{print $4, $1, $2, $3, 27.177/2, 27.17/2, 27.17/2}' > particles_centroids_ed5.dat.ellip` (radius obtained from fit of first peak from the pair correlation).
+-  pull the latest version of [calcLPF_ellip](https://github.com/spatialfruitsalad/pomeloTools/tree/master/calcLPF_ellip) . The new version excludes cells with volume zero, wich exist due to pomelo boundary mode ignore (cells which share a common face with a cell that belongs to boundary 0 (the container wall) will automatically be set to have volume 0).
+- make directory
+`mkdir out`
+- run calcLPF_ellip
+ `./calcLPF_ellip pomeloOut/setVoronoiVolumes.dat particles_centroids_ed5.dat.ellip  out spheres 255 255 255 0 512`
+ - That should give you a phig of 0.60.
+- When increasing the cutoff, phig should increase to around 0.64 depending on the actual chosen cutoff values.
+ `./calcLPF_ellip pomeloOut/setVoronoiVolumes.dat particles_centroids_ed5.dat.ellip  out spheres 255 255 120 100 400`
+- The lpfs can be obtained from `out/spheres_lpf.dat`. a tool like [gsl-histogram](https://www.gnu.org/software/gsl/doc/html/histogram.html) can be used to create the histogram data.
+
 ## License
 Pomelo is licensed under GPL3. See COPYING for further details.
