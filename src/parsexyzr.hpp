@@ -234,7 +234,8 @@ public:
             double x ,y, z, r;
             if (!(iss >> x >> y >> z >> r))
             {
-                std::cerr << "error parsing one line in XYZR file" << std::endl;
+                std::cerr << "error parsing one line in XYZR file\n";
+                std::cerr << line << std::endl;
                 break;
             }
             
