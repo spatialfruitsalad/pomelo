@@ -51,7 +51,11 @@ struct point
     }
     bool operator== (point const& rhs) const
     {
-        return (rhs.x== point::x && rhs.y == point::y && rhs.z ==point::z && rhs.l == point::l);
+        return (rhs.x== point::x && rhs.y == point::y && rhs.z == point::z && rhs.l == point::l);
+    }
+    bool operator!= (point const& rhs) const
+    {
+        return (rhs.x!= point::x || rhs.y != point::y || rhs.z != point::z || rhs.l != point::l);
     }
 
     double length ( ) const
