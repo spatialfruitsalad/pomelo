@@ -1,5 +1,6 @@
 CXX = clang++ -Wall -Wextra -O3 -std=c++1y 
 CXXVORO = clang++ -std=c++1y -g -O3
+CXXTEST = clang++ -std=c++1y -g -O1 -Ilib/googletest-master/googletest/include/
 LUAFLAG = -DUSELUA
 
 all:  LINK_luafree
@@ -16,10 +17,13 @@ obj/pointpattern.o: src/pointpattern.*
 	$(CXX) -c -o obj/pointpattern.o src/pointpattern.cpp
 
 obj/testduplicationremover.o: src/pointpattern.* src/unittests/testduplicationremover.cpp
-	$(CXX) -c -o obj/testduplicationremover.o src/unittests/testduplicationremover.cpp
+	$(CXXTEST) -c -o obj/testduplicationremover.o src/unittests/testduplicationremover.cpp
+
+obj/gtest.o: src/unittests/gtest.cpp
+	$(CXXTEST) -Llib/googletest-master/build/lib/ -lpthread -lgtest -c -o obj/gtest.o src/unittests/gtest.cpp
 
 obj/testpointpattern.o: src/pointpattern.* src/unittests/testpointpattern.cpp
-	$(CXX) -c -o obj/testpointpattern.o src/unittests/testpointpattern.cpp
+	$(CXXTEST) -c -o obj/testpointpattern.o src/unittests/testpointpattern.cpp
 
 obj/main_luafree.o: src/main.cpp  src/triangle.hpp src/duplicationremover.hpp src/writerpoly.hpp src/writeroff.hpp src/IWriter.hpp src/postprocessing.hpp src/parsexyz.hpp src/parsepolymer.hpp src/parseellipsoids.hpp src/parsesphcyl.hpp  src/GenericMatrix.h src/parsexyzr.hpp src/parsetetra.hpp src/output.hpp src/colorTable.hpp src/parsetetra_blunt.hpp src/tetrahedra.hpp src/cmdlparser.hpp src/writerfe.hpp
 	mkdir -p obj
@@ -38,6 +42,11 @@ LINK_luafree: obj/main_luafree.o obj/voro.o obj/fileloader.o obj/pointpattern.o
 LINK: obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o
 	$(CXX) obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o -o bin/pomelo -llua5.2 -I/usr/include/lua5.2 $(LUAFLAG) 
 
+LINK_STATIC: obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o
+	$(CXX) obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o -o bin/pomelo -llua5.2 -static -I/usr/include/lua5.2 $(LUAFLAG) 
+
+gtest: 
+	$(CXXTEST) src/unittests/cmdlparsertest.cpp -Llib/googletest-master/build/lib/ -lpthread -lgtest -lgtest_main  -o bin/gtest
 
 test: obj/pointpattern.o src/pointpattern.hpp src/pointpattern.cpp  obj/testpointpattern.o obj/testduplicationremover.o
 	$(CXX) obj/pointpattern.o obj/testpointpattern.o -o bin/testpointpattern
