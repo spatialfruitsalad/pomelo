@@ -113,11 +113,11 @@ public:
                 std::cerr << "WARNING: Parameter clash. shrink and iteration values are only valid for tetrahedra modes (TETRA, TETRABLUNT)" << std::endl;
         }
         if (!outset)
-            throw std::string ("ERROR: No output folder specified!");
+            throw std::invalid_argument("No output folder specified!");
         if (!fileset)
-            throw std::string ("ERROR: No FileName given");
+            throw std::invalid_argument("No FileName given");
         if (!modeset)
-            throw std::string ("ERROR: No Mode selected");
+            throw std::invalid_argument("No Mode selected");
     }
 
 private:
@@ -134,7 +134,7 @@ private:
         {
             if (shrinkset) std::cerr << "WARNING: shrink has aready been set. Overwriting old shrink" << std::endl;
             shrinkset = true;
-            if (i == argc -1) throw std::string("cannot parse shrink");
+            if (i == argc -1) throw std::invalid_argument("cannot parse shrink");
             shrink = std::stod(argv[i+1]);
             ++i; 
             std::cout << "shrink set to: " << shrink << std::endl;
@@ -148,7 +148,7 @@ private:
         {
             if (itset) std::cerr << "WARNING: iterations has aready been set. Overwriting old value" << std::endl;
             itset = true;
-            if (i == argc -1) throw std::string("cannot parse iterations");
+            if (i == argc -1) throw std::invalid_argument("cannot parse iterations");
             iterations = std::stoi(argv[i+1]);
             ++i; 
             std::cout << "iterations set to: " << iterations << std::endl;
@@ -166,7 +166,7 @@ private:
                 std::cerr << "WARNING: outfolder has aready been set. Overwriting old outfolder" << std::endl;
             }
             outset = true;
-            if (i == argc -1) throw std::string("cannot parse folder");
+            if (i == argc -1) throw std::invalid_argument("cannot parse folder");
             outfolder = argv[i+1];
             ++i; 
         }
@@ -179,7 +179,7 @@ private:
         {
             if (fileset) std::cerr << "WARNING: FileName has aready been set. Overwriting old filename" << std::endl;
             fileset = true;
-            if (i == argc -1) throw std::string("cannot parse filename");
+            if (i == argc -1) throw std::invalid_argument("cannot parse filename");
             filename = argv[i+1];
             ++i; 
         }
@@ -192,7 +192,7 @@ private:
         {
             if (modeset) std::cerr << "WARNING: Mode has already been set. Overwriting old mode." << std::endl;
             modeset = true;
-            if (i == argc -1) throw std::string("cannot parse mode");
+            if (i == argc -1) throw std::invalid_argument("cannot parse mode");
             std::string mode = argv[i+1];
             if (mode == "SPHERE" || mode == "sphere")
             {
@@ -227,12 +227,12 @@ private:
 #ifdef USELUA
                 thisMode = GENERIC;
 #else
-                throw std::string ("unknown mode " + mode + ".\n to enable GENERIC mode, you must build pomelo with 'make GENERIC'");
+                throw std::invalid_argument ("unknown mode " + mode + ".\n to enable GENERIC mode, you must build pomelo with 'make GENERIC'");
 #endif
             }
             else
             {
-                throw std::string ("unknown mode " + mode);
+                throw std::invalid_argument ("unknown mode " + mode);
             }
         }
     }
