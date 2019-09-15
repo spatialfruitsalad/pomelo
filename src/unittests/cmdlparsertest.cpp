@@ -63,6 +63,11 @@ TEST_F(CmdlParserTest, InvalidMode)
     EXPECT_THROW(parseArguments("-i test.dat -o outfolder -mode XXX"), std::invalid_argument); 
 }
 
+TEST_F(CmdlParserTest, MissingMode)
+{
+    EXPECT_THROW(parseArguments("-i test.dat -o outfolder -mode"), std::invalid_argument); 
+}
+
 
 TEST_F(CmdlParserTest, modes)
 {
@@ -87,5 +92,63 @@ TEST_F(CmdlParserTest, modes)
     {
         EXPECT_NO_THROW(parseArguments(kvp.first));
         EXPECT_EQ(cp.thisMode, kvp.second); 
+    }
+}
+
+TEST_F(CmdlParserTest, MissingFilename)
+{
+    EXPECT_THROW(parseArguments("-o outfolder -mode SPHERE -i"), std::invalid_argument); 
+}
+
+TEST_F(CmdlParserTest, filename)
+{
+    std::map<std::string,std::string> map{
+        {"-i test.dat -o outfolder -mode SPHERE", "test.dat"},
+        {"--i blahurazzzzpumpelpuuu -o outfolder -mode sphere", "blahurazzzzpumpelpuuu"}
+    };
+
+    for(auto const kvp : map)
+    {
+        EXPECT_NO_THROW(parseArguments(kvp.first));
+        EXPECT_EQ(cp.filename, kvp.second); 
+    }
+}
+
+TEST_F(CmdlParserTest, MissingOutputfolder)
+{
+    EXPECT_THROW(parseArguments("-i test.dat -mode SPHERE -o"), std::invalid_argument); 
+}
+
+TEST_F(CmdlParserTest, outfolder)
+{
+    std::map<std::string,std::string> map{
+        {"-i test.dat -o outfolder -mode SPHERE", "outfolder"},
+        {"-i test.dat --o blahurazzzzpumpelpuuu -mode sphere", "blahurazzzzpumpelpuuu"}
+    };
+
+    for(auto const kvp : map)
+    {
+        EXPECT_NO_THROW(parseArguments(kvp.first));
+        EXPECT_EQ(cp.outfolder, kvp.second); 
+    }
+}
+
+TEST_F(CmdlParserTest, ArgumentOrder)
+{
+    std::vector<std::string> vect{
+        {"-i in -o out -mode SPHERE"},
+        {"-i in -mode SPHERE -o out"},
+        {"-o out -i in -mode SPHERE"},
+        {"-o out -mode SPHERE -i in"},
+        {"-mode SPHERE -i in -o out"},
+        {"-mode SPHERE -o out -i in"},
+    };
+
+    for(auto const kvp : vect)
+    {
+        EXPECT_NO_THROW(parseArguments(kvp));
+        EXPECT_EQ(cp.thisMode, eMode::SPHERE); 
+        EXPECT_EQ(cp.filename, "in"); 
+        EXPECT_EQ(cp.outfolder, "out"); 
     }
 }
