@@ -127,4 +127,4 @@ TEST_P(DuplicationRemoverTest, TwoSamePointsInDuplicationRemoverResultInOnePoint
 }
 
 INSTANTIATE_TEST_CASE_P(
-        NAME, DuplicationRemoverTest, ::testing::Values( 1,2,50, 100));
+        DuplicationRemoverTest, DuplicationRemoverTest, ::testing::Values( 1,2,50, 100));
