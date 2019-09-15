@@ -45,8 +45,8 @@ LINK: obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o
 LINK_STATIC: obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o
 	$(CXX) obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o -o bin/pomelo -llua5.2 -static -I/usr/include/lua5.2 $(LUAFLAG) 
 
-gtest: 
-	$(CXXTEST) src/unittests/cmdlparsertest.cpp -Llib/googletest-master/build/lib/ -lpthread -lgtest -lgtest_main  -o bin/gtest
+gtest: src/cmdlparser.hpp src/duplicationremover.hpp obj/pointpattern.o src/unittests/cmdlparsertest.cpp src/unittests/duplicationremovertest.cpp 
+	$(CXXTEST) src/unittests/cmdlparsertest.cpp src/unittests/duplicationremovertest.cpp obj/pointpattern.o -Llib/googletest-master/build/lib/ -lpthread -lgtest -lgtest_main  -o bin/gtest
 
 test: obj/pointpattern.o src/pointpattern.hpp src/pointpattern.cpp  obj/testpointpattern.o obj/testduplicationremover.o
 	$(CXX) obj/pointpattern.o obj/testpointpattern.o -o bin/testpointpattern

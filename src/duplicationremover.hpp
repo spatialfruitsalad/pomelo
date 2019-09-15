@@ -27,10 +27,10 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 class duplicationremover
 {
 public:
-    duplicationremover(const unsigned int _x, const unsigned int _y, const unsigned int _z) : x(_x), y(_y), z(_z)
+    duplicationremover(const unsigned int _x, const unsigned int _y, const unsigned int _z) : x(_x), y(_y), z(_z), xmin(0), ymin(0), zmin(0), xmax(1), ymax(1), zmax(1)
     {
         if (_x == 0 || _y == 0 || _z == 0) 
-            throw std::string("ERROR: cannot perform cell subdivision with number of cells = 0 in at least one axis.");
+            throw std::invalid_argument("ERROR: cannot perform cell subdivision with number of cells = 0 in at least one axis.");
         list.resize(x*y*z);
     };
 
@@ -134,8 +134,7 @@ public:
             }
         }
         //std::cout << "found " << i << std::endl;
-
-    };
+    }
 
 
     // remove any duplicated points
