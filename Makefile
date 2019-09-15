@@ -19,9 +19,6 @@ obj/pointpattern.o: src/pointpattern.*
 obj/testduplicationremover.o: src/pointpattern.* src/unittests/testduplicationremover.cpp
 	$(CXXTEST) -c -o obj/testduplicationremover.o src/unittests/testduplicationremover.cpp
 
-obj/gtest.o: src/unittests/gtest.cpp
-	$(CXXTEST) -Llib/googletest-master/build/lib/ -lpthread -lgtest -c -o obj/gtest.o src/unittests/gtest.cpp
-
 obj/testpointpattern.o: src/pointpattern.* src/unittests/testpointpattern.cpp
 	$(CXXTEST) -c -o obj/testpointpattern.o src/unittests/testpointpattern.cpp
 
@@ -47,6 +44,8 @@ LINK_STATIC: obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o
 
 gtest: src/cmdlparser.hpp src/duplicationremover.hpp obj/pointpattern.o src/unittests/cmdlparsertest.cpp src/unittests/pointpatterntest.cpp src/unittests/duplicationremovertest.cpp src/unittests/splitstringtest.cpp 
 	$(CXXTEST) src/unittests/cmdlparsertest.cpp src/unittests/duplicationremovertest.cpp src/unittests/pointpatterntest.cpp src/unittests/splitstringtest.cpp obj/pointpattern.o -Llib/googletest-master/build/lib/ -lpthread -lgtest -lgtest_main -o bin/gtest
+gtest: src/cmdlparser.hpp src/duplicationremover.hpp obj/pointpattern.o src/unittests/cmdlparsertest.cpp src/unittests/pointpatterntest.cpp src/unittests/duplicationremovertest.cpp src/unittests/splitstringtest.cpp src/unittests/triangletest.cpp 
+	$(CXXTEST) src/unittests/cmdlparsertest.cpp src/unittests/duplicationremovertest.cpp src/unittests/pointpatterntest.cpp src/unittests/splitstringtest.cpp src/unittests/triangletest.cpp obj/pointpattern.o -Llib/googletest-master/build/lib/ -lpthread -lgtest -lgtest_main -o bin/gtest
 
 test: obj/pointpattern.o src/pointpattern.hpp src/pointpattern.cpp  obj/testpointpattern.o obj/testduplicationremover.o
 	$(CXX) obj/pointpattern.o obj/testpointpattern.o -o bin/testpointpattern
