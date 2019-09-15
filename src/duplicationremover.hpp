@@ -32,6 +32,7 @@ public:
         if (_x == 0 || _y == 0 || _z == 0) 
             throw std::invalid_argument("ERROR: cannot perform cell subdivision with number of cells = 0 in at least one axis.");
         list.resize(x*y*z);
+        pointAdded = false;
     };
 
     // read points from a pointpattern
@@ -58,6 +59,23 @@ public:
     // TODO periodic Boundaries
     void setboundaries (const double xmi, const double xma, const double ymi, const double yma, const double zmi, const double zma)
     {
+        if (pointAdded)
+            throw std::logic_error("Cannot change boundaries after points have been added.");
+
+        if (xmi == xma)
+            throw std::invalid_argument("xmin and xmax boundary are the same.");
+        if (ymi == yma)
+            throw std::invalid_argument("ymin and ymax boundary are the same.");
+        if (zmi == zma)
+            throw std::invalid_argument("zmin and zmax boundary are the same.");
+
+        if (xmi > xma)
+            throw std::invalid_argument("xmin and xmax boundaries are inverted.");
+        if (ymi > yma)
+            throw std::invalid_argument("ymin and ymax boundaries are inverted.");
+        if (zmi > zma)
+            throw std::invalid_argument("zmin and zmax boundaries are inverted.");
+        
         xmin = xmi;
         ymin = ymi;
         zmin = zmi;
@@ -68,6 +86,13 @@ public:
 
     void addpoint(const double dx, const double dy, const double dz, const unsigned long long l, const long cellID = -1)
     {
+        if (xmin == xmax)
+            throw std::invalid_argument("xmin and xmax boundary are the same.");
+        if (ymin == ymax)
+            throw std::invalid_argument("ymin and ymax boundary are the same.");
+        if (zmin == zmax)
+            throw std::invalid_argument("zmin and zmax boundary are the same.");
+
         if (dx > xmax || dx < xmin)
         {
             //std::cerr << "Warning: point with label: " << l << " out of X boundaries, adding in outmost subcell" << std::endl;
@@ -109,6 +134,7 @@ public:
         {
             list[index].addpointForCell(dx,dy,dz,l,cellID,cellID);
         }
+        pointAdded = true;
     }
 
     // store all points to passed parameter p
@@ -118,14 +144,14 @@ public:
         unsigned int i = 0;
         // loop over all subcells
         for (
-            auto it = list.begin();
-            it != list.end();
+            auto it = list.cbegin();
+            it != list.cend();
             ++it)
         {
             // ... in each subcell, loop over all points
             for (
-                auto itp = (*it).points.begin();
-                itp != (*it).points.end();
+                auto itp = (*it).points.cbegin();
+                itp != (*it).points.cend();
                 ++itp)
             {
                 // add them to p
@@ -204,6 +230,7 @@ private:
     unsigned int z;
 
     double xmin, xmax, ymin, ymax, zmin, zmax;
+    bool pointAdded;
 };
 
 #endif

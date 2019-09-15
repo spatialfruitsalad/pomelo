@@ -1,4 +1,3 @@
-
 /* 
 Copyright 2019 Simon Weis and Philipp Schoenhoefer
 
@@ -38,6 +37,25 @@ TEST(DuplicationRemoverTest, SubdivisionZero)
     EXPECT_THROW(duplicationremover dr( 0,1,1) , std::invalid_argument);
     EXPECT_THROW(duplicationremover dr( 1,0,1) , std::invalid_argument);
     EXPECT_THROW(duplicationremover dr( 1,1,0) , std::invalid_argument);
+}
+TEST_P(DuplicationRemoverTest, SetBoundariesAfterPointAdd)
+{
+    dr.addpoint(1, 2, 3, 1, 1);
+    EXPECT_THROW(dr.setboundaries(0,0,0,0,0,0),std::logic_error);
+}
+
+TEST_P(DuplicationRemoverTest, SetBoundaryZero)
+{
+    EXPECT_THROW(dr.setboundaries(0,0,0,1,0,1), std::invalid_argument);
+    EXPECT_THROW(dr.setboundaries(0,1,0,0,0,1), std::invalid_argument);
+    EXPECT_THROW(dr.setboundaries(0,1,0,1,0,0), std::invalid_argument);
+}
+
+TEST_P(DuplicationRemoverTest, SetInvertedBoundary)
+{
+    EXPECT_THROW(dr.setboundaries(0,-1,0,1,0,1), std::invalid_argument);
+    EXPECT_THROW(dr.setboundaries(0,1,0,-1,0,1), std::invalid_argument);
+    EXPECT_THROW(dr.setboundaries(0,1,0,1,0,-1), std::invalid_argument);
 }
 
 TEST_P(DuplicationRemoverTest, EmptyDuplicationRemoverResultsInEmptyPointPattern)
