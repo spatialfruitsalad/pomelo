@@ -31,7 +31,7 @@ LINK_luafree: obj/main_luafree.o obj/voro.o obj/fileloader.o obj/pointpattern.o
 
 
 LINK: obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o
-	$(CXX) obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o -o bin/pomelo -llua5.2 -I/usr/include/lua5.2 $(LUAFLAG) 
+	$(CXX) obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o -o bin/pomelo_generic -llua5.2 -I/usr/include/lua5.2 $(LUAFLAG) 
 
 LINK_STATIC: obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o
 	$(CXX) obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o -o bin/pomelo -llua5.2 -static -I/usr/include/lua5.2 $(LUAFLAG) 
