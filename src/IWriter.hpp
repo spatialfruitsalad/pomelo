@@ -32,6 +32,8 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 class IWriter
 {
 public:
+    IWriter() = default;
+    ~IWriter() = default;
     void addface( std::vector<double> positionlist, unsigned int cellID)
     {
         unsigned int faceID = currentFaceLabel;

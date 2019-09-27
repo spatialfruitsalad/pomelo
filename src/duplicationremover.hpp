@@ -229,7 +229,7 @@ private:
     unsigned int y;
     unsigned int z;
 
-    double xmin, xmax, ymin, ymax, zmin, zmax;
+    double xmin, ymin, zmin, xmax, ymax, zmax;
     bool pointAdded;
 };
 

@@ -31,9 +31,9 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 class writerpoly : public IWriter
 {
 public:
-    writerpoly()
-    {
-    };
+    writerpoly() = default;
+    ~writerpoly() = default;
+
     writerpoly(IWriter const& other)
     {
         faceCellMap = other.faceCellMap;
