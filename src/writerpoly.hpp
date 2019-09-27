@@ -32,7 +32,7 @@ class writerpoly : public IWriter
 {
 public:
     writerpoly() = default;
-    ~writerpoly() = default;
+    virtual ~writerpoly() = default;
 
     writerpoly(IWriter const& other)
     {

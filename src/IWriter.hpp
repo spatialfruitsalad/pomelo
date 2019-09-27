@@ -33,7 +33,8 @@ class IWriter
 {
 public:
     IWriter() = default;
-    ~IWriter() = default;
+    virtual ~IWriter() = default;
+
     void addface( std::vector<double> positionlist, unsigned int cellID)
     {
         unsigned int faceID = currentFaceLabel;
