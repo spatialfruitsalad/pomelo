@@ -1,4 +1,5 @@
 # pomelo
+[![Build Status](https://travis-ci.com/spatialfruitsalad/pomelo.svg?branch=master)](https://travis-ci.com/spatialfruitsalad/pomelo)
 
 calculate generic set voronoi diagrams with c++11
 ![3d rendering of a Voronoi diagram of spheres](https://cloud.githubusercontent.com/assets/17979038/25128693/dea86b48-243a-11e7-8a95-6b9cc504605d.png)
