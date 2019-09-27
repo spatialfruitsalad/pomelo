@@ -1,0 +1,5 @@
+language: cpp
+before_install:
+    - sudo apt-get install -y lib-lua5.2 liblua5.2 liblua5.2-dev lua5.2
+compiler: clang
+dist: bionic
