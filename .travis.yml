@@ -8,6 +8,7 @@ deploy:
     provider: pages
     skip_cleanup: true
     github_token: $GITHUB_TOKEN
-    keep_history: true
+    keep_history: false
+    local_dir: bin
     on:
         branch: master
