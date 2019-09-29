@@ -34,6 +34,12 @@ LINK: obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o
 
 unittest: src/cmdlparser.hpp src/duplicationremover.hpp obj/pointpattern.o src/unittests/cmdlparsertest.cpp src/unittests/pointpatterntest.cpp src/unittests/duplicationremovertest.cpp src/unittests/splitstringtest.cpp src/unittests/triangletest.cpp 
 	$(CXXTEST) src/unittests/cmdlparsertest.cpp src/unittests/duplicationremovertest.cpp src/unittests/pointpatterntest.cpp src/unittests/splitstringtest.cpp src/unittests/triangletest.cpp obj/pointpattern.o -Llib/googletest-master/build/lib/ -lpthread -lgtest -lgtest_main -o bin/unittest
+	./bin/unittest 
+
+applicationtest: src/applicationtests/twospheretest.cpp LINK
+	$(CXXTEST) src/applicationtests/twospheretest.cpp -Llib/googletest-master/build/lib/ -lpthread -lgtest -lgtest_main -o bin/applicationtest
+	cd bin && ./pomelo_generic -mode GENERIC -i ../test/2015-12-16_twopoints/twopoints.lua -o ../test/2015-12-16_twopoints/applicationtest && cd ..
+	./bin/applicationtest && rm -r test/2015-12-16_twopoints/applicationtest
 
 clean:
 	rm obj/*
