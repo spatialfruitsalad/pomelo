@@ -231,15 +231,12 @@ public:
             double x ,y, z, ax, ay, az, r, l;
             if (!(iss >> x >> y >> z >> ax >> ay >> az >> r >> l))
             {
-                std::cerr << "error parsing one line in XYZ file, line is '" << line << "'"  << std::endl;
-                break;
+                throw std::logic_error("error parsing one line in spherocylinder file:\n" + line);
             }
 
             if(  std::fabs(1.0- (ax*ax + ay*ay + az*az) ) > 0.01  )
             {
-                std::cerr << "error parsing spherocylinder, orientation vector is not of unit length " << std::endl;
-                std::cerr << "ax: " << ax <<  "ay: " << ay << "az: " << az << std::endl; 
-                break;
+                throw std::logic_error("error parsing one line in spherocylinder file:\n" + line + "\n orientation vector is not of unit length\n");
             }
 
             linesloaded++;
@@ -295,8 +292,6 @@ public:
             for(int i = 0; i != stepsTheta; ++i)
             for(int j = 0; j <= stepsPhi; ++j)
             {
-
-
                 double theta = std::acos( static_cast<double>(j) * (2.0/stepsPhi) - 1.0);
                 double phi   = static_cast<double>(i) * (1.0/stepsTheta) * std::acos(-1)*2.0;                
 

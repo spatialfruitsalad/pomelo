@@ -71,12 +71,9 @@ public:
             double bounds;
             if (!(iss >> x1 >> y1 >> z1 >> x2 >> y2 >> z2>> x3 >> y3 >> z3 >> x4 >> y4 >> z4 >> bounds))
             {
-                std::cerr << "error parsing one line in XYZ file" << std::endl;
-                std::cout << line << std::endl;
-                break;
+                throw std::logic_error("error parsing one line in tetra file:\n" + line );
             }
             linesloaded++;
-        //std::cout << "line loaded" << std::endl;
             
             point p1(x1,y1,z1,linesloaded);
             point p2(x2,y2,z2,linesloaded);
@@ -99,18 +96,14 @@ public:
             std::vector<point> p = {p1,p2,p3,p4};
             dumbShrink( p, shrink);
 
-            //std::cout << "points loaded" << std::endl;
             triangle t1 (p[0], p[1], p[2]); 
             triangle t2 (p[0], p[1], p[3]); 
             triangle t3 (p[0], p[2], p[3]); 
             triangle t4 (p[1], p[2], p[3]); 
-            //std::cout << "triangles created" << std::endl;
 
             std::vector<triangle> list = {t1, t2, t3, t4}; 
 
-            //std::cout << "subdivision started" << std::endl;
             triangle::recusiveSubdivide(depth, list);
-            //std::cout << "subdivision ended" << std::endl;
             
             // add the surface points to a pointpattern for this tetrahedra first to make some duplicationchecks
             pointpattern pptetra; 
@@ -145,7 +138,6 @@ public:
 private:
     static void dumbShrink (std::vector<point>& p, double f  = 0.95)
     {
-        //std::cout << "dumbshrink: using shrink of " << f << std::endl;
         if(p.size() == 0) return;
     
         // calculate center of mass
@@ -156,7 +148,6 @@ private:
         }
         
         com = com / static_cast<double>(p.size());
-        //std::cout << "center of mass\n" << com.x << " " << com.y << " " << com.z << std::endl;
         
         // shift collection to com = 0
         // shrink all values
@@ -164,13 +155,9 @@ private:
         for(size_t i = 0; i != p.size(); ++i)
         {
             point q = p[i];
-            //std::cout << "calc 1 " << q.x << " " << q.y << " " << q.z << std::endl;
             q = q + (-1.0)* com; 
-            //std::cout << "calc 2 " << q.x << " " << q.y << " " << q.z << std::endl;
             q = q * f;
-            //std::cout << "calc 3 " << q.x << " " << q.y << " " << q.z << std::endl;
             p[i] = q + com;
-            //std::cout << "calc 4 " << p[i].x << " " << p[i].y << " " << p[i].z << std::endl;
         }
     }
 };

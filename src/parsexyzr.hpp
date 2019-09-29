@@ -223,9 +223,7 @@ public:
             double x ,y, z, r;
             if (!(iss >> x >> y >> z >> r))
             {
-                std::cerr << "error parsing one line in XYZR file\n";
-                std::cerr << line << std::endl;
-                break;
+                throw std::logic_error("error parsing one line in XYZR file:\n" + line);
             }
             
             if (r < shrink) std::cerr << "WARNING: Shrink (s=" << shrink << ") larger than particle (i=" << linesloaded << "9 radius (r= " << r << "). The result will be a negative radius" << std::endl;

@@ -226,9 +226,7 @@ public:
             ellip e;
             if (!(iss >> e.l >> e.cx >> e.cy >> e.cz >> e.a >> e.x1 >> e.y1 >> e.z1 >> e.b >> e.x2 >> e.y2 >> e.z2>> e.c >> e.x3 >> e.y3 >> e.z3))
             {
-                std::cerr << "error parsing one line in ellipsoid file" << std::endl;
-                std::cout << line << std::endl;
-                break;
+                throw std::logic_error("error parsing one inlie in ellipsoide file\n" + line);
             }
             linesloaded++;
             if (steps == 1)
@@ -319,38 +317,11 @@ public:
 
         std::cout << "created N = " << pp.points.size() << " points"  << std::endl;
         std::cout << "setting boundaries "<< std::endl;
-        //std::cout << "\t nx="<< nx << std::endl;
-        //std::cout << "\t nx="<< ny << std::endl;
-        //std::cout << "\t nx="<< nz << std::endl;
         
         xmin = 0;
         ymin = 0;
         zmin = 0;
     };
-private:
-    static void dumbShrink (std::vector<point>& p, double f  = 0.95)
-    {
-        if(p.size() == 0) return;
-    
-        // calculate center of mass
-        point com (0,0,0,p[0].l);
-        for(point q : p)
-        {
-            com = com + q;
-        }
-
-        com = com / static_cast<double>(p.size());
-        
-        // shift collection to com = 0
-        // shrink all values
-        // move them back to original com
-        for(point q : p)
-        {
-            q = q + (-1.0)* com;
-            q = q * f;
-            q = q + com;
-        }
-    }
 };
 
 #endif

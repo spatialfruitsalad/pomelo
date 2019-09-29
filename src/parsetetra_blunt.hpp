@@ -72,9 +72,7 @@ public:
             unsigned int label;
             if (!(iss >> label >> x1 >> y1 >> z1 >> x2 >> y2 >> z2>> x3 >> y3 >> z3 >> x4 >> y4 >> z4))
             {
-                std::cerr << "error parsing one line in XYZ file" << std::endl;
-                std::cout << line << std::endl;
-                break;
+                throw std::logic_error("error parsing one line in tetra file:\n" + line );
             }
             linesloaded++;
         //std::cout << "line loaded" << std::endl;

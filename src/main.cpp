@@ -305,6 +305,8 @@ int main (int argc, char* argv[])
         outMode.postprocessing = false;
     }
     
+    try
+    {
     if (cp.thisMode == SPHERE)
     {
         parsexyz p{};
@@ -358,6 +360,12 @@ int main (int argc, char* argv[])
         p.parse(cp.filename, pp);
 
         bi = parseBoundaryInfoFromParser(p);
+    }
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Error: parsing values not successful!\n\n" + e.what() << std::endl;
+        return -1;
     }
 
     // write parameter file

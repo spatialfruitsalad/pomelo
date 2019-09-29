@@ -194,8 +194,7 @@ public:
             int member;
             if (!(iss >> x >> y >> z >> member))
             {
-                std::cerr << "error parsing one line in Polymer file" << std::endl;
-                break;
+                throw std::logic_error("error parsing one line from polymere file:\n" + line);
             }
 
             if(member<1)

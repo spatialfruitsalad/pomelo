@@ -194,10 +194,8 @@ public:
             double x ,y, z;
             if (!(iss >> x >> y >> z))
             {
-                std::cerr << "error parsing one line in XYZ file" << std::endl;
-                break;
+                throw std::logic_error("error parsing one line in XYZ file:\n" + line);
             }
-            //std::cout << "parsed particle: " << x << " " << y << " " << z << std::endl;
             linesloaded++;
             pp.addpoint(linesloaded, x,y,z);
         }
