@@ -27,27 +27,15 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include "IParser.hpp"
 #include "pointpattern.hpp"
 #include "splitstring.hpp"
 
-class parsepolymer
+class parsepolymer : public IParser
 {
 public:
-    double xmin;
-    double ymin;
-    double zmin;
-    double xmax;
-    double ymax;
-    double zmax;
-    bool xpbc;
-    bool ypbc;
-    bool zpbc;
-    bool percstruct;
-    unsigned int cellmin;
-    unsigned int cellmax;
 
-    parsepolymer () : xmin(0),  ymin(0), zmin(0), xmax(0) ,ymax(0), zmax(0), xpbc(false), ypbc(false), zpbc(false), percstruct(false),cellmin(0),cellmax(0)
-    {};
+    parsepolymer () = default;
     void parse(std::string const filename, pointpattern& pp)
     {
         std::ifstream infile;

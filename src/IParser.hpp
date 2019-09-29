@@ -1,5 +1,5 @@
 /* 
-Copyright 2018 Simon Weis and Philipp Schoenhoefer
+Copyright 2019 Simon Weis and Philipp Schoenhoefer
 
 This file is part of Pomelo.
 
@@ -18,18 +18,28 @@ along with Pomelo.  If not, see <http://www.gnu.org/licenses/>.
 
 The development of Pomelo took place at the Friedrich-Alexander University of Erlangen and was funded by the German Research Foundation (DFG) Forschergruppe FOR1548 "Geometry and Physics of Spatial Random Systems" (GPSRS). 
 */
-#ifndef OUTPUT_H_GUARD_123456
-#define OUTPUT_H_GUARD_123456
 
-struct output
+#ifndef IPARSER_H_GUARD_123456
+#define IPARSER_H_GUARD_123456
+
+class IParser
 {
-    output () {}
-    bool savepoly {true};
-    bool saveoff{true};
-    bool savesurface{true};
-    bool savereduced{true};
-    bool savefe{true};
-    bool postprocessing{true};
+public:
+
+    virtual ~IParser () = default;
+    double xmin{0};
+    double ymin{0};
+    double zmin{0};
+    double xmax{0};
+    double ymax{0};
+    double zmax{0};
+    bool xpbc{false};
+    bool ypbc{false};
+    bool zpbc{false};
+    bool percstruct{false};
+    unsigned int cellmin{0};
+    unsigned int cellmax{0};
 };
 
 #endif
+

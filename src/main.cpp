@@ -19,7 +19,6 @@ along with Pomelo.  If not, see <http://www.gnu.org/licenses/>.
 The development of Pomelo took place at the Friedrich-Alexander University of Erlangen and was funded by the German Research Foundation (DFG) Forschergruppe FOR1548 "Geometry and Physics of Spatial Random Systems" (GPSRS). 
 */
 
-
 #include <iostream>
 #include <fstream>
 #include <map>
@@ -43,12 +42,30 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 #include "postprocessing.hpp"
 #include "output.hpp"
 
-std::string version = "0.1.5";
+std::string version = "0.1.6";
 #ifdef USELUA 
 using namespace sel;
 #endif
 using namespace voro;
 
+namespace {
+
+
+struct boundaryInfo
+{
+    double xmin {0};
+    double ymin {0};
+    double zmin {0};
+    double xmax {0};
+    double ymax {0};
+    double zmax {0};
+    bool xpbc {false};
+    bool ypbc {false};
+    bool zpbc {false};
+    bool percstruct {false};
+    unsigned int cellmin {0};
+    unsigned int cellmax {0};
+};
 
 void  getFaceVerticesOfFace( std::vector<int>& f, unsigned int k, std::vector<unsigned int>& vertexList)
 {
@@ -77,15 +94,88 @@ void  getFaceVerticesOfFace( std::vector<int>& f, unsigned int k, std::vector<un
         index++;
     }
 }
+boundaryInfo parseBoundaryInfoFromParser(IParser& p)
+{
+    boundaryInfo bi;
+    bi.xmin = p.xmin;
+    bi.ymin = p.ymin;
+    bi.zmin = p.zmin;
+    bi.xmax = p.xmax;
+    bi.ymax = p.ymax;
+    bi.zmax = p.zmax;
+    bi.xpbc = p.xpbc;
+    bi.ypbc = p.ypbc;
+    bi.zpbc = p.zpbc;
+    bi.percstruct = p.percstruct;
+    bi.cellmin=p.cellmin;
+    bi.cellmax=p.cellmax;
+    return bi;
+}
 
+#if USELUA
+output parseOutFromLua(State& state)
+{
+    output outMode;
+    outMode.savesurface = state["savesurface"];
+    outMode.savepoly = state["savepoly"];
+    outMode.saveoff = state["saveoff"];
+    outMode.savereduced = state["savereduced"];
+    outMode.savefe = state["savefe"];
+    outMode.postprocessing = state["postprocessing"];
+
+    return outMode;
+}
+
+boundaryInfo parseBoundaryInfoFromLua(State& state, cmdlParser& cp)
+{
+    boundaryInfo bi{};
+    bi.xmin = state["xmin"];
+    bi.ymin = state["ymin"];
+    bi.zmin = state["zmin"];
+    bi.xmax = state["xmax"];
+    bi.ymax = state["ymax"];
+    bi.zmax = state["zmax"];
+    bi.xpbc = false;
+    bi.ypbc = false;
+    bi.zpbc = false;
+    bi.percstruct = false;
+    bi.cellmin=0;
+    bi.cellmax=0;
+
+    std::string const boundary = state["boundary"];
+    if(boundary == "periodic")
+    {
+        std::cout << "boundary condition mode 'periodic' selected." ;
+       bi.xpbc = state["xpbc"];
+       bi.ypbc = state["ypbc"];
+       bi.zpbc = state["zpbc"];
+       bi.percstruct = state["percolation"];
+        std::cout << "\nx: " << bi.xpbc << "\ny: " << bi.ypbc << "\nz: " << bi.zpbc << "\npercolating structure:" << bi.percstruct << std::endl;
+    }
+    else if (boundary == "none")
+    {
+        std::cout << "boundary condition mode 'none' selected." << std::endl;
+        std::string ignoreboundarycells = state["ignoreboundarycells"];
+    }
+    else if (boundary == "ignore")
+    {
+        cp.ignoreBoundaryCellsswitch = true;
+    }
+    else
+    {
+        throw std::invalid_argument("ERROR: bondary condition mode " + boundary + " not known");
+    }
+
+
+    return bi;
+}
+#endif
+}   // end of namespace
 
 int main (int argc, char* argv[])
 {
-    
-
-    std::cout << "\nP O M E L O\n\nVersion " << version << "\nCopyright (C) 2016\nSimon Weis and Philipp Schoenhoefer\n\n";
+    std::cout << "\nP O M E L O\n\nVersion " << version << "\nCopyright (C) 2016-2019\nSimon Weis and Philipp Schoenhoefer\n\n";
     std::cout << "pomelo home:\t\t http://www.theorie1.physik.uni-erlangen.de/" << std::endl << std::endl << std::endl;
-
 
 /////////////////////
 // Parse Command line arguments
@@ -96,28 +186,23 @@ int main (int argc, char* argv[])
         cp.parseArguments(argc, argv); 
         cp.sanityCheckParameters();
     }
-    catch(std::string& e)
+    catch(std::exception& e)
     {
         cp.printHelp();
-        std::cerr << e << std::endl;
+        std::cerr << e.what() << std::endl;
         return -1;
     }
 
     std::cout << "#commandline parser arguments:\n#\tinfine: " << cp.filename << "\n";
     std::cout << "#\toutfolder: " << cp.outfolder << "\n";
 
-    std::string folder = cp.outfolder;
     
 /////////////////////
 // check if folder is ok and create it
 /////////////////////
-    // command line sanity check
-    if(folder.empty())
-    {
-        std::cerr << "outfilepath is not valid" << std::endl;
-        return -1;
-    }
 
+    std::string folder = cp.outfolder;
+    
     // sanitize folder path and create folder 
     char lastCharOfFolder = *folder.rbegin();
     if (lastCharOfFolder != '/')
@@ -132,18 +217,7 @@ int main (int argc, char* argv[])
     // pp contains the triangulation of the particle surfaces
     pointpattern pp;
     double epsilon = 1e-10;
-    xmin = 0;
-    ymin = 0;
-    zmin = 0;
-    xmax = 0;
-    ymax = 0;
-    zmax = 0;
-    bool xpbc = false;
-    bool ypbc = false;
-    bool zpbc = false;
-    bool percstruct = false;
-    unsigned int cellmin=0;
-    unsigned int cellmax=0;
+    boundaryInfo bi;
     output outMode;
     
 /////////////////////
@@ -163,12 +237,8 @@ int main (int argc, char* argv[])
         }
 
         // parse output from lua file
-        outMode.savesurface = state["savesurface"];
-        outMode.savepoly = state["savepoly"];
-        outMode.saveoff = state["saveoff"];
-        outMode.savereduced = state["savereduced"];
-        outMode.savefe = state["savefe"];
-        outMode.postprocessing = state["postprocessing"];
+        outMode = parseOutFromLua(state);
+
         // parse global parameters from lua file
         std::string posfile = state["positionfile"];
         std::string readfile = state["readfile"];
@@ -219,42 +289,8 @@ int main (int argc, char* argv[])
         // parse epsilon from the global lua parameter file
         epsilon = state["epsilon"];
         // parse boundaries from the global lua parameter file
-        xmin = state["xmin"];
-        ymin = state["ymin"];
-        zmin = state["zmin"];
-        xmax = state["xmax"];
-        ymax = state["ymax"];
-        zmax = state["zmax"];
-        xpbc = false;
-        ypbc = false;
-        zpbc = false;
-        percstruct = false;
-        cellmin=0;
-        cellmax=0;
+        bi = parseBoundaryInfoFromLua(state, cp);
 
-        std::string boundary = state["boundary"];
-        if(boundary == "periodic")
-        {
-            std::cout << "boundary condition mode 'periodic' selected." ;
-            xpbc = state["xpbc"];
-            ypbc = state["ypbc"];
-            zpbc = state["zpbc"];
-            percstruct = state["percolation"];
-            std::cout << "\nx: " << xpbc << "\ny: " << ypbc << "\nz: " << zpbc << "\npercolating structure:" << percstruct << std::endl;
-        }
-        else if (boundary == "none")
-        {
-            std::cout << "boundary condition mode 'none' selected." << std::endl;
-            std::string ignoreboundarycells = state["ignoreboundarycells"];
-        }
-        else if (boundary == "ignore")
-        {
-           cp.ignoreBoundaryCellsswitch = true;
-        }
-        else
-        {
-            std::cerr << "bondary condition mode " << boundary << " not known" << std::endl;
-        }
         std::cout << std::endl;
     }
 #endif
@@ -271,80 +307,31 @@ int main (int argc, char* argv[])
     
     if (cp.thisMode == SPHERE)
     {
-        parsexyz p;
+        parsexyz p{};
         p.parse(cp.filename, pp);
 
-        xmin = p.xmin;
-        ymin = p.ymin;
-        zmin = p.zmin;
-        xmax = p.xmax;
-        ymax = p.ymax;
-        zmax = p.zmax;
-        xpbc = p.xpbc;
-        ypbc = p.ypbc;
-        zpbc = p.zpbc;
-        percstruct = p.percstruct;
-        cellmin=p.cellmin;
-        cellmax=p.cellmax;
-
+        bi = parseBoundaryInfoFromParser(p);
     }
     else if (cp.thisMode == SPHEREPOLY)
     {
         parsexyzr p;
-        std::cout << "loading file: " << cp.filename << std::endl;
         p.parse(cp.filename, pp);
 
-        xmin = p.xmin;
-        ymin = p.ymin;
-        zmin = p.zmin;
-        xmax = p.xmax;
-        ymax = p.ymax;
-        zmax = p.zmax;
-        xpbc = p.xpbc;
-        ypbc = p.ypbc;
-        zpbc = p.zpbc;
-        percstruct = p.percstruct;
-        cellmin=p.cellmin;
-        cellmax=p.cellmax;
+        bi = parseBoundaryInfoFromParser(p);
     }
     else if (cp.thisMode == POLYMER)
     {
         parsepolymer p;
-        std::cout << "loading file: " << cp.filename << std::endl;
         p.parse(cp.filename, pp);
 
-        xmin = p.xmin;
-        ymin = p.ymin;
-        zmin = p.zmin;
-        xmax = p.xmax;
-        ymax = p.ymax;
-        zmax = p.zmax;
-        xpbc = p.xpbc;
-        ypbc = p.ypbc;
-        zpbc = p.zpbc;
-        percstruct = p.percstruct;
-        cellmin=p.cellmin;
-        cellmax=p.cellmax;
+        bi = parseBoundaryInfoFromParser(p);
     }
     else if (cp.thisMode == ELLIP)
     {
         parseellipsoid p;
         p.parse(cp.filename, pp);
-        outMode.postprocessing = true; 
     
-        std::cout << "epsilon " << epsilon << std::endl;
-        xmin = p.xmin;
-        ymin = p.ymin;
-        zmin = p.zmin;
-        xmax = p.xmax;
-        ymax = p.ymax;
-        zmax = p.zmax;
-        xpbc = p.xpbc;
-        ypbc = p.ypbc;
-        zpbc = p.zpbc;
-        percstruct = p.percstruct;
-        cellmin=p.cellmin;
-        cellmax=p.cellmax;
+        bi = parseBoundaryInfoFromParser(p);
 
     }
     else if (cp.thisMode == TETRA)
@@ -353,65 +340,24 @@ int main (int argc, char* argv[])
         double shrink = cp.shrink;
         int iterations = cp.iterations;
         p.parse(cp.filename, pp, shrink, iterations);
-        outMode.postprocessing = false; 
-        std::cout << "epsilon " << epsilon << std::endl;
-        xmin = p.xmin;
-        ymin = p.ymin;
-        zmin = p.zmin;
-        xmax = p.xmax;
-        ymax = p.ymax;
-        zmax = p.zmax;
-        xpbc = p.xpbc;
-        ypbc = p.ypbc;
-        zpbc = p.zpbc;
-        percstruct = p.percstruct;
-        cellmin=p.cellmin;
-        cellmax=p.cellmax;
+
+        bi = parseBoundaryInfoFromParser(p);
     }
     else if (cp.thisMode == TETRABLUNT)
     {
         parsetetrablunt p;
         double shrink = cp.shrink;
         int iterations = cp.iterations;
-        std::cout << "number of iterations: " << iterations << std::endl;
         p.parse(cp.filename, pp, shrink, iterations);
-        outMode.postprocessing = true; 
-        outMode.saveoff = false; 
-        outMode.savesurface = true;
-        outMode.savereduced = true;
-        epsilon = 1e-11;
-        std::cout << "epsilon " << epsilon << std::endl;
-        xmin = p.xmin;
-        ymin = p.ymin;
-        zmin = p.zmin;
-        xmax = p.xmax;
-        ymax = p.ymax;
-        zmax = p.zmax;
-        xpbc = p.xpbc;
-        ypbc = p.ypbc;
-        zpbc = p.zpbc;
-        percstruct = p.percstruct;
-        cellmin=p.cellmin;
-        cellmax=p.cellmax;
+
+        bi = parseBoundaryInfoFromParser(p);
     }
     else if (cp.thisMode == SPHCYL)
     {
-
         parsesphcyl p;
         p.parse(cp.filename, pp);
 
-        xmin = p.xmin;
-        ymin = p.ymin;
-        zmin = p.zmin;
-        xmax = p.xmax;
-        ymax = p.ymax;
-        zmax = p.zmax;
-        xpbc = p.xpbc;
-        ypbc = p.ypbc;
-        zpbc = p.zpbc;
-        percstruct = p.percstruct;
-        cellmin=p.cellmin;
-        cellmax=p.cellmax;
+        bi = parseBoundaryInfoFromParser(p);
     }
 
     // write parameter file
@@ -424,15 +370,15 @@ int main (int argc, char* argv[])
     }
 
     std::cout << "boundarybox\n";
-    std::cout << "nx: [" << xmin << ", " << xmax << "]\n";
-    std::cout << "ny: [" << ymin << ", " << ymax << "]\n";
-    std::cout << "nz: [" << zmin << ", " << zmax << "]\n";
+    std::cout << "nx: [" << bi.xmin << ", " << bi.xmax << "]\n";
+    std::cout << "ny: [" << bi.ymin << ", " << bi.ymax << "]\n";
+    std::cout << "nz: [" << bi.zmin << ", " << bi.zmax << "]\n";
      
     // clean degenerated vertices from particle surface triangulation pointpattern
     {
         std::cout << "remove duplicates in surface triangulation" << std::endl;
         duplicationremover d(40,40,40);
-        d.setboundaries(xmin, xmax, ymin, ymax, zmin, zmax);
+        d.setboundaries(bi.xmin, bi.xmax, bi.ymin, bi.ymax, bi.zmin, bi.zmax);
         d.addPoints(pp);
         d.removeduplicates(epsilon);
         d.getallPoints(pp);
@@ -453,7 +399,7 @@ int main (int argc, char* argv[])
     // add particle surface triangulation to voro++ pre container for subcell division estimate
     std::cout << "importing surface triangulation to voro++" << std::endl;
 
-    pre_container pcon(xmin, xmax, ymin, ymax, zmin, zmax, xpbc, ypbc, zpbc);
+    pre_container pcon(bi.xmin, bi.xmax, bi.ymin, bi.ymax, bi.zmin, bi.zmax, bi.xpbc, bi.ypbc, bi.zpbc);
     
     // label ID map is used to  map surface point IDs to the respective particle label
     std::cout << "creating label id map " ;
@@ -511,7 +457,7 @@ int main (int argc, char* argv[])
     // setting up voro++ container
     int nx, ny, nz;
     pcon.guess_optimal(nx,ny,nz);
-    container con(xmin, xmax, ymin, ymax, zmin, zmax, nx, ny, nz, xpbc, ypbc, zpbc, 8);
+    container con(bi.xmin, bi.xmax, bi.ymin, bi.ymax, bi.zmin, bi.zmax, nx, ny, nz, bi.xpbc, bi.ypbc, bi.zpbc, 8);
     pcon.setup(con);
     std::cout << "setting up voro++ container with division: (" << nx << " " << ny << " " << nz << ") for N= " << numberofpoints << " particles " << std::endl;
     std::cout << std::endl;
@@ -540,7 +486,7 @@ int main (int argc, char* argv[])
     pointpattern ppreduced;
     writerpoly pw;
     std::vector<writerpoly> pw_cells;
-    pw_cells.resize(cellmax+1);
+    pw_cells.resize(bi.cellmax+1);
     // loop over all voronoi cells
     c_loop_all cla(con);
     // cell currently worked on
@@ -549,9 +495,9 @@ int main (int argc, char* argv[])
     double tenpercentSteps = 0.01*static_cast<double>(numberofpoints);
     double target = tenpercentSteps;
 
-    double xdist = xmax - xmin;
-    double ydist = ymax - ymin;
-    double zdist = zmax - zmin;
+    double xdist = xmax - bi.xmin;
+    double ydist = ymax - bi.ymin;
+    double zdist = zmax - bi.zmin;
 
     //unsigned long long refl = 0;
     
@@ -625,7 +571,7 @@ int main (int argc, char* argv[])
                 double xabs2_alt, yabs2_alt, zabs2_alt;
 
                 ref[l][3]=0;
-                if(xpbc && !percstruct)
+                if(bi.xpbc && !bi.percstruct)
                 {
                     if(xabs < 0) xabs_alt = xabs + xdist;
                     else xabs_alt = xabs - xdist;
@@ -640,7 +586,7 @@ int main (int argc, char* argv[])
                     }
                 }
                 ref[l][4]=0;
-                if(ypbc && !percstruct)
+                if(bi.ypbc && !bi.percstruct)
                 {
                     if(yabs < 0) yabs_alt = yabs + ydist;
                     else yabs_alt = yabs - ydist;
@@ -655,7 +601,7 @@ int main (int argc, char* argv[])
                     }
                 }
                 ref[l][5]=0;
-                if(zpbc && !percstruct)
+                if(bi.zpbc && !bi.percstruct)
                 {
                     if(zabs < 0) zabs_alt = zabs + zdist;
                     else zabs_alt = zabs - zdist;
@@ -725,9 +671,9 @@ int main (int argc, char* argv[])
                             double y = vertices[vertexindex*3+1];
                             double z = vertices[vertexindex*3+2];
 
-                            if(xpbc && !percstruct) x += ref[l][3];
-                            if(ypbc && !percstruct) y += ref[l][4];
-                            if(zpbc && !percstruct) z += ref[l][5];
+                            if(bi.xpbc && !bi.percstruct) x += ref[l][3];
+                            if(bi.ypbc && !bi.percstruct) y += ref[l][4];
+                            if(bi.zpbc && !bi.percstruct) z += ref[l][5];
 
                             ppreduced.addpoint(l,x,y,z);
                             positionlist.push_back(x);
@@ -735,8 +681,8 @@ int main (int argc, char* argv[])
                             positionlist.push_back(z);
                         }
                         pw.addface(positionlist, l);
-                        if(cellmax!= 0){
-                            if(l<=cellmax && l>=cellmin) pw_cells[l].addface(positionlist, l);
+                        if(bi.cellmax!= 0){
+                            if(l<=bi.cellmax && l>=bi.cellmin) pw_cells[l].addface(positionlist, l);
                         }
                     }
                 }
@@ -788,17 +734,16 @@ int main (int argc, char* argv[])
 
     if (ppreduced.points.size() == 0)
     {
-        std::cout << "\nall Voronoi Vertices have been removed. Check for periodic boundary conditions. skipping further calculation." << std::endl;
-        std::cout << "\nworking for you has been nice. Thank you for using me & see you soon. :) "<< std::endl;
-        return 0;
+        std::cout << "\nAll Voronoi Vertices have been removed. Check for periodic boundary conditions. skipping further calculation." << std::endl;
+        return -1;
     }
     // save point pattern output
     if(outMode.savereduced == true)
     {
         pw.savePointPatternForGnuplot(folder + "reduced.xyz");
 
-        if(cellmax != 0){
-            for (unsigned int ii = cellmin; ii <= cellmax; ++ii){
+        if(bi.cellmax != 0){
+            for (unsigned int ii = bi.cellmin; ii <= bi.cellmax; ++ii){
             pw_cells[ii].savePointPatternForGnuplot(folder + "reduced" + std::to_string(ii)  + ".xyz");
             }
         }
@@ -807,11 +752,11 @@ int main (int argc, char* argv[])
     std::cout << std::endl;
 
     // remove duplicates and label back indices
-    pw.removeduplicates(epsilon, xmin, xmax, ymin, ymax, zmin, zmax, nx, ny, nz);
+    pw.removeduplicates(epsilon, bi.xmin, bi.xmax, bi.ymin, bi.ymax, bi.zmin, bi.zmax, nx, ny, nz);
 
-    if(cellmax != 0){
-        for (unsigned int ii = cellmin; ii <= cellmax; ++ii){
-        pw_cells[ii].removeduplicates(epsilon, xmin, xmax, ymin, ymax, zmin, zmax, nx, ny, nz);
+    if(bi.cellmax != 0){
+        for (unsigned int ii = bi.cellmin; ii <= bi.cellmax; ++ii){
+        pw_cells[ii].removeduplicates(epsilon, bi.xmin, bi.xmax, bi.ymin, bi.ymax, bi.zmin, bi.zmax, nx, ny, nz);
         }
     }
 
@@ -825,21 +770,21 @@ int main (int argc, char* argv[])
         file.open(folder + "cell.poly");
         if (!file.good())
         {
-            std::cerr << "error: cannot open poly file for write" << std::endl;
-            throw std::string("error: cannot open poly file for write");
+            std::cerr << "Error: cannot open poly file for write" << std::endl;
+            return -1;
         }
         file << pw;
         file.close();
 
-        if(cellmax != 0){
+        if(bi.cellmax != 0){
 
-            for (unsigned int ii = cellmin; ii <= cellmax; ++ii){
+            for (unsigned int ii = bi.cellmin; ii <= bi.cellmax; ++ii){
 
                 file.open(folder + "cell" + std::to_string(ii) + ".poly");
                 if (!file.good())
                 {
-                    std::cerr << "error: cannot open poly file for write" << std::endl;
-                    throw std::string("error: cannot open poly file for write");
+                    std::cerr << "Error: cannot open poly file for write" << std::endl;
+                    return -1;
                 }
                 file << pw_cells[ii];
                 file.close();
@@ -854,7 +799,7 @@ int main (int argc, char* argv[])
         if (!file.good())
         {
             std::cerr << "error: cannot open off file for write" << std::endl;
-            throw std::string("error: cannot open off file for write");
+            return -1;
         }
         writeroff wo(pw);
         file << wo;
@@ -867,10 +812,10 @@ int main (int argc, char* argv[])
         file.open(folder+"cell.fe");
         if (!file.good())
         {
-            std::cerr << "error: cannot open fe file for write!" << std::endl;
-            throw std::string("error: cannot open fe file for write!");
+            std::cerr << "Error: cannot open fe file for write!" << std::endl;
+            return -1;
         }
-        if(percstruct)
+        if(bi.percstruct)
         {
             writerfe_perc wf(pw);
             file << wf;

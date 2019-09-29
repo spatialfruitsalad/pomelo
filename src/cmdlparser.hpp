@@ -113,11 +113,13 @@ public:
                 std::cerr << "WARNING: Parameter clash. shrink and iteration values are only valid for tetrahedra modes (TETRA, TETRABLUNT)" << std::endl;
         }
         if (!outset)
-            throw std::invalid_argument("No output folder specified!");
+            throw std::invalid_argument("No output folder specified");
         if (!fileset)
             throw std::invalid_argument("No FileName given");
         if (!modeset)
             throw std::invalid_argument("No Mode selected");
+        if (outfolder.empty())
+            throw std::invalid_argument("Outfolder empty");
     }
 
 private:
