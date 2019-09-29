@@ -7,6 +7,9 @@ env:
     - TEST_SUITE=unittest 
     - TEST_SUITE=applicationtest 
 script: make GENERIC && make && make $TEST_SUITE 
+stages:
+    - name: deploy
+    if: $TEST_SUITE="unittest"
 deploy:
     provider: pages
     skip_cleanup: true
