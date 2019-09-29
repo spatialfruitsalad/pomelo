@@ -1,0 +1,4 @@
+#1_particle label #2_number of neighbours
+0 0 ( )
+1 1 ( 2 )
+2 1 ( 1 )

@@ -3,7 +3,7 @@ CXXVORO = clang++ -std=c++1y -g -O3
 CXXTEST = clang++ -std=c++1y -g -O3 -Ilib/googletest-master/googletest/include/
 LUAFLAG = -DUSELUA
 
-all:  LINK_luafree
+all:  LINK_luafree LINK unittest applicationtest
 
 GENERIC:  LINK 
 
@@ -32,8 +32,14 @@ LINK_luafree: obj/main_luafree.o obj/voro.o obj/fileloader.o obj/pointpattern.o
 LINK: obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o
 	$(CXX) obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o -o bin/pomelo_generic -llua5.2 -I/usr/include/lua5.2 $(LUAFLAG) 
 
-gtest: src/cmdlparser.hpp src/duplicationremover.hpp obj/pointpattern.o src/unittests/cmdlparsertest.cpp src/unittests/pointpatterntest.cpp src/unittests/duplicationremovertest.cpp src/unittests/splitstringtest.cpp src/unittests/triangletest.cpp 
-	$(CXXTEST) src/unittests/cmdlparsertest.cpp src/unittests/duplicationremovertest.cpp src/unittests/pointpatterntest.cpp src/unittests/splitstringtest.cpp src/unittests/triangletest.cpp obj/pointpattern.o -Llib/googletest-master/build/lib/ -lpthread -lgtest -lgtest_main -o bin/gtest
+unittest: src/cmdlparser.hpp src/duplicationremover.hpp obj/pointpattern.o src/unittests/cmdlparsertest.cpp src/unittests/pointpatterntest.cpp src/unittests/duplicationremovertest.cpp src/unittests/splitstringtest.cpp src/unittests/triangletest.cpp 
+	$(CXXTEST) src/unittests/cmdlparsertest.cpp src/unittests/duplicationremovertest.cpp src/unittests/pointpatterntest.cpp src/unittests/splitstringtest.cpp src/unittests/triangletest.cpp obj/pointpattern.o -Llib/googletest-master/build/lib/ -lpthread -lgtest -lgtest_main -o bin/unittest
+	./bin/unittest 
+
+applicationtest: src/applicationtests/twospheretest.cpp LINK
+	$(CXXTEST) src/applicationtests/twospheretest.cpp -Llib/googletest-master/build/lib/ -lpthread -lgtest -lgtest_main -o bin/applicationtest
+	cd bin && ./pomelo_generic -mode GENERIC -i ../test/2015-12-16_twopoints/twopoints.lua -o ../test/2015-12-16_twopoints/applicationtest && cd ..
+	./bin/applicationtest && rm -r test/2015-12-16_twopoints/applicationtest
 
 clean:
 	rm obj/*
