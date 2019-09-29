@@ -256,9 +256,16 @@ int main (int argc, char* argv[])
 
         // read particle parameters and positions
         std::vector<particleparameterset> setlist;
-        fileloader loader;
-        loader.read(posfile,setlist);
-
+        try
+        {
+            fileloader loader;
+            loader.read(posfile,setlist);
+        }
+        catch (std::exception& e)
+        {
+            std::cerr << "Error: Cannot parse position file!\n" << e.what() << std::endl;
+            return -1;
+        }
         std::cout << "Creating Surface Triangulation... " << std::flush;
         
         // scope for the readstate to ensure it won't lack out to anything else

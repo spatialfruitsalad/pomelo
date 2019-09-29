@@ -34,8 +34,7 @@ void fileloader::read(const std::string filename, std::vector<particleparameters
     infile.open(filename, std::ifstream::in);
     if (infile.fail())
     {
-        std::cout << "Cannot load file " << filename << std::endl;
-        return;
+        throw std::invalid_argument("can not open posfile: " + filename);
     }
 #pragma GCC diagnostic ignored "-Wwrite-strings"
     cSplitString line("");
