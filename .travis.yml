@@ -9,7 +9,7 @@ env:
 script: make GENERIC && make && make $TEST_SUITE 
 stages:
     - name: deploy
-      oif: $TEST_SUITE="unittest"
+      if: $TEST_SUITE="unittest"
 deploy:
     provider: pages
     skip_cleanup: true
