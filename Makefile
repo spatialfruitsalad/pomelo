@@ -32,8 +32,8 @@ LINK_luafree: obj/main_luafree.o obj/voro.o obj/fileloader.o obj/pointpattern.o
 LINK: obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o
 	$(CXX) obj/main.o obj/voro.o obj/fileloader.o obj/pointpattern.o -o bin/pomelo_generic -llua5.2 -I/usr/include/lua5.2 $(LUAFLAG) 
 
-gtest: src/cmdlparser.hpp src/duplicationremover.hpp obj/pointpattern.o src/unittests/cmdlparsertest.cpp src/unittests/pointpatterntest.cpp src/unittests/duplicationremovertest.cpp src/unittests/splitstringtest.cpp src/unittests/triangletest.cpp 
-	$(CXXTEST) src/unittests/cmdlparsertest.cpp src/unittests/duplicationremovertest.cpp src/unittests/pointpatterntest.cpp src/unittests/splitstringtest.cpp src/unittests/triangletest.cpp obj/pointpattern.o -Llib/googletest-master/build/lib/ -lpthread -lgtest -lgtest_main -o bin/gtest
+unittest: src/cmdlparser.hpp src/duplicationremover.hpp obj/pointpattern.o src/unittests/cmdlparsertest.cpp src/unittests/pointpatterntest.cpp src/unittests/duplicationremovertest.cpp src/unittests/splitstringtest.cpp src/unittests/triangletest.cpp 
+	$(CXXTEST) src/unittests/cmdlparsertest.cpp src/unittests/duplicationremovertest.cpp src/unittests/pointpatterntest.cpp src/unittests/splitstringtest.cpp src/unittests/triangletest.cpp obj/pointpattern.o -Llib/googletest-master/build/lib/ -lpthread -lgtest -lgtest_main -o bin/unittest
 
 clean:
 	rm obj/*
