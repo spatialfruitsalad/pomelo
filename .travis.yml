@@ -3,18 +3,17 @@ compiler: clang
 dist: bionic
 before_install:
     - sudo apt-get install -y liblua5.2 liblua5.2-dev lua5.2
-env:
-    - TEST_SUITE=unittest 
-    - TEST_SUITE=applicationtest 
-script: make GENERIC && make && make $TEST_SUITE 
-stages:
-    - name: deploy
-      if: $TEST_SUITE="unittest"
-deploy:
-    provider: pages
-    skip_cleanup: true
-    github_token: $GITHUB_TOKEN
-    keep_history: false
-    local_dir: bin
-    on:
-        branch: master
+jobs:
+    include:
+      - script: make unittest
+      - script: make applicationtest
+      - stage: deploy
+        script: make && mahe GENERIC
+        deploy: &pages
+            provider: pages
+            skip_cleanup: true
+            github_token: $GITHUB_TOKEN
+            keep_history: false
+            local_dir: bin
+            on:
+                branch: master
