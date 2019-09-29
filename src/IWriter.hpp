@@ -69,7 +69,7 @@ public:
 
     void savePointPatternForGnuplot( std::string filename)
     {
-        std::cout << "writing PointPattern file" << std::endl;
+        //std::cout << "writing PointPattern file" << std::endl;
         std::ofstream file;
         file.open(filename);
         file >> p;
@@ -78,16 +78,16 @@ public:
 
     void removeduplicates (double epsilon, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, unsigned int nx = 16, unsigned int ny = 16, unsigned int nz = 16 )
     {
-        std::cout << "IWriter: remove duplicates" << std::endl;
+        //std::cout << "IWriter: remove duplicates" << std::endl;
         duplicationremover d(nx, ny, nz);
         d.setboundaries(xmin, xmax, ymin, ymax, zmin, zmax);
-        std::cout << "\tadding points" << std::endl;
+        //std::cout << "\tadding points" << std::endl;
         d.addPoints(p, true);
-        std::cout << "\tremoving duplicates" << std::endl;
+        //std::cout << "\tremoving duplicates" << std::endl;
         d.removeduplicates(epsilon);
-        std::cout << "\tget back points" << std::endl;
-        d.getallPoints(p);
-        std::cout << "\tmatch back indices" << std::endl;
+        //std::cout << "\tget back points" << std::endl;
+        p = d.getallPoints();
+        //std::cout << "\tmatch back indices" << std::endl;
         rearrangeIndices(d.indexShift);
 
         //std::cout << "\torder indices" << std::endl;

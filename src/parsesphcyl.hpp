@@ -57,172 +57,8 @@ public:
        
         std::vector<std::string> parameters = commentline.split(','); 
 
-        bool setsize = false;
-        bool origin_center = false;
-        xmin = 0;
-        ymin = 0;
-        zmin = 0;
-
-        for (auto s:parameters)
-        {
-            if (s.find("boxsz") != std::string::npos)
-            {
-                splitstring split (s.c_str());
-                std::vector<std::string> boxsplit= split.split('=');
-                if (boxsplit.size() != 2)
-                    throw std::string("cannot parse parameters from XYZ file");
-                
-                double v = std::stod(boxsplit[1]);
-                std::cout << "polymer parser boxsize: " << v << std::endl;
-                if (!setsize)
-                {
-                    xmax = v;
-                    ymax = v;
-                }
-                zmax = v;
-                            
-            }
-            else if (s.find("boxsy") != std::string::npos)
-            {
-                splitstring split (s.c_str());
-                std::vector<std::string> boxsplit= split.split('=');
-                if (boxsplit.size() != 2)
-                    throw std::string("cannot parse parameters from XYZ file");
-                
-                double v = std::stod(boxsplit[1]);
-                std::cout << "polymer parser boxsize X: " << v << std::endl;
-                ymax = v;
-                setsize = true;
-            }
-            else if (s.find("boxsx") != std::string::npos)
-            {
-                splitstring split (s.c_str());
-                std::vector<std::string> boxsplit= split.split('=');
-                if (boxsplit.size() != 2)
-                    throw std::string("cannot parse parameters from XYZ file");
-                
-                double v = std::stod(boxsplit[1]);
-                std::cout << "polymer parser boxsize X: " << v << std::endl;
-                xmax = v;
-                setsize = true;
-            }
-            else if (s.find("boundary_condition") != std::string::npos)
-            {
-                splitstring split (s.c_str());
-                std::vector<std::string> pbcsplit= split.split('=');
-                if (pbcsplit.size() != 2)
-                    throw std::string("cannot parse parameters from XYZR file");
-
-                if (pbcsplit[1].find("periodic_cuboidal") != std::string::npos)
-                {
-                    xpbc = ypbc = zpbc = true;
-                    std::cout << "polymer parser boundaries: " << pbcsplit[1] << std::endl;
-                }
-                else if (pbcsplit[1].find("periodic_xy") != std::string::npos)
-                {
-                    xpbc = ypbc =  true;
-                    std::cout << "polymer parser boundaries: " << pbcsplit[1] << std::endl;
-                }
-                else if (pbcsplit[1].find("periodic_xz") != std::string::npos)
-                {
-                    xpbc = zpbc =  true;
-                    std::cout << "polymer parser boundaries: " << pbcsplit[1] << std::endl;
-                }
-                else if (pbcsplit[1].find("periodic_yz") != std::string::npos)
-                {
-                    ypbc = zpbc =  true;
-                    std::cout << "polymer parser boundaries: " << pbcsplit[1] << std::endl;
-                }
-                else if (pbcsplit[1].find("periodic_x") != std::string::npos)
-                {
-                    xpbc =  true;
-                    std::cout << "polymer parser boundaries: " << pbcsplit[1] << std::endl;
-                }
-                else if (pbcsplit[1].find("periodic_y") != std::string::npos)
-                {
-                    ypbc =  true;
-                    std::cout << "polymer parser boundaries: " << pbcsplit[1] << std::endl;
-                }
-                else if (pbcsplit[1].find("periodic_z") != std::string::npos)
-                {
-                    zpbc =  true;
-                    std::cout << "polymer parser boundaries: " << pbcsplit[1] << std::endl;
-                }
-            }
-            else if (s.find("percolating_cluster") != std::string::npos)
-            {
-                percstruct = true;
-            }
-            else if (s.find("box_origin_center") != std::string::npos)
-            {
-                origin_center = true;
-            }
-            else if (s.find("shrink") != std::string::npos)
-            {
-                splitstring split (s.c_str());
-                std::vector<std::string> shrinksplit = split.split('=');
-                if (shrinksplit.size() != 2)
-                    throw std::string("cannot parse parameters from XYZ file");
-                shrink = std::stod(shrinksplit[1]);
-            }
-            else if (s.find("stepstheta") != std::string::npos)
-            {
-                splitstring split (s.c_str());
-                std::vector<std::string> stepsThetaSplit = split.split('=');
-                if (stepsThetaSplit.size() != 2)
-                    throw std::string("cannot parse parameters from XYZ file");
-                stepsTheta = std::stoi(stepsThetaSplit[1]);
-            }
-            else if (s.find("stepsphi") != std::string::npos)
-            {
-                splitstring split (s.c_str());
-                std::vector<std::string> stepsPhiSplit = split.split('=');
-                if (stepsPhiSplit.size() != 2)
-                    throw std::string("cannot parse parameters from XYZ file");
-                stepsPhi = std::stoi(stepsPhiSplit[1]);
-            }
-            else if (s.find("stepsz") != std::string::npos)
-            {
-                splitstring split (s.c_str());
-                std::vector<std::string> stepsZSplit = split.split('=');
-                if (stepsZSplit.size() != 2)
-                    throw std::string("cannot parse parameters from XYZ file");
-                stepsZ = std::stoi(stepsZSplit[1]);
-            }
-            else if (s.find("poly_subset") != std::string::npos)
-            {
-                splitstring split (s.c_str());
-                std::vector<std::string> stepsSplit = split.split('=');
-                if (stepsSplit.size() != 2)
-                throw std::string("cannot parse parameters from ELLIP file");
-
-                splitstring split2 (stepsSplit[1].c_str());
-                std::vector<std::string> stepsSplit2 = split2.split('-');
-                if (stepsSplit2.size() != 2)
-                throw std::string("cannot parse parameters from ELLIP file");
-
-                cellmin=std::stoi(stepsSplit2[0]);
-                cellmax=std::stoi(stepsSplit2[1]);
-
-                if(cellmin > cellmax){
-                    throw std::string("poly_output in wrong order");
-                    cellmin=0;
-                    cellmax=0;
-                }
-            }
-        }
-
-        if(origin_center){
-            xmax *= 0.5;
-            xmin = -xmax;
-
-            ymax *= 0.5;
-            ymin = -ymax;
-
-            zmax *= 0.5;
-            zmin = -zmax;
-        }
-        
+        parseBasicParameters(parameters);
+        parseSpecialParameters(parameters);
 
         while(std::getline(infile, line))   // parse lines
         {
@@ -320,6 +156,45 @@ public:
         }
         std::cout << "parsed "  << linesloaded << " lines" << std::endl;
     };
+private:
+    void parseSpecialParameters(std::vector<std::string> const& parameters)
+    {
+        for (auto const s : parameters)
+        {
+            if (s.find("shrink") != std::string::npos)
+            {
+                splitstring split (s.c_str());
+                std::vector<std::string> shrinksplit = split.split('=');
+                if (shrinksplit.size() != 2)
+                    throw std::string("cannot parse parameters from XYZ file");
+                shrink = std::stod(shrinksplit[1]);
+            }
+            else if (s.find("stepstheta") != std::string::npos)
+            {
+                splitstring split (s.c_str());
+                std::vector<std::string> stepsThetaSplit = split.split('=');
+                if (stepsThetaSplit.size() != 2)
+                    throw std::string("cannot parse parameters from XYZ file");
+                stepsTheta = std::stoi(stepsThetaSplit[1]);
+            }
+            else if (s.find("stepsphi") != std::string::npos)
+            {
+                splitstring split (s.c_str());
+                std::vector<std::string> stepsPhiSplit = split.split('=');
+                if (stepsPhiSplit.size() != 2)
+                    throw std::string("cannot parse parameters from XYZ file");
+                stepsPhi = std::stoi(stepsPhiSplit[1]);
+            }
+            else if (s.find("stepsz") != std::string::npos)
+            {
+                splitstring split (s.c_str());
+                std::vector<std::string> stepsZSplit = split.split('=');
+                if (stepsZSplit.size() != 2)
+                    throw std::string("cannot parse parameters from XYZ file");
+                stepsZ = std::stoi(stepsZSplit[1]);
+            }
+        }
+    }
 };
 
 #endif

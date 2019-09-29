@@ -371,7 +371,7 @@ int main (int argc, char* argv[])
     }
     catch (std::exception& e)
     {
-        std::cerr << "Error: parsing values not successful!\n\n" + e.what() << std::endl;
+        std::cerr << "Error: parsing values not successful!\n\n" << e.what() << std::endl;
         return -1;
     }
 
@@ -396,7 +396,7 @@ int main (int argc, char* argv[])
         d.setboundaries(bi.xmin, bi.xmax, bi.ymin, bi.ymax, bi.zmin, bi.zmax);
         d.addPoints(pp);
         d.removeduplicates(epsilon);
-        d.getallPoints(pp);
+        pp = d.getallPoints();
         std::cout << std::endl;
     }
     // print out pointpattern file

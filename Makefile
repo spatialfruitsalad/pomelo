@@ -1,6 +1,6 @@
 CXX = clang++ -Wall -Wextra -O3 -std=c++1y 
 CXXVORO = clang++ -std=c++1y -g -O3
-CXXTEST = clang++ -std=c++1y -g -O1 -Ilib/googletest-master/googletest/include/
+CXXTEST = clang++ -std=c++1y -g -O3 -Ilib/googletest-master/googletest/include/
 LUAFLAG = -DUSELUA
 
 all:  LINK_luafree

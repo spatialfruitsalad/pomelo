@@ -137,10 +137,10 @@ public:
         pointAdded = true;
     }
 
-    // store all points to passed parameter p
-    void getallPoints ( pointpattern& p)
+    // store all points 
+    pointpattern getallPoints ()
     {
-        p.points.clear();
+        pointpattern p;
         unsigned int i = 0;
         // loop over all subcells
         for (
@@ -159,7 +159,7 @@ public:
                 i++;
             }
         }
-        //std::cout << "found " << i << std::endl;
+        return p;
     }
 
 

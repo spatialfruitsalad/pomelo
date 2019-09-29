@@ -60,38 +60,27 @@ TEST_P(DuplicationRemoverTest, SetInvertedBoundary)
 
 TEST_P(DuplicationRemoverTest, EmptyDuplicationRemoverResultsInEmptyPointPattern)
 {
-    pointpattern pp{};
     // sanity: check that there are no points
-    ASSERT_EQ(pp.points.size(), 0);
-    dr.getallPoints(pp);
-
-    EXPECT_EQ(pp.points.size(), 0);
+    EXPECT_EQ(dr.getallPoints().points.size(), 0);
 }
 
 TEST_P(DuplicationRemoverTest, OnePointInDuplicationRemoverResultsInOnePointInPointPattern)
 {
     dr.addpoint(1, 2, 3, 1, 1);
-    pointpattern pp{};
     // sanity: check that there are no points
-    ASSERT_EQ(pp.points.size(), 0);
-    dr.getallPoints(pp);
-
-    EXPECT_EQ(pp.points.size(), 1);
+    EXPECT_EQ(dr.getallPoints().points.size(), 1);
 }
 
 
 TEST_P(DuplicationRemoverTest, AddPointIncreasesCountInPointPattern)
 {
     const unsigned int N = 50;
-    pointpattern pp{};
     // sanity: check that there are no points
-    ASSERT_EQ(pp.points.size(), 0);
     for (unsigned int i= 0; i != N; ++i)
     {
         const double p = static_cast<double>(i)/static_cast<double>(N);
         dr.addpoint(p,p,p,i,i); 
-        dr.getallPoints(pp);
-        EXPECT_EQ(pp.points.size(), i+1);
+        EXPECT_EQ(dr.getallPoints().points.size(), i+1);
     }
 }
 
@@ -100,12 +89,7 @@ TEST_P(DuplicationRemoverTest, TwoDistinctPointsInDuplicationRemoverResultInTwoP
 {
     dr.addpoint(1, 2, 3, 1, 1);
     dr.addpoint(4, 5, 6, 2, 2);
-    pointpattern pp{};
-    // sanity: check that there are no points
-    ASSERT_EQ(pp.points.size(), 0);
-    dr.getallPoints(pp);
-
-    EXPECT_EQ(pp.points.size(), 2);
+    EXPECT_EQ(dr.getallPoints().points.size(),2);
 }
 
 
@@ -113,17 +97,12 @@ TEST_P(DuplicationRemoverTest, TwoSamePointsInDuplicationRemoverResultInOnePoint
 {
     dr.addpoint(1, 2, 3, 1, 1);
     dr.addpoint(1, 2, 3, 1, 1);
-    pointpattern pp{};
-    // sanity: check that there are no points
-    ASSERT_EQ(pp.points.size(), 0);
-    dr.getallPoints(pp);
+    ASSERT_EQ(dr.getallPoints().points.size(), 2);
 
     // sanity: check that there are two points
-    ASSERT_EQ(pp.points.size(), 2);
     dr.removeduplicates(1e-8);
 
-    dr.getallPoints(pp);
-    EXPECT_EQ(pp.points.size(), 1);
+    EXPECT_EQ(dr.getallPoints().points.size(), 1);
 }
 
 INSTANTIATE_TEST_CASE_P(
