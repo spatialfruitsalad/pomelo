@@ -28,19 +28,16 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 struct point
 {
     point(const double cx, const double cy, const double cz, const int cl, const long cf = -1, const long cC = -1): x(cx), y (cy), z(cz), l(cl), faceID(cf), cellID(cC) {};
+    point (point const&) = default;
+    point (point&&) = default;
+    ~point() = default;
+    point& operator= ( point const& rhs) = default;
+    point& operator= ( point && rhs) = default;
+
     double x, y, z;
     int l;
     long faceID, cellID;
-    point& operator= ( point const& rhs)
-    {
-        x = rhs.x;
-        y = rhs.y;
-        z = rhs.z;
-        l = rhs.l;
-        cellID = rhs.cellID;
-        faceID = rhs.faceID;
-        return *this;
-    }
+
     point operator+ ( point const& rhs) const
     {
         return point(point::x + rhs.x, point::y + rhs.y, point::z + rhs.z, point::l);
@@ -76,7 +73,7 @@ inline bool checkdistancecloserthan (point const& a, point const& b, double e)
     const double dy =fabs(a.y - b.y);
     const double dz =fabs(a.z - b.z);
 
-    return (dx < e && dy < e && dz < e);
+    return (dx <= e && dy <= e && dz <= e);
 };
 
 class pointpattern

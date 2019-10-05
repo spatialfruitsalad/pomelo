@@ -35,7 +35,7 @@ The development of Pomelo took place at the Friedrich-Alexander University of Er
 
 TEST(PointsTest, Constructor)
 {
-    point p1(0,0,0,0);
+    point const p1(0,0,0,0);
     EXPECT_EQ(p1.x,0); 
     EXPECT_EQ(p1.y,0); 
     EXPECT_EQ(p1.z,0); 
@@ -43,7 +43,7 @@ TEST(PointsTest, Constructor)
     EXPECT_EQ(p1.faceID,-1); 
     EXPECT_EQ(p1.cellID,-1); 
 
-    point p2(1,2,3,1, 99, 100);
+    point const p2(1,2,3,1, 99, 100);
     EXPECT_EQ(p2.x,1); 
     EXPECT_EQ(p2.y,2); 
     EXPECT_EQ(p2.z,3); 
@@ -52,23 +52,51 @@ TEST(PointsTest, Constructor)
     EXPECT_EQ(p2.cellID,100); 
 }
 
-TEST(PointsTest, OperatorEq)
+TEST(PointsTest, CopyConstructor)
 {
-    point p1(1,2,3,1, 99, 100);
-    point p = p1;
-    EXPECT_EQ(p.x,1); 
-    EXPECT_EQ(p.y,2); 
-    EXPECT_EQ(p.z,3); 
-    EXPECT_EQ(p.l,1); 
-    EXPECT_EQ(p.faceID,99); 
-    EXPECT_EQ(p.cellID,100); 
+    point const p1{1,2,3,1, 99, 100};
+    point const p2{p1};
+    EXPECT_EQ(p1, p2);
+}
+
+TEST(PointsTest, MoveConstructor)
+{
+    point p1{1,2,3,1, 99, 100};
+    point const p2{std::move(p1)};
+
+    EXPECT_EQ(p2.x,1); 
+    EXPECT_EQ(p2.y,2); 
+    EXPECT_EQ(p2.z,3); 
+    EXPECT_EQ(p2.l,1); 
+    EXPECT_EQ(p2.faceID,99); 
+    EXPECT_EQ(p2.cellID,100); 
+}
+
+TEST(PointsTest, CopyAssign)
+{
+    point const p1{1,2,3,1, 99, 100};
+    point const p2 = p1;
+    EXPECT_EQ(p1, p2);
+}
+
+TEST(PointsTest, MoveAssign)
+{
+    point p1{1,2,3,1, 99, 100};
+    point const p2 = std::move(p1);
+
+    EXPECT_EQ(p2.x,1); 
+    EXPECT_EQ(p2.y,2); 
+    EXPECT_EQ(p2.z,3); 
+    EXPECT_EQ(p2.l,1); 
+    EXPECT_EQ(p2.faceID,99); 
+    EXPECT_EQ(p2.cellID,100); 
 }
 
 TEST(PointsTest, OperatorPlus)
 {
-    point p1(1,1,1,1, 9, 10);
-    point p2(1,2,3,4, 9, 10);
-    point p = p1 + p2;
+    point const p1(1,1,1,1, 9, 10);
+    point const p2(1,2,3,4, 9, 10);
+    point const p = p1 + p2;
     EXPECT_EQ(p.x,2); 
     EXPECT_EQ(p.y,3); 
     EXPECT_EQ(p.z,4); 
@@ -77,11 +105,24 @@ TEST(PointsTest, OperatorPlus)
     EXPECT_EQ(p.cellID,-1); 
 }
 
+TEST(PointsTest, OperatorMinus)
+{
+    point const p1(1,1,1,1, 9, 10);
+    point const p2(1,2,3,4, 9, 10);
+    point const p = p1 - p2;
+    EXPECT_EQ(p.x,0); 
+    EXPECT_EQ(p.y,-1); 
+    EXPECT_EQ(p.z,-2); 
+    EXPECT_EQ(p.l,1); 
+    EXPECT_EQ(p.faceID,-1); 
+    EXPECT_EQ(p.cellID,-1); 
+}
+
 TEST(PointsTest, OperatorTimes)
 {
 
-    std::vector<double> vect {1.0,2.0,-1.0};
-    point p1(1,2,-4,1, 4, 12);
+    std::vector<double> const vect {1.0,2.0,-1.0};
+    point const p1(1,2,-4,1, 4, 12);
 
     for(auto const kvp : vect)
     {
@@ -101,14 +142,12 @@ TEST(PointsTest, OperatorTimes)
         EXPECT_EQ(p.faceID,4); 
         EXPECT_EQ(p.cellID,12); 
     }
-
 }
 
 TEST(PointsTest, OperatorDivided)
 {
-
-    std::vector<double> vect {1.0,2.0,-1.0};
-    point p1(2,6,-18,1, 33, 1);
+    std::vector<double> const vect {1.0,2.0,-1.0};
+    point const p1(2,6,-18,1, 33, 1);
 
     for(auto const kvp : vect)
     {
@@ -124,11 +163,9 @@ TEST(PointsTest, OperatorDivided)
 
 TEST(PointsTest, OperatorEqual)
 {
-
-    point p1(1,2,3,1, 33, 1);
-    point p2(1,2,3,1, 33, 1);
-    point p3(4,22,5,9, 3, 10);
-
+    point const p1(1,2,3,1, 33, 1);
+    point const p2(1,2,3,1, 33, 1);
+    point const p3(4,22,5,9, 3, 10);
 
     EXPECT_TRUE(p1==p2); 
     EXPECT_FALSE(p1==p3); 
@@ -136,26 +173,76 @@ TEST(PointsTest, OperatorEqual)
 
 TEST(PointsTest, OperatorUnequal)
 {
-
-    point p1(1,2,3,1, 33, 1);
-    point p2(4,22,5,9, 3, 10);
-    point p3(1,2,3,1, 33, 1);
+    point const p1(1,2,3,1, 33, 1);
+    point const p2(4,22,5,9, 3, 10);
+    point const p3{p1};
 
 
     EXPECT_TRUE(p1!=p2); 
     EXPECT_FALSE(p1!=p3); 
 }
 
-TEST(PointsTest, Length)
+TEST(PointsTest, LengthZero)
 {
-
-    point p1(0,0,0,1);
+    point const p1(0,0,0,1);
     EXPECT_EQ(p1.length(),0); 
+}
 
-    point p2(4,9,-16,1);
+TEST(PointsTest, LengthUnity)
+{
+    point const px(1,0,0,1);
+    EXPECT_EQ(px.length(), 1); 
+
+    point const py(0,1,0,1);
+    EXPECT_EQ(py.length(), 1); 
+
+    point const pz(0,0,1,1);
+    EXPECT_EQ(pz.length(), 1); 
+}
+
+TEST(PointsTest, LengthArbitrary)
+{
+    point const p1(4,0,0,1);
+    EXPECT_EQ(p1.length(),4); 
+
+    point const p2(4,9,-16,1);
     EXPECT_EQ(p2.length(),sqrt(4*4+9*9+16*16)); 
 }
 
+TEST(PointsTest, CheckDistanceCloserThanSamePosition)
+{
+    point const p1(1,0,0,1);
+    point const p2{p1};
+
+    EXPECT_TRUE(checkdistancecloserthan(p1,p2,1e-3));
+}
+
+TEST(PointsTest, CheckDistanceCloserThanSmallEpsilon)
+{
+    double const e = 1e-3;
+    point const p1(1,0,0,1);
+    point const p2(p1.x + e, 0,0,0, 1);
+
+    EXPECT_TRUE(checkdistancecloserthan(p1,p2,e));
+}
+
+TEST(PointsTest, CheckDistanceCloserThanLargeEpsilon)
+{
+    double const e = 1e3;
+    point const p1(1,0,0,1);
+    point const p2(p1.x + e, 0,0,0, 1);
+
+    EXPECT_TRUE(checkdistancecloserthan(p1,p2,e));
+}
+
+TEST(PointsTest, CheckDistanceCloserThanExceedsEpsilon)
+{
+    double const e = 1e-3;
+    point const p1(1,0,0,1);
+    point const p2(p1.x + 5*e, 0,0,0, 1);
+
+    EXPECT_FALSE(checkdistancecloserthan(p1,p2,e));
+}
 
 TEST(PointPatternTest, AddPoint)
 {
