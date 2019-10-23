@@ -101,12 +101,15 @@ public:
             }
 
             matrix rotate(a11, a21, a31, a12, a22, a32, a13, a23, a33);
+ 
+            double invStepsPhi = 1.0/stepsPhi;
+            double invStepsTheta = 1.0/stepsTheta;
 
             // spawn cylinder part first
             for (int i = 0; i != stepsPhi; ++i)
             for (int j = 0; j != stepsZ; ++j)
             {
-                double deltaPhi = 2*M_PI/stepsPhi;
+                double deltaPhi = 2*M_PI*invStepsPhi;
                 double deltaZ = l/stepsZ;
 
                 double phi = 0 + i * deltaPhi;
@@ -123,13 +126,12 @@ public:
             std::cout << "cylinder points: " << pp.points.size() << std::endl;
 
             // TODO rotate point to correct orientation
-            
-
-            for(int i = 0; i != stepsTheta; ++i)
-            for(int j = 0; j <= stepsPhi; ++j)
+           
+            for(int i = 0; i <= stepsTheta; ++i)
+            for(int j = 0; j != stepsPhi; ++j)
             {
-                double theta = std::acos( static_cast<double>(j) * (2.0/stepsPhi) - 1.0);
-                double phi   = static_cast<double>(i) * (1.0/stepsTheta) * std::acos(-1)*2.0;                
+                double theta = std::acos( static_cast<double>(i) * (2.0*invStepsTheta) - 1.0);
+                double phi   = static_cast<double>(j)* M_PI*2.0*invStepsPhi;                
 
                 double xp =  cos(phi) * sin(theta)*(r*shrink);
                 double yp =  sin(phi) * sin(theta)*(r*shrink);
